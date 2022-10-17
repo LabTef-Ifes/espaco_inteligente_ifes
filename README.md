@@ -2,7 +2,7 @@
 
 ![Reconstrução tridimensional](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES/blob/main/caminhada.gif)
 
-Antes de tudo, instale as bibliotecas necessárias que se encontram descritas no arquivos requiremensts.txt através do comando 'pip install -r requirements.txt'.
+Antes de tudo, instale as bibliotecas necessárias que se encontram descritas no arquivos requiremensts.txt (que se encontra dentro da pasta Docker_files) através do comando 'pip install -r requirements.txt'.
 Uma dica é utilizar o virtualenv, para que se tenha um espaço com todas as bibliotecas desejadas.
 
 1. Suba os containeres (rode 'iniciar_principais_containeres.py' - inicia os containeres na ordem correta). Mude os volumes dos containeres de acordo com o seus diretórios.
