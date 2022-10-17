@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adapter-config
+  namespace: monitoring
+data:
+  config.yaml: |
+    rules:
+    - seriesQuery: 'rabbitmq_queue_messages_published_total{namespace!="",queue!=""}'
+      seriesFilters: []
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          queue:
+            resource: service 
+      name:
+        matches: ""
+        as: "rabbitmq_msgs_per_second"
+      metricsQuery: rate(rabbitmq_queue_messages_published_total [1m]) / rabbitmq_queue_consumers  
