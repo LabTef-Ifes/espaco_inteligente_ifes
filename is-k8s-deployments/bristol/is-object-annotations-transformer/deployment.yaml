@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: object-annotations-transformer
+  namespace: default
+data:
+  transformer: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "input_topics": [
+        "SkeletonsGrouper.0.Localization",
+        "SkeletonsGrouper.1.Localization",
+        "SkeletonsGrouper.2.Localization"
+      ],
+      "output_topic": "SkeletonsGrouper.3DLocalization",
+      "frame_id": 1000
+    }
+
+---
+
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "is-object-annotations-transformer"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: transformer
+    spec:
+      containers:
+      - name: "0"
+        image: viros/is-object-annotations-transformer:0.0.2
+        command: ["is-object-annotations-transformer"]
+        args: ["/conf/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            cpu: "1"
+            memory: 128Mi
+        volumeMounts:
+          - name: options
+            mountPath: /conf/
+      volumes:
+      - name: options
+        configMap:
+          name: object-annotations-transformer
+          items:
+          - key: transformer
+            path: options.json

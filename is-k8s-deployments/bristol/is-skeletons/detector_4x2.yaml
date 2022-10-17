@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skeletons-detector
+  namespace: default
+data:
+  detector: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "resize": {
+        "width": 432,
+        "height": 368
+      },
+      "model": "MOBILENET_THIN",
+      "resize_out_ratio": 4.0,
+      "gpu_mem_allow_growth": true,
+      "per_process_gpu_memory_fraction": 0.25
+    }
+
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "is-skeletons-detector"
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: detector
+    spec:
+      containers:
+      - name: "0"
+        image: viros/is-skeletons-detector:0.0.2
+        command: ["is-skeletons-detector-stream"]
+        args: ["/opt/is/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            cpu: "1"
+            memory: 2048Mi
+            nvidia.com/gpu: 1
+        volumeMounts:
+          - name: options
+            mountPath: /opt/is
+      - name: "1"
+        image: viros/is-skeletons-detector:0.0.2
+        command: ["is-skeletons-detector-stream"]
+        args: ["/opt/is/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            cpu: "1"
+            memory: 2048Mi
+        volumeMounts:
+          - name: options
+            mountPath: /opt/is
+      - name: "2"
+        image: viros/is-skeletons-detector:0.0.2
+        command: ["is-skeletons-detector-stream"]
+        args: ["/opt/is/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            cpu: "1"
+            memory: 2048Mi
+        volumeMounts:
+          - name: options
+            mountPath: /opt/is
+      - name: "3"
+        image: viros/is-skeletons-detector:0.0.2
+        command: ["is-skeletons-detector-stream"]
+        args: ["/opt/is/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            cpu: "1"
+            memory: 2048Mi
+        volumeMounts:
+          - name: options
+            mountPath: /opt/is
+      volumes:
+      - name: options
+        configMap:
+          name: skeletons-detector
+          items:
+          - key: detector
+            path: options.json
