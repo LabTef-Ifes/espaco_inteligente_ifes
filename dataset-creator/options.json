@@ -1,0 +1,114 @@
+{
+  "broker_uri": "amqp://guest:guest@localhost:5672",
+  "folder": "/home/rafael/desenvolvimento/espaco_inteligente_ifes/dataset-creator/videos",
+  "cameras": [
+    {
+      "id": 0,
+      "config": {
+        "sampling": {
+          "frequency": 30.0
+        },
+        "image": {
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "color_space": {
+            "value": "GRAY"
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.9
+          }
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.2,
+            "automatic": false
+          }
+        }
+      }
+    },
+    {
+      "id": 1,
+      "config": {
+        "sampling": {
+          "frequency": 30.0
+        },
+        "image": {
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "color_space": {
+            "value": "GRAY"
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.9
+          }
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.2,
+            "automatic": false
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "config": {
+        "sampling": {
+          "frequency": 30.0
+        },
+        "image": {
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "color_space": {
+            "value": "GRAY"
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.9
+          }
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.2,
+            "automatic": false
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "config": {
+        "sampling": {
+          "frequency": 30.0
+        },
+        "image": {
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "color_space": {
+            "value": "GRAY"
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.9
+          }
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.2,
+            "automatic": false
+          }
+        }
+      }
+    }
+  ]
+}
