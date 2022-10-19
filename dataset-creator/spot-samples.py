@@ -9,6 +9,9 @@ from collections import OrderedDict
 from is_wire.core import Logger
 from video_loader import MultipleVideoLoader
 
+"""_summary_
+"""
+
 log = Logger(name='DisplayGestures')
 
 with open('gestures.json', 'r') as f:

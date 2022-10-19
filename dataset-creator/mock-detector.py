@@ -5,7 +5,7 @@ from utils import load_options
 import time
 from random import randint
 
-mean_time = 100 # milliseconds
+mean_time = 100 # miliseconds
 var_time = 20
 
 def detect(image, ctx):

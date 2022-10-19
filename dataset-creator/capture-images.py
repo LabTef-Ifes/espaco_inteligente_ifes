@@ -1,7 +1,5 @@
-import re
-import os
-import sys
-import json
+import re,os,sys,json
+
 import shutil
 import argparse
 from datetime import datetime as DT
@@ -14,8 +12,18 @@ from utils import load_options
 from is_msgs.image_pb2 import Image
 from is_wire.core import Channel, Subscription, Message, Logger
 
+"""_summary_
+"""
 
 def get_id(topic):
+    """_summary_
+
+    Args:
+        topic (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     match_id = re.compile(r'CameraGateway.(\d+).Frame')
     match = match_id.search(msg.topic)
     if not match:
@@ -25,17 +33,21 @@ def get_id(topic):
 
 
 def place_images(output_image, images):
-    w, h = images[0].shape[1], images[0].shape[0]
+    """_summary_
+
+    Args:
+        output_image (_type_): _description_
+        images (_type_): _description_
+    """
+    h, w = images[0].shape[0:2]
+
     output_image[0:h, 0:w, :] = images[0]
     output_image[0:h, w:2 * w, :] = images[1]
     output_image[h:2 * h, 0:w, :] = images[2]
     output_image[h:2 * h, w:2 * w, :] = images[3]
 
 
-def draw_info_bar(image,
-                  text,
-                  x,
-                  y,
+def draw_info_bar(image, text, x, y,
                   background_color=(0, 0, 0),
                   text_color=(255, 255, 255),
                   draw_circle=False):
@@ -51,6 +63,7 @@ def draw_info_bar(image,
         pt2=(x + text_width, y),
         color=background_color,
         thickness=cv2.FILLED)
+
     if draw_circle:
         cv2.circle(
             display_image,
@@ -110,6 +123,7 @@ if os.path.exists(sequence_folder):
         person_id, gesture_id)
     key = raw_input()
     if key == 'y':
+        # Recursively delete a directory tree.
         shutil.rmtree(sequence_folder)
     elif key == 'n':
         sys.exit(0)

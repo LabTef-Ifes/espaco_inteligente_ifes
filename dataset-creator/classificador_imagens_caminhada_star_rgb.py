@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 import tensorflow as tf
-import tensorflow.keras
 from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 import keras.layers
@@ -12,11 +11,15 @@ from tensorflow.keras.models  import load_model
 import pickle
 import time
 #from keras.backend.tensorflow_backend import set_session
-from keras import regularizers
-import sklearn
-from sklearn.model_selection import train_test_split
+
+# Not used (?)
+#import tensorflow.keras
+#from keras import regularizers
+#import sklearn
+#from sklearn.model_selection import train_test_split
 
 
+# Poor definition
 CATEGORIAS=["Certo","Errado"]
 
 IMG_SIZE=75
@@ -25,7 +28,7 @@ modelo_final = tf.keras.models.load_model("/home/julian/docker/ifes-2019-09-09/M
 
 cap = cv2.VideoCapture('/home/julian/docker/ifes-2019-09-09/Simulacao_de_movimento_deficiente/Simulacao_de_movimento_deficiente_6/p001g01c03.mp4')
 
-if (cap.isOpened()== False): 
+if not cap.isOpened(): 
   print("Error opening video stream or file")
 
 aux_diferenca_frame=[0]
@@ -37,12 +40,12 @@ tempo_final=0
 intervalo_de_tempo=0
 i=0
 
-while(cap.isOpened()):
+while cap.isOpened():
     # Capture frame-by-frame
     ret, frame = cap.read()
     #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     #print(frame)
-    if ret == True:
+    if ret:
         if k!=0:    
             #frame=cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
             frame=(frame/255.0)
@@ -72,22 +75,17 @@ while(cap.isOpened()):
                 aux_soma_frame=0
 
             #aux_soma_frame=aux_soma_frame+aux_diferenca_frame
-
-                    
             keyboard = cv2.waitKey(30)
            
-        k=k+1
+        k+=1
         #Atualiza o frame que será comparado na próxima iteração
         frame_anterior=frame
     # Press Q on keyboard to  exit
     if cv2.waitKey(25) & 0xFF == ord('q'):
-      break
+        break
 # Break the loop
 
 # When everything done, release the video capture object
-
 cap.release()
-
 # Closes all the frames
-
 cv2.destroyAllWindows()
