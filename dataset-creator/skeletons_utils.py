@@ -11,6 +11,11 @@ from itertools import permutations
 from time import time
 
 def load_options():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """    
     log = Logger(name='LoadingOptions')
     op_file = sys.argv[1] if len(sys.argv) > 1 else 'options.json'
     try:
@@ -30,6 +35,14 @@ def load_options():
         log.critical('Unable to open file \'{}\'', op_file)
 
 def get_links(model='COCO'):
+    """_summary_
+
+    Args:
+        model (str, optional): _description_. Defaults to 'COCO'.
+
+    Returns:
+        _type_: _description_
+    """    
     if model == 'COCO':
         return [
             (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
@@ -56,6 +69,14 @@ def get_links(model='COCO'):
         return []
 
 def get_face_parts(model='COCO'):
+    """_summary_
+
+    Args:
+        model (str, optional): _description_. Defaults to 'COCO'.
+
+    Returns:
+        _type_: _description_
+    """    
     if model == 'COCO':
         return [
             HKP.Value('NOSE'),
@@ -74,6 +95,14 @@ def get_links_colors():
     return list(permutations([0, 255, 85, 170], 3))
 
 def get_np_image(input_image):
+    """_summary_
+
+    Args:
+        input_image (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if isinstance(input_image, np.ndarray):
         output_image = input_image
     elif isinstance(input_image, Image):
@@ -85,6 +114,16 @@ def get_np_image(input_image):
 
 
 def get_pb_image(input_image, encode_format='.jpeg', compression_level=0.8):
+    """_summary_
+
+    Args:
+        input_image (_type_): _description_
+        encode_format (str, optional): _description_. Defaults to '.jpeg'.
+        compression_level (float, optional): _description_. Defaults to 0.8.
+
+    Returns:
+        _type_: _description_
+    """    
     if isinstance(input_image, np.ndarray):
         if encode_format == '.jpeg':
             params = [cv2.IMWRITE_JPEG_QUALITY, int(compression_level * (100 - 0) + 0)]
@@ -100,6 +139,15 @@ def get_pb_image(input_image, encode_format='.jpeg', compression_level=0.8):
         return Image()
 
 def draw_skeletons(input_image, skeletons):
+    """_summary_
+
+    Args:
+        input_image (_type_): _description_
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     image = get_np_image(input_image)
     links = get_links()
     face_parts = get_face_parts()
@@ -117,4 +165,5 @@ def draw_skeletons(input_image, skeletons):
             cv2.circle(image, center=center, radius=radius, color=(255, 255, 255), thickness=-1)
     return image
 
+#??
 # def get_3d_skeletons()

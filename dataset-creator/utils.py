@@ -23,15 +23,30 @@ def load_options(print_options=True):
 
 
 def make_pb_image(input_image, encode_format='.jpeg', compression_level=0.9):
+    """_summary_
+
+    Args:
+        input_image (_type_): _description_
+        encode_format (str, optional): _description_. Defaults to '.jpeg'.
+        compression_level (float, optional): _description_. Defaults to 0.9.
+
+    Returns:
+        _type_: _description_
+    """    
     if isinstance(input_image, np.ndarray):
         if encode_format == '.jpeg':
-            params = [cv2.IMWRITE_JPEG_QUALITY, int(compression_level * (100 - 0) + 0)]
+            params = [cv2.IMWRITE_JPEG_QUALITY, int(
+                compression_level * (100 - 0) + 0)]
         elif encode_format == '.png':
-            params = [cv2.IMWRITE_PNG_COMPRESSION, int(compression_level * (9 - 0) + 0)]
+            params = [cv2.IMWRITE_PNG_COMPRESSION,
+                      int(compression_level * (9 - 0) + 0)]
         else:
             return Image()
-        cimage = cv2.imencode(ext=encode_format, img=input_image, params=params)
+
+        cimage = cv2.imencode(
+            ext=encode_format, img=input_image, params=params)
         return Image(data=cimage[1].tobytes())
+
     elif isinstance(input_image, Image):
         return input_image
     else:
@@ -39,6 +54,14 @@ def make_pb_image(input_image, encode_format='.jpeg', compression_level=0.9):
 
 
 def to_labels_array(labels_dict):
+    """_summary_
+
+    Args:
+        labels_dict (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     labels = np.zeros(labels_dict['n_samples'])
     for label in labels_dict['labels']:
         begin, end = label['begin'], label['end']
@@ -49,6 +72,14 @@ def to_labels_array(labels_dict):
 
 
 def to_labels_dict(labels_array):
+    """_summary_
+
+    Args:
+        labels_array (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     labels = {'n_samples': labels_array.size, 'labels': []}
     begins = np.where(labels_array == 1)[0]
     ends = np.where(labels_array == -1)[0]
@@ -63,6 +94,8 @@ def to_labels_dict(labels_array):
 
 
 class FrameVideoFetcher:
+    """_summary_
+    """    
     def __init__(self, video_files, base_folder):
         self._video_files = video_files
         self._it_videos = iter(self._video_files)
@@ -135,7 +168,16 @@ class AnnotationsFetcher:
         self._fwd_annotations = self._annotation_pos == self._n_annotations
         return self._current_person_id, self._current_gesture_id, pos, annotations
 
+
 def get_np_image(input_image):
+    """_summary_
+
+    Args:
+        input_image (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if isinstance(input_image, np.ndarray):
         output_image = input_image
     elif isinstance(input_image, Image):
