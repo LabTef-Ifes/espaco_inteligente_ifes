@@ -12,6 +12,8 @@ from utils import load_options
 from is_msgs.image_pb2 import Image
 from is_wire.core import Channel, Subscription, Message, Logger
 
+"""_summary_
+"""
 
 def get_id(topic):
     """_summary_
@@ -37,7 +39,8 @@ def place_images(output_image, images):
         output_image (_type_): _description_
         images (_type_): _description_
     """
-    w, h = images[0].shape[1], images[0].shape[0]
+    h, w = images[0].shape[0:2]
+
     output_image[0:h, 0:w, :] = images[0]
     output_image[0:h, w:2 * w, :] = images[1]
     output_image[h:2 * h, 0:w, :] = images[2]
