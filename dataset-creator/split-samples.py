@@ -1,5 +1,4 @@
-import os
-import json
+import os, json
 from subprocess import Popen, PIPE, STDOUT
 from is_wire.core import Logger
 

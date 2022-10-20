@@ -1,25 +1,37 @@
 import math
 import statistics
 import numpy as np
+import cv2
+
+# should not exist
 from numpy import *
-import tensorflow as tf
+
 import pandas as pd
 import sklearn
 from sklearn import preprocessing as prepro
-from sklearn.preprocessing import MinMaxScaler
+
+import skfuzzy as fuzz
+from skfuzzy import control as ctrl
+import matplotlib.pyplot as plt
+
+# ???
+import tensorflow as tf
 from keras import *
 from tensorflow.keras import *
+
 import time
 import csv
 import json
 import io
+
 from utils import load_options
 from is_msgs.image_pb2 import ObjectAnnotations
 from is_msgs.image_pb2 import HumanKeypoints as HKP
 from google.protobuf.json_format import ParseDict
 
-with open('keymap.json', 'r') as f:
+with open('keymap.json') as f:
     keymap = json.load(f)
+
 options = load_options(print_options=False)
 
 
@@ -43,45 +55,65 @@ class Parameters:
                     return perdas
 
     def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo_caminhada, altura_quadril, perna_direita, left_knee_angle, angulo_real_joelho_esquerdo, flexion_left_knee, flexion_right_knee, simetria_comprimento_passo, largura_da_passada, left_extension_hip_angle, right_extension_hip_angle):
+        """_summary_
 
+        Args:
+            comprimento_passo_real_medido (_type_): _description_
+            Stance_real (_type_): _description_
+            Swing_real (_type_): _description_
+            distance_feet (_type_): _description_
+            dist_dos_pes_inicial (_type_): _description_
+            picos_distancia (_type_): _description_
+            comprimento_passo_medido (_type_): _description_
+            comprimento_swing (_type_): _description_
+            comprimento_stance (_type_): _description_
+            angulo_caminhada (_type_): _description_
+            altura_quadril (_type_): _description_
+            perna_direita (_type_): _description_
+            left_knee_angle (_type_): _description_
+            angulo_real_joelho_esquerdo (_type_): _description_
+            flexion_left_knee (_type_): _description_
+            flexion_right_knee (_type_): _description_
+            simetria_comprimento_passo (_type_): _description_
+            largura_da_passada (_type_): _description_
+            left_extension_hip_angle (_type_): _description_
+            right_extension_hip_angle (_type_): _description_
+        """
+
+        # Poderia ser um Defaultdict(list)
         vetor_erro_comprimento_de_passo = []
         vetor_erro_comprimento_de_meio_passo = []
         vetor_erro_comprimento_swing = []
         vetor_erro_comprimento_stance = []
         vetor_erro_distancia_dos_pes_inicial = []
-        dist = []
-        dist.append(dist_dos_pes_inicial)
-        dist.append(distance_feet[0])
+        dist = [dist_dos_pes_inicial, distance_feet[0]]
 
         comprimento_medio_real_de_meio_passo = (Stance_real+Swing_real)/2
         # print(comprimento_passo_real_medido,statistics.mean(comprimento_passo_medido))
         erro_medio_comprimento_de_passo = comprimento_passo_real_medido - \
             statistics.mean(comprimento_passo_medido)
         # print(erro_medio_comprimento_de_passo)
-        for j in range(0, len(comprimento_passo_medido)):
+
+        # Poderia ser generator
+        for j in range(len(comprimento_passo_medido)):
             vetor_erro_comprimento_de_passo.append(
                 abs(comprimento_passo_real_medido-comprimento_passo_medido[j]))
 
-        for i in range(0, len(picos_distancia)):
+        for j in range(len(picos_distancia)):
             vetor_erro_comprimento_de_meio_passo.append(
-                abs(comprimento_medio_real_de_meio_passo-picos_distancia[i]))
+                abs(comprimento_medio_real_de_meio_passo-picos_distancia[j]))
 
-        for j in range(0, len(comprimento_stance)):
+        for j in range(len(comprimento_stance)):
             vetor_erro_comprimento_stance.append(
                 abs(Stance_real-comprimento_stance[j]))
 
-        for j in range(0, len(comprimento_swing)):
+        for j in range(len(comprimento_swing)):
             vetor_erro_comprimento_swing.append(
                 abs(Swing_real-comprimento_swing[j]))
 
-        for j in range(0, len(dist)):
+        for j in range(len(dist)):
             vetor_erro_distancia_dos_pes_inicial.append(
                 abs(dist_dos_pes_inicial-dist[j]))
-        # print("Erro stride")
-        # print(vetor_erro_comprimento_de_passo)
-
-        # print("Erro comprimento de meio passo")
-        # print(vetor_erro_comprimento_de_meio_passo)
 
         erro_medio_meio_comprimento_de_passo = (
             comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
@@ -287,19 +319,12 @@ class Parameters:
 
     def ang_plano_torax(skeletons):
         neck = 0
-        left_hip = 0
-        right_hip = 0
-        right_knee = 0
-        left_knee = 0
-        v1 = 0
-        v2 = 0
+        left_hip = left_knee = right_hip = right_knee = 0
+        v1 = v2 = 0
         vetor_normal = [0, 0, 0]
-        angle = 0
-        ang = 0
-        angle_right = 0
-        angle_left = 0
+        angle = ang = angle_test = 0
+        angle_right = angle_left = 0
         ponto_peito = [0, 0, 0]
-        angle_test = 0
 
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
 
@@ -308,27 +333,29 @@ class Parameters:
             for part in skeletons.keypoints:
                 parts[part.id] = (
                     part.position.x, part.position.y, part.position.z)
-                if part.id == 10:
-                    right_hip = parts[10]
-                if part.id == 13:
-                    left_hip = parts[13]
                 if part.id == 3:
                     neck = parts[3]
-                if part.id == 20:
-                    ponto_peito = parts[20]
-                if part.id == 14:
-                    left_knee = parts[14]
-                if part.id == 11:
+                elif part.id == 10:
+                    right_hip = parts[10]
+                elif part.id == 11:
                     right_knee = parts[11]
+                elif part.id == 13:
+                    left_hip = parts[13]
+                elif part.id == 14:
+                    left_knee = parts[14]
+                elif part.id == 20:
+                    ponto_peito = parts[20]
 
                 if left_hip and right_hip and neck and right_knee and left_knee:
                     v1_x, v1_y, v1_z = (
                         right_hip[0]-left_hip[0]), (right_hip[1]-left_hip[1]), (right_hip[2]-left_hip[2])
+
                     v1 = np.array([v1_x, v1_y, v1_z])
                     v2_x, v2_y, v2_z = (
                         right_hip[0]-neck[0]), (right_hip[1]-neck[1]), (right_hip[2]-neck[2])
                     v2 = np.array([v2_x, v2_y, v2_z])
                     vetor_normal = np.cross(v1, v2)
+
                     v3 = ((right_hip[0]+left_hip[0]), (right_hip[1] +
                           left_hip[1]), (right_hip[2]+left_hip[2])/2)
                     # (neck[0]-v3[0],neck[1]-v3[1],neck[2]-v3[2])
@@ -346,11 +373,10 @@ class Parameters:
                     delta_y = right_knee[1]-right_hip[1]
                     delta_z = right_knee[2]-right_hip[2]
                     razao = delta_y/delta_z
-                    # CALCULADO COM A LUÍZA DIA 08/01/2021 - extansão do quadril direito
+                    # CALCULADO COM A LUÍZA DIA 08/01/2021 - extensão do quadril direito
                     angle_test = -1*degrees(np.math.atan(razao))
-                    # print(angle_test)
-                    # print(v0,v1)
-                    if(ang < 0):
+
+                    if ang < 0:
                         angle_right = 180+ang
                         angle_right = -1*angle_right
                         # print("aqui")
@@ -360,9 +386,8 @@ class Parameters:
                     # angle_left=degrees(np.arccos(dot_product))
                     # print(angle_right)
                 else:
-                    angle = 0
+                    angle = angle_right = 0
                     vetor_normal = [0, 0, 0]
-                    angle_right = 0
 
         return angle_test, vetor_normal, ponto_peito
 
@@ -388,7 +413,7 @@ class Parameters:
                     part.position.x, part.position.y, part.position.z)
                 if part.id == 13:
                     left_hip = parts[13]
-                if part.id == 14:
+                elif part.id == 14:
                     left_knee = parts[14]
                 if left_hip and left_knee:
                     a = left_hip[1]-left_knee[1]
@@ -421,10 +446,10 @@ class Parameters:
             for part in skeletons.keypoints:
                 parts[part.id] = (
                     part.position.x, part.position.y, part.position.z)
-                if part.id == 14:
-                    junta_joelho_esquerdo = parts[14]
                 if part.id == 13:
                     junta_quadril_esquerdo = parts[13]
+                if part.id == 14:
+                    junta_joelho_esquerdo = parts[14]
                 if part.id == 15:
                     junta_tornozelo_esquerdo = parts[15]
 
@@ -462,8 +487,7 @@ class Parameters:
         left_ankle = None
         height_mid_point_ankle = None
         largura_de_passo = None
-        altura_pe_esquerdo = 0
-        altura_pe_direito = 0
+        altura_pe_esquerdo = altura_pe_direito = 0
         ang_produto = 0
 
         if skeletons_pb.objects:
@@ -474,12 +498,11 @@ class Parameters:
                         part.position.x, part.position.y, part.position.z)
                     if part.id == 10:
                         right_hip = parts[10]
-                    if part.id == 11:
+                    elif part.id == 11:
                         right_knee = parts[11]
-                    if part.id == 12:
+                    elif part.id == 12:
                         right_ankle = parts[12]
-
-                    if part.id == 15:
+                    elif part.id == 15:
                         left_ankle = parts[15]
 
                 if right_ankle and right_knee and right_hip and left_ankle:
@@ -552,11 +575,19 @@ class Parameters:
         return velocidade_angular
 
     def fuzzy(velocidade_media, cadencia_medido, largura_media, comprimento_passo_medido, comprimento_passo_real_medido, dist_dos_pes_inicial):
-        import statistics
-        import numpy as np
-        import skfuzzy as fuzz
-        from skfuzzy import control as ctrl
-        import matplotlib.pyplot as plt
+        """_summary_
+
+        Args:
+            velocidade_media (_type_): _description_
+            cadencia_medido (_type_): _description_
+            largura_media (_type_): _description_
+            comprimento_passo_medido (_type_): _description_
+            comprimento_passo_real_medido (_type_): _description_
+            dist_dos_pes_inicial (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
 
         cadencia = ctrl.Antecedent(np.arange(0, 210, 1), 'cadencia')
         velocidade = ctrl.Antecedent(np.arange(0, 4, 1), 'velocidade')
@@ -829,6 +860,7 @@ class Parameters:
         movimento['Circundacao do pe'] = fuzz.trapmf(
             movimento.universe, [4, 5, 6, 7])
 
+        # Deveria ser um dicionário ou lista
         rule1 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_time_up'] & comprimento_medio_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_time_up']
                           & angulo_flexao_joelho_direito['normal_time_up'] | angulo_extensao_do_quadril['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] | simetria_passo['normal_time_up'], movimento['Time Up and Go'])
         rule2 = ctrl.Rule(velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] & largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circulos']
@@ -944,6 +976,7 @@ class Parameters:
                                             rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35, rule36, rule37, rule38, rule39, rule40, rule41, rule42, rule43, rule44, rule45, rule46, rule47, rule48, rule49, rule50, rule51, rule52, rule53, rule54])
         movimento_simulador = ctrl.ControlSystemSimulation(movimento_ctrl)
 
+        # ???
         # Entrando com alguns valores para qualidade da comida e do serviço
         movimento_simulador.input['velocidade'] = velocidade_media*100
         movimento_simulador.input['cadencia'] = cadencia_medido
@@ -970,6 +1003,7 @@ class Parameters:
         movimento_simulador.compute()
         resultado = movimento_simulador.output['movimento']
 
+        # Aparentemente salva os resultados em imagem
         velocidade.view(sim=movimento_simulador)
         plt.savefig(options.folder+'/velocidade.png')
         cadencia.view(sim=movimento_simulador)
@@ -1011,6 +1045,14 @@ class Parameters:
         return resultado
 
     def altura_da_pessoa(skeletons):
+        """_summary_
+
+        Args:
+            skeletons (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         altura_da_pessoa = 0
         for skeletons in skeletons_pb.objects:
@@ -1027,19 +1069,25 @@ class Parameters:
             break
         return altura_da_pessoa
 
-    def retira_primeiro_elemento(x):
-        x = x[1:]
-        return x
-
     def angulo_caminhada(perna_direita, perna_esquerda, picos_distancia, altura_quadril):
+        """_summary_
+
+        Args:
+            perna_direita (_type_): _description_
+            perna_esquerda (_type_): _description_
+            picos_distancia (_type_): _description_
+            altura_quadril (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         teta_angulo_dist_entre_pes = []
         k = 0
         aux_perna_direita = perna_direita
         aux_perna_esquerda = perna_esquerda
-        aux1_cosseno = 0
-        aux2_cosseno = 0
+        aux1_cosseno = aux2_cosseno = 0
         # print(len(picos_distancia))
-        for k in range(0, len(picos_distancia)):
+        for k in range(len(picos_distancia)):
             # 2*(aux_perna_direita[k])*(aux_perna_esquerda[k])
             A = altura_quadril
             if A != 0:
@@ -1063,14 +1111,22 @@ class Parameters:
 
     # Estou usando apenas este atualmente para conseguir o angulo durante a caminhada
     def angulo_caminhada_real(perna_direita, perna_esquerda, distance_feet):
+        """_summary_
+
+        Args:
+            perna_direita (_type_): _description_
+            perna_esquerda (_type_): _description_
+            distance_feet (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         angulo = 0
         # print(distance_feet)
         B = pow(distance_feet, 2) - \
             (pow(perna_esquerda, 2)+pow(perna_direita, 2))
-        # print(B)
         A = -2*perna_direita*perna_esquerda
-        # print(A)
-        # print(B/A)
+
         if (A != 0) and (B/A) < 1:
             angulo = math.degrees(math.acos(B/A))
 
@@ -1079,6 +1135,14 @@ class Parameters:
         return angulo
 
     def left_knee_angle(skeletons):
+        """_summary_
+
+        Args:
+            skeletons (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         left_ankle = left_hip = left_knee = None
 
         aux_left_leg = None
@@ -1122,6 +1186,50 @@ class Parameters:
         return left_knee_angle
 
     def file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_height, idade, porcentagem, porcentagem_3d, perda_media, variancia, y, x, perna_esquerda, perna_direita, maior_passo_medido, tempo_total, velocidade_media, passos_por_min, contador, tempo_total_em_min, dist_do_chao, comprimento_passo_real, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo, altura_quadril, left_knee_angle, angulo_real_joelho_esquerdo, comprimento_passo_real_medido, flexion_left_knee, simetria_comprimento_passo, largura_da_passada, ang_ext_quadril):
+        """_summary_
+
+        Args:
+            cam_id (_type_): _description_
+            juntas (_type_): _description_
+            perdidas (_type_): _description_
+            juntas_3d (_type_): _description_
+            perdidas_3d (_type_): _description_
+            average_height (_type_): _description_
+            idade (_type_): _description_
+            porcentagem (_type_): _description_
+            porcentagem_3d (_type_): _description_
+            perda_media (_type_): _description_
+            variancia (_type_): _description_
+            y (_type_): _description_
+            x (_type_): _description_
+            perna_esquerda (_type_): _description_
+            perna_direita (_type_): _description_
+            maior_passo_medido (_type_): _description_
+            tempo_total (_type_): _description_
+            velocidade_media (_type_): _description_
+            passos_por_min (_type_): _description_
+            contador (_type_): _description_
+            tempo_total_em_min (_type_): _description_
+            dist_do_chao (_type_): _description_
+            comprimento_passo_real (_type_): _description_
+            Stance_real (_type_): _description_
+            Swing_real (_type_): _description_
+            distance_feet (_type_): _description_
+            dist_dos_pes_inicial (_type_): _description_
+            picos_distancia (_type_): _description_
+            comprimento_passo_medido (_type_): _description_
+            comprimento_swing (_type_): _description_
+            comprimento_stance (_type_): _description_
+            angulo (_type_): _description_
+            altura_quadril (_type_): _description_
+            left_knee_angle (_type_): _description_
+            angulo_real_joelho_esquerdo (_type_): _description_
+            comprimento_passo_real_medido (_type_): _description_
+            flexion_left_knee (_type_): _description_
+            simetria_comprimento_passo (_type_): _description_
+            largura_da_passada (_type_): _description_
+            ang_ext_quadril (_type_): _description_
+        """
 
         file_results = open(
             options.folder+"/Resultados_reconstrucao_3D.txt", "w")
@@ -1184,6 +1292,7 @@ class Parameters:
         erro_medio_comprimento_de_passo = comprimento_passo_real_medido - \
             statistics.mean(comprimento_passo_medido)
 
+        # Deveria ser generator
         for j in range(0, len(comprimento_passo_medido)):
             vetor_erro_comprimento_de_passo.append(
                 abs(comprimento_passo_real-comprimento_passo_medido[j]))
@@ -1203,6 +1312,7 @@ class Parameters:
         for j in range(0, len(dist)):
             vetor_erro_distancia_dos_pes_inicial.append(
                 abs(dist_dos_pes_inicial-dist[j]))
+
         # print("Erro stride")
         # print(vetor_erro_comprimento_de_passo)
 
@@ -1214,7 +1324,7 @@ class Parameters:
         erro_medio_meio_comprimento_de_passo = (
             comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
 
-        # Should be a function
+        # ???
 
         file_results.write("Comprimento médio da passada: %.4f m " %
                            (statistics.mean(comprimento_passo_medido)))
@@ -1340,6 +1450,41 @@ class Parameters:
         file_results.close()
 
     def file_maker_csv(comprimento_passo_real_medido, cadencia, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, aux_angulo, altura_quadril, idade, velocidade_media, perna_direita, altura_real, left_knee_angle, angulo_real_joelho_esquerdo, sexo, flexion_left_knee, flexion_right_knee, simetria_comprimento_passo, largura_da_passada, ang_ext_quadril, left_extension_hip_angle, right_extension_hip_angle, movimento, CAPTURA, quant_de_ciclos_desejado):
+        """_summary_
+
+        Args:
+            comprimento_passo_real_medido (_type_): _description_
+            cadencia (_type_): _description_
+            Stance_real (_type_): _description_
+            Swing_real (_type_): _description_
+            distance_feet (_type_): _description_
+            dist_dos_pes_inicial (_type_): _description_
+            picos_distancia (_type_): _description_
+            comprimento_passo_medido (_type_): _description_
+            comprimento_swing (_type_): _description_
+            comprimento_stance (_type_): _description_
+            aux_angulo (_type_): _description_
+            altura_quadril (_type_): _description_
+            idade (_type_): _description_
+            velocidade_media (_type_): _description_
+            perna_direita (_type_): _description_
+            altura_real (_type_): _description_
+            left_knee_angle (_type_): _description_
+            angulo_real_joelho_esquerdo (_type_): _description_
+            sexo (_type_): _description_
+            flexion_left_knee (_type_): _description_
+            flexion_right_knee (_type_): _description_
+            simetria_comprimento_passo (_type_): _description_
+            largura_da_passada (_type_): _description_
+            ang_ext_quadril (_type_): _description_
+            left_extension_hip_angle (_type_): _description_
+            right_extension_hip_angle (_type_): _description_
+            movimento (_type_): _description_
+            CAPTURA (_type_): _description_
+            quant_de_ciclos_desejado (_type_): _description_
+        """
+
+        # ???
         #    with open(options.folder+"/Parâmetros.csv", 'w') as csvfile:
         #      filewriter = csv.writer(csvfile, delimiter=',',
         #                         quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -1430,6 +1575,8 @@ class Parameters:
         erro_medio_comprimento_de_passo = statistics.pstdev(
             comprimento_passo_medido)
 
+        # ???
+        # Repete muitas vezes
         for j in range(len(comprimento_passo_medido)):
             vetor_erro_comprimento_de_passo.append(
                 abs(comprimento_passo_real_medido-comprimento_passo_medido[j]))
@@ -1463,6 +1610,8 @@ class Parameters:
         data = time.strftime("%Y%m%d")
         # erro_medio_angulo=math.degrees(math.acos(aux2))-statistics.mean(aux_angulo)
         # k=0
+
+        # Deveria ter uma variável path
         with open('/home/julian/docker/Pablo/CICLOS_v4/{}/{}/Parâmetros_de_todos_para_validacao_{}_ciclos_{}.csv'.format(CAPTURA, quant_de_ciclos_desejado, quant_de_ciclos_desejado, CAPTURA), 'a') as csvfile:
             filewriter = csv.writer(csvfile, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -1473,6 +1622,14 @@ class Parameters:
             # print(len(angulo_caminhada))
 
     def Array_coordenadas(skeletons):
+        """_summary_
+
+        Args:
+            skeletons (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         aux_array_coordenadas = []
         nome_das_coordenadas = []
@@ -1513,8 +1670,22 @@ class Parameters:
             outfile.write(to_unicode(str_))
 
     def rede_neural(velocidade_media, comprimento_passo_medido, largura_da_passada, simetria_comprimento_passo, cadencia):
+        """_summary_
+
+        Args:
+            velocidade_media (_type_): _description_
+            comprimento_passo_medido (_type_): _description_
+            largura_da_passada (_type_): _description_
+            simetria_comprimento_passo (_type_): _description_
+            cadencia (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+
         CATEGORIAS = ["Time Up and Go", "Em círculos", "Marcha em linha reta",
                       "Elevação excessiva do calcanhar", " Assimetria de passo", "Circundação do pé"]
+
         # ("/home/julian/docker/ifes-2019-09-09/Modelo_para_treinamento/Modelo_1/Modelo_detecta_caminhada")
         modelo_final = tf.keras.models.load_model(
             "/home/julian/docker/ifes-2019-09-09/Modelos_para_treinamento/Modelo_2/Modelo_detecta_caminhada_6_movimentos")
@@ -1556,12 +1727,28 @@ class Parameters:
         # return "Errado"
 
     def prepare(filepath):
+        """_summary_
+
+        Args:
+            filepath (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         img_array = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
         new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
         return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
     def slide_gait_cycle(slide):
-        if ((slide == 0) or (slide == 4)):
+        """_summary_
+
+        Args:
+            slide (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        if slide in (0, 4):
             result = 4
         else:
             result = 2
@@ -1569,6 +1756,15 @@ class Parameters:
         return result
 
     def prepara_split_do_array(array, quant_de_ciclos):
+        """_summary_
+
+        Args:
+            array (_type_): _description_
+            quant_de_ciclos (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         div = int(len(array)/quant_de_ciclos)
         # print(div)
         ref_tamanho = quant_de_ciclos*div
@@ -1578,13 +1774,24 @@ class Parameters:
         return array
 
     def normaliza_vetor(y, quant_de_ciclos, quant_de_ciclos_desejado, pico_do_sinal):
+        """_summary_
+
+        Args:
+            y (_type_): _description_
+            quant_de_ciclos (_type_): _description_
+            quant_de_ciclos_desejado (_type_): _description_
+            pico_do_sinal (_type_): _description_
+        """
+
         ## Essas referências podem mudar conforme os ciclos em interesse para análise !!!##
-        div = int(len(y)/quant_de_ciclos)  # Prepara para a quebra do array
+        div = int(len(y)//quant_de_ciclos)  # Prepara para a quebra do array
         # print(div)
         # Garante que haja somente múltiplos da quantidade de ciclos  para a normalização
         ref_tamanho = quant_de_ciclos*div
-        while(len(y) != ref_tamanho):
-            y = y[:-1]
+
+        # ???
+        while len(y) != ref_tamanho:
+            y.pop()
             # print(len(aux_angulo),ref_tamanho)
 
         y = np.array_split(y, quant_de_ciclos)
@@ -1594,14 +1801,14 @@ class Parameters:
        # for i in range (0,len(y_refencia)+1):
        # k_referencia.append((100*i)/len(y_refencia))
 
-        for i in range(0, quant_de_ciclos_desejado-1):
+        for i in range(quant_de_ciclos_desejado-1):
             a = np.array(y[i+1])
             ultimo_elemento = a[-1]
             B = np.array([ultimo_elemento])
             y[i] = np.append(np.array(y[i]), B)
 
         if quant_de_ciclos_desejado == 1:  # S for de 1 ciclo a análise final fica com menor quantidade de dados pra tirar a média
-            y = y[:(quant_de_ciclos_desejado)]
+            y = [y[0]]
         else:
             y = y[:(quant_de_ciclos_desejado-1)]
 
@@ -1617,10 +1824,9 @@ class Parameters:
             while ((indice_maior_valor) != (index_array_deslocado+1)):
                 index_array_deslocado = np.argmax(y[i])
                 y[i] = np.roll(y[i], 1)
-                if (indice_maior_valor == 0 and index_array_deslocado == 0):
+                if not indice_maior_valor and not index_array_deslocado:
                     break
 
-        aux = []
         aux = np.mean(y, axis=0)
         # print(len(y[0]),len(
         # k_referencia))
@@ -1630,7 +1836,7 @@ class Parameters:
         index_array_deslocado = np.argmax(aux)
 
         #### Alinhamento final!!!!!#####
-        for i in range(0, len(y_refencia)):  # Array de referência !!!!!
+        for i in range(len(y_refencia)):  # Array de referência !!!!!
             if (i == indice_maior_valor):
                 aux_array.append(1)
             else:
@@ -1643,10 +1849,15 @@ class Parameters:
         return aux  # Vetor final após o processo de normalização
 
     def marca_frame(contador_numero_de_passos, frame):
-        import cv2
+        """_summary_
 
-        BLUE = [255, 0, 0]
-        RED = [0, 0, 255]
+        Args:
+            contador_numero_de_passos (_type_): _description_
+            frame (_type_): _description_
+        """
+
+        BLUE = (255, 0, 0)
+        RED = (0, 0, 255)
         if (contador_numero_de_passos != 0):
             try:
                 if (contador_numero_de_passos % 2):

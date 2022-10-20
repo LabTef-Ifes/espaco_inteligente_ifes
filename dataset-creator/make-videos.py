@@ -6,6 +6,14 @@ from is_wire.core import Logger
 
 
 def get_person_gesture(folder):
+    """_summary_
+
+    Args:
+        folder (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     match = re.search(r'p(\d+)g(\d+)', folder)
     if match is None:
         return None
@@ -25,6 +33,8 @@ ffmpeg_base_command = "ffmpeg -y -r {fps:.1f} -start_number 0 -i {file_pattern:s
 root, dirs, files = os.walk(options.folder)[0]
 
 #for root, dirs, files in os.walk(options.folder):
+
+
 for exp_folder in dirs:
     pg = get_person_gesture(exp_folder)
     if pg is None:

@@ -1,10 +1,10 @@
 import os
+import json
+import time
+import shutil
 import cv2
 import numpy as np
-from sys import exit
-import json
-import shutil
-import time
+
 from collections import OrderedDict
 from is_wire.core import Logger
 from video_loader import MultipleVideoLoader
@@ -70,7 +70,7 @@ while True:
 
         g_id = 0
         for begin, end, g_id in zip(labels_list[1:-1:2], labels_list[2:-1:2],
-                              gestures.keys()):
+                                    gestures.keys()):
             ss, t = begin / fps, (end - begin) / fps
             log.info('{} -> {} | {:.2f} {:.2f}', begin, end, ss, t)
             spots.append({"gesture": g_id, "ss": ss, "t": t})
@@ -81,4 +81,4 @@ while True:
         with open("samples/spots.json", 'w') as f:
             json.dump(spots, f, indent=2)
 
-        exit(0)
+        sys.exit(0)
