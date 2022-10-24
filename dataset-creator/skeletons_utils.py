@@ -92,6 +92,11 @@ def get_face_parts(model='COCO'):
         return []
 
 def get_links_colors():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """    
     return list(permutations([0, 255, 85, 170], 3))
 
 def get_np_image(input_image):
@@ -165,5 +170,5 @@ def draw_skeletons(input_image, skeletons):
             cv2.circle(image, center=center, radius=radius, color=(255, 255, 255), thickness=-1)
     return image
 
-#??
+#???
 # def get_3d_skeletons()

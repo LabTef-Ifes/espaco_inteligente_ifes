@@ -1,35 +1,22 @@
-import os
-import re
-import sys
+import os, re, sys, json, time, csv 
 import cv2
-import json
-import time
 import argparse
 import numpy as np
-import math
-import statistics
-#import mplot3d from mpl_toolkits as axes3d
-from mpl_toolkits import mplot3d
+import math, statistics
 #matplotlib inline
-import scipy
 from scipy import interpolate
 from sympy import S, symbols, printing
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-#from mpl_toolkits.mplot3d import Axes3D
 from is_wire.core import Logger
-from utils import load_options
-from utils import to_labels_array, to_labels_dict
+from utils import to_labels_array, to_labels_dict, load_options, get_np_image
 from video_loader import MultipleVideoLoader
-from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
-from utils import get_np_image
-import csv
+
+from collections import OrderedDict
 from is_msgs.image_pb2 import ObjectAnnotations
 
 log = Logger(name='WatchVideos')
 
-with open('keymap.json', 'r') as f:
+with open('keymap.json') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
 
@@ -207,9 +194,8 @@ class Plota_graficos:
         
 
     def trajetoria_vetor(vetor):
-        X=[0]
-        Y=[0]
-        Z=[0]
+        X,Y,Z=[0],[0],[0]
+
         title='Trajetória vetor normal ao tórax'
         fig=plt.figure()
         ax=plt.axes(projection='3d')
@@ -224,7 +210,7 @@ class Plota_graficos:
 
         ax.set_title('Trajetória vetor normal ao tórax')
 
-        for i in range(0,len(vetor)):
+        for i in range(len(vetor)):
             X.append(vetor[i][0])
             Y.append(vetor[i][1])
             Z.append(vetor[i][2])

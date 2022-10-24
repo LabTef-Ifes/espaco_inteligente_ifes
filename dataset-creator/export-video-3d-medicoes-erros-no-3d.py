@@ -1,28 +1,18 @@
-import tensorflow as tf
 from Plota_graficos import Plota_graficos
 from Parameters import Parameters
 from analysis import SkeletonsCoord
-from matplotlib.animation import FuncAnimation
-from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import os
-import re
-import sys
+import os,re,csv,sys,json,time
 import cv2
-import csv
-import json
-import time
 import argparse
 import numpy as np
-import math
-import statistics
+import math,statistics
 import pika
-from utils import load_options, to_labels_array, to_labels_dict
+from utils import load_options, to_labels_array, to_labels_dict,get_np_image
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
-from utils import get_np_image
+from collections import OrderedDict
 #from PIL import ImageGrab
 from is_msgs.image_pb2 import ObjectAnnotations
 from is_msgs.image_pb2 import HumanKeypoints as HKP
@@ -83,7 +73,7 @@ def render_skeletons(images, annotations, it, links, colors):
                 if begin in parts and end in parts:
                     cv2.line(image, parts[begin],
                              parts[end], color=color, thickness=4)
-            for _, center in parts.items():
+            for center in parts.values():
                 cv2.circle(image, center=center, radius=4,
                            color=(255, 255, 255), thickness=-1)
 
@@ -113,6 +103,7 @@ def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
     deteccoes_3d = 0
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     # print(skeletons_pb)
+
     for skeleton in skeletons_pb.objects:
         parts = {}
         for part in skeleton.keypoints:
@@ -133,6 +124,7 @@ def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
                     linewidth=3,
                     color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
 
+    #Por que 10 e 15?
     if deteccoes_3d < 10:
         juntas_3d -= deteccoes_3d
     else:
@@ -187,10 +179,13 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
     h, w = images[0].shape[0:2]
     output_image[0 + y_offset:h + y_offset, 0 +
                  x_offset:w + x_offset, :] = images[0]
+
     output_image[0 + y_offset:h + y_offset, w +
                  x_offset:2 * w + x_offset, :] = images[1]
+
     output_image[h + y_offset:2 * h + y_offset,
                  0 + x_offset:w + x_offset, :] = images[2]
+
     output_image[h + y_offset:2 * h + y_offset, w +
                  x_offset:2 * w + x_offset, :] = images[3]
 
@@ -230,6 +225,7 @@ if person_id < 1 or person_id > 999:
 log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
 
 cameras = [int(cam_config.id) for cam_config in options.cameras]
+
 video_files = {
     cam_id: os.path.join(options.folder, 'p{:03d}g{:02d}c{:02d}.mp4'.format(
         person_id, gesture_id, cam_id))

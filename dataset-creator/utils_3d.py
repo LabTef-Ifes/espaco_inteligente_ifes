@@ -5,13 +5,26 @@ from is_wire.core.utils import now
 
 
 class RequestManager:
+    """_summary_
+    """    
     def __init__(self,
                  channel,
                  max_requests,
                  min_requests=None,
                  log_level=Logger.INFO,
                  zipkin_exporter=None):
+        """_summary_
 
+        Args:
+            channel (_type_): _description_
+            max_requests (_type_): _description_
+            min_requests (_type_, optional): _description_. Defaults to None.
+            log_level (_type_, optional): _description_. Defaults to Logger.INFO.
+            zipkin_exporter (_type_, optional): _description_. Defaults to None.
+
+        Raises:
+            Exception: _description_
+        """                
         if min_requests is None:
             min_requests = max_requests
         if min_requests < 0:
@@ -38,10 +51,20 @@ class RequestManager:
         return self._can_request
 
     def all_received(self):
-        return len(self._requests) == 0
+        return not self._requests
 
     def request(self, content, topic, timeout_ms, metadata=None):
+        """_summary_
 
+        Args:
+            content (_type_): _description_
+            topic (_type_): _description_
+            timeout_ms (_type_): _description_
+            metadata (_type_, optional): _description_. Defaults to None.
+
+        Raises:
+            Exception: _description_
+        """        
         if not self.can_request():
             raise Exception("Can't request more than {}. Use 'RequestManager.can_request' "
                             "method to check if you can do requests.")
@@ -83,11 +106,12 @@ class RequestManager:
                         received_msgs.append((msg, self._requests[cid]["metadata"]))
                         del self._requests[cid]
 
+        #???
         except socket.timeout:
             pass
 
         # check for timeouted requests
-        for cid in self._requests.keys():
+        for cid in self._requests:
             timeouted_msg = self._requests[cid]["msg"]
 
             if timeouted_msg.deadline_exceeded():

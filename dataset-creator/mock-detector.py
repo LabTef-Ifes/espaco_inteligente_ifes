@@ -5,12 +5,23 @@ from utils import load_options
 import time
 from random import randint
 
-mean_time = 100 # miliseconds
+mean_time = 100 # milliseconds
 var_time = 20
 
 def detect(image, ctx):
+    """_summary_
+
+    Args:
+        image (_type_): _description_
+        ctx (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    
+    #???
     # simulate error
-    time.sleep(randint(mean_time - var_time, mean_time + var_time) / 1000.0)
+    time.sleep(randint(mean_time - var_time, mean_time + var_time) / 1000)
     reply = ObjectAnnotations(
         frame_id=randint(0, 4), objects=[ObjectAnnotation()] * randint(1, 3))
     return reply

@@ -1,8 +1,8 @@
 import os
 import sys
-import cv2
 import json
 import time
+import cv2
 import socket
 import datetime
 from collections import defaultdict
@@ -12,12 +12,18 @@ from is_msgs.image_pb2 import ObjectAnnotations
 from utils import load_options, make_pb_image, FrameVideoFetcher
 from google.protobuf.json_format import MessageToDict
 
+"""_summary_
+"""
+
 MIN_REQUESTS = 5
-MAX_REQUESTS = 10 
+MAX_REQUESTS = 10
 DEADLINE_SEC = 15.0
 
 
 class State(Enum):
+    """_summary_
+
+    """
     MAKE_REQUESTS = 1
     RECV_REPLIES = 2
     CHECK_END_OF_VIDEO_AND_SAVE = 3
@@ -91,7 +97,7 @@ while True:
                     'frame_id': frame_id,
                     'requested_at': time.time()
                 }
-        continue
+        
 
     elif state == State.RECV_REPLIES:
 
@@ -112,7 +118,7 @@ while True:
             state = State.CHECK_END_OF_VIDEO_AND_SAVE
         except socket.timeout:
             state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-        continue
+        
 
     elif state == State.CHECK_END_OF_VIDEO_AND_SAVE:
 
@@ -120,10 +126,8 @@ while True:
             annotations_dict = annotations_received[base_name]
             if len(annotations_dict) == n_annotations[base_name]:
                 output_annotations = {
-                    'annotations':
-                    [x[1] for x in sorted(annotations_dict.items())],
-                    'created_at':
-                    datetime.datetime.now().isoformat()
+                    'annotations':[x[1] for x in sorted(annotations_dict.items())],
+                    'created_at': datetime.datetime.now().isoformat()
                 }
                 filename = os.path.join(options.folder,
                                         '{}_2d.json'.format(base_name))
@@ -133,7 +137,7 @@ while True:
                 log.info('{} has been saved.', filename)
 
         state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-        continue
+        
 
     elif state == State.CHECK_FOR_TIMEOUTED_REQUESTS:
 
@@ -156,7 +160,7 @@ while True:
 
         requests.update(new_requests)
         state = State.MAKE_REQUESTS
-        continue
+        
 
     elif state == State.EXIT:
 
@@ -166,4 +170,4 @@ while True:
     else:
 
         state = State.MAKE_REQUESTS
-        continue
+        
