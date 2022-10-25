@@ -24,6 +24,7 @@ def valid(default, var):
 
 
 source_file = '0.json'
+
 with open(source_file) as f:
     config = json.load(f)
     # print(config)
@@ -41,11 +42,11 @@ config['initial_config']['image']['resolution']['height'] = height
 config['initial_config']['image']['resolution']['width'] = width
 
 # Copia o novo fps para os jsons 1-3
-with open(source_file, 'w+') as f:
-    json.dump(config, f, indent=2)
 for c in range(1, 4):
-    shutil.copyfile(source_file, str(c)+'.json')
-
+    with open(str(c)+source_file[1:], 'w+') as f:
+        config['camera_id'] = c
+        json.dump(config, f, indent=2)
+     
 # Atualiza o options.json na outra pasta
 options_path = '../dataset-creator/options.json'
 with open(options_path) as f:
@@ -55,5 +56,6 @@ with open(options_path) as f:
         options["cameras"][i]['config']['image']['resolution']['width'] = width
         options["cameras"][i]['config']['image']['resolution']['height'] = height
     print(novo_fps, width, height)
-with open('optionstest.json', 'w+') as f:
+
+with open(options_path, 'w+') as f:
     json.dump(options, f, indent=2)
