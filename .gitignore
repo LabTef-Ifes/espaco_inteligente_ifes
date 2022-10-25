@@ -4,3 +4,9 @@ options/0.json
 options/1.json
 options/2.json
 options/3.json
+is-basic.sh
+is-cameras.sh
+is-frame-transformation.sh
+is-skeletons-detector.sh
+is-skeletons-grouper.sh
+options/optionstest.json
