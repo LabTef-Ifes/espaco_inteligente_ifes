@@ -29,6 +29,7 @@ for c in range(1, 4):
     shutil.copyfile(source_file, str(c)+'.json')
 
 
+#Incompleto
 # Atualiza o options.json na outra pasta
 options_path = '..\\dataset-creator\\options.json'
 
