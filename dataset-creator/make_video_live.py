@@ -100,6 +100,8 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
 
 
 log = Logger(name='WatchVideos')
+
+#??
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
@@ -107,13 +109,16 @@ options = load_options(print_options=False)
 if not os.path.exists(options.folder):
     log.critical("Folder '{}' doesn't exist", options.folder)
 
-with open('gestures.json', 'r') as f:
+with open('gestures.json') as f:
     gestures = json.load(f)
+    #Ordered de sorted?
     gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
 
 parser = argparse.ArgumentParser(
     description='Utility to capture a sequence of images from multiples cameras'
 )
+
+#O que sao gestures?
 parser.add_argument(
     '--person', '-p', type=int, required=True, help='ID to identity person')
 parser.add_argument(
@@ -157,7 +162,8 @@ if not all(
         person_id, gesture_id)
 
 size = (2 * options.cameras[0].config.image.resolution.height,
-        2 * options.cameras[0].config.image.resolution.width, 3)
+        2 * options.cameras[0].config.image.resolution.width,
+        3)
 full_image = np.zeros(size, dtype=np.uint8)
 
 video_loader = MultipleVideoLoader(video_files)
@@ -170,8 +176,9 @@ for cam_id, filename in json_files.items():
 
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fps = 7.0
-resolution = (1288,728)
-outlist = [cv2.VideoWriter(f'cam{i}.avi', fourcc, fps, resolution) for i in range(4)]
+resolution = (1288, 728)
+outlist = [cv2.VideoWriter(
+    f'cam{i}.avi', fourcc, fps, resolution) for i in range(4)]
 '''out0 = 
 out1 = cv2.VideoWriter('cam1.avi', fourcc, fps, resolution)
 out2 = cv2.VideoWriter('cam2.avi', fourcc, fps, resolution)
