@@ -2,17 +2,14 @@ import os
 import re
 import sys
 import cv2
-from cv2 import imshow, resize, destroyAllWindows, waitKey
 import json
 import time
 import argparse
 import numpy as np
-from utils import load_options
-from utils import to_labels_array, to_labels_dict
+from utils import load_options,to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
-import matplotlib 
+from collections import OrderedDict
 import statistics
 from is_msgs.image_pb2 import ObjectAnnotations
 from is_msgs.image_pb2 import HumanKeypoints as HKP
@@ -22,6 +19,11 @@ from analysis import SkeletonsCoord
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+
+#Código igual ao outro watch???
+"""_summary_
+
+"""
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('CHEST')),
@@ -45,6 +47,15 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
 
 
 def render_skeletons(images, annotations, it, links, colors):
+    """_summary_
+
+    Args:
+        images (_type_): _description_
+        annotations (_type_): _description_
+        it (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+    """    
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -60,6 +71,14 @@ def render_skeletons(images, annotations, it, links, colors):
 
 
 def render_skeletons_3d(ax, skeletons, links, colors):
+    """_summary_
+
+    Args:
+        ax (_type_): _description_
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+    """    
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -84,6 +103,14 @@ def render_skeletons_3d(ax, skeletons, links, colors):
         break
                     
 def left_leg(skeletons):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     skeletons_pb = ParseDict( skeletons, ObjectAnnotations())
     for skeletons in skeletons_pb.objects:
         left_hip = None
@@ -110,6 +137,14 @@ def left_leg(skeletons):
         break
 
 def right_leg(skeletons):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     skeletons_pb = ParseDict( skeletons, ObjectAnnotations())
     right_hip=None  
     right_ankle=None 
@@ -146,6 +181,17 @@ def right_leg(skeletons):
 
 
 def perdas_3d(ax, skeletons, links, colors):
+    """_summary_
+
+    Args:
+        ax (_type_): _description_
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -163,6 +209,14 @@ def perdas_3d(ax, skeletons, links, colors):
                 return perdas
 
 def altura_da_pessoa(skeletons):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     skeletons_pb= ParseDict(skeletons,ObjectAnnotations())
     for skeletons in skeletons_pb.objects:
         parts = {}
@@ -174,6 +228,14 @@ def altura_da_pessoa(skeletons):
     return altura_da_pessoa
 
 def place_images(output_image, images, x_offset=0, y_offset=0):
+    """_summary_
+
+    Args:
+        output_image (_type_): _description_
+        images (_type_): _description_
+        x_offset (int, optional): _description_. Defaults to 0.
+        y_offset (int, optional): _description_. Defaults to 0.
+    """    
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w + x_offset, :] = images[0]
     output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w + x_offset, :] = images[1]
@@ -182,6 +244,12 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
 
 
 def plota_grafico_perdas(x,y):
+    """_summary_
+
+    Args:
+        x (_type_): _description_
+        y (_type_): _description_
+    """    
     fig2,AX=plt.subplots()
     AX.plot(x,y)
     AX.set(xlabel='Medição',ylabel='Perda percentual (%)',title='Perdas na reconstrução 3D em função da amostragem')
@@ -189,6 +257,14 @@ def plota_grafico_perdas(x,y):
     plt.show()
 
 def data_sheet_of_members(alt_torn,comprimento_medio_perna_esquerda,comprimento_medio_perna_direita,altura_media):
+    """_summary_
+
+    Args:
+        alt_torn (_type_): _description_
+        comprimento_medio_perna_esquerda (_type_): _description_
+        comprimento_medio_perna_direita (_type_): _description_
+        altura_media (_type_): _description_
+    """    
     file_results=open("Resultados_medições_dos_membros.txt","w")
 
     file_results.write("Distância do tornozelo ao chão: %5.3f m" % alt_torn)
@@ -256,6 +332,7 @@ size = (2 * options.cameras[0].config.image.resolution.height,
 full_image = np.zeros(size, dtype=np.uint8)
 
 video_loader = MultipleVideoLoader(video_files)
+
 # load annotations
 annotations = {}
 for cam_id, filename in json_files.items():
@@ -271,21 +348,22 @@ ax = Axes3D(fig)
 
 update_image = True
 it_frames = 0
-y = []
-x = []
+x,y = [],[]
 i=0
+
+#Poderia ser um defaultdict
 picos_distancia=[]
 perna_esquerda=[]
 perna_direita=[]
 dist_chao=[]
 altura_pessoa=[]
-tempo_inicial=time.time()
 distance_feet = []
 picos_maximos_distancia=[]
 dist_do_chao=[]
 perna_direita_aux=0
 dist_do_chao_aux=0
 
+tempo_inicial=time.time()
 while True:
     if video_loader.n_loaded_frames() < video_loader.n_frames():
         update_image = True
@@ -302,11 +380,13 @@ while True:
         ax.clear()
         ax.view_init(azim=28, elev=32)
         ax.set_xlim(-1.5, 1.5)
-        ax.set_xticks(np.arange(-1.5, 2.0, 0.5))
         ax.set_ylim(-1.5, 1.5)
-        ax.set_yticks(np.arange(-1.5, 2.0, 0.5))
         ax.set_zlim(-0.25, 1.5)
+
+        ax.set_xticks(np.arange(-1.5, 2.0, 0.5))
+        ax.set_yticks(np.arange(-1.5, 2.0, 0.5))
         ax.set_zticks(np.arange(0, 1.75, 0.5))
+
         ax.set_xlabel('X', labelpad=20)
         ax.set_ylabel('Y', labelpad=10)
         ax.set_zlabel('Z', labelpad=5)
@@ -334,7 +414,7 @@ while True:
 
         print("Perna direita: %5.3f" % aux_right_leg)
         dist_chao.append(dist_do_chao)
-        print("Distacia do chão: %5.3f m" % dist_do_chao)
+        print("Distancia do chao: %5.3f m" % dist_do_chao)
         print("Perdas no 3D: %5.2f"  % perdas_no_3d + "%")
         average_height=altura_da_pessoa(localizations[it_frames])
         altura_pessoa.append(average_height)
@@ -349,7 +429,9 @@ while True:
         hv, wv, _ = view_3d.shape
 
         display_image = np.hstack([display_image, 255*np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
+        #???
         display_image[int((hd - hv) / 2):int((hd + hv) / 2),wd:,:] = view_3d
+
         cv2.imshow('', display_image)
         update_image = False
       
@@ -362,13 +444,13 @@ while True:
         it_frames += keymap['big_step']
         it_frames = it_frames if it_frames < n_loaded_frames else 0
         update_image = True
-        i=i+1
+        i+=1
 
     if key == ord(keymap['next_frame']):
         it_frames += 1
         it_frames = it_frames if it_frames < n_loaded_frames else 0
         update_image = True
-        i=i+1
+        i+=1
 
     if key == ord(keymap['previous_frames']):
         it_frames -= keymap['big_step']
@@ -380,18 +462,18 @@ while True:
         it_frames -= 1
         it_frames = n_loaded_frames - 1 if it_frames < 0 else it_frames
         update_image = True
-        i=i+1
+        i+=1
 
     #if key == ord(keymap['exit']):
     #   sys.exit(0)    
-    if waitKey(0) & 0xFF == ord('q'):
-       break   
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+       break
 
-for j in range(0,len(distance_feet)-2):
+for j in range(len(distance_feet)-2):
     if distance_feet[j+1] > distance_feet[j+2] and distance_feet[j+1] > distance_feet[j]:
         picos_distancia.append(distance_feet[j+1])
 
-for r in range(0,len(picos_distancia)-2):
+for r in range(len(picos_distancia)-2):
     if picos_distancia[r+1] > picos_distancia[r+2] and picos_distancia[r+1] > picos_distancia[r]:
         picos_maximos_distancia.append(picos_distancia[r+1])
 
