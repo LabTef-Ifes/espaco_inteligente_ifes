@@ -6,8 +6,8 @@ Antes de tudo, instale as bibliotecas necessárias que se encontram descritas no
 É recomendado utilizar um virtualenv para o espaço reservado com todas as bibliotecas desejadas.
 
 1. Suba os containeres (execute 'iniciar_principais_containeres.py' - inicia os containeres na ordem correta). Mude os volumes dos containeres de acordo com o seus diretórios.
-2. No terminal, digite 'sudo docker ps' para verificar se os containeres estão de pé.
+2. No terminal, digite 'sudo docker stats' para verificar se os containeres estão de pé. (Ctrl+C para fechar)
 3. Mude o diretório da pasta com os vídeos a serem analisados no arquivo 'options.json', na parte do folder.
-4. Rode o arquivo principal 'export-video-3d-medicoes-erros-no-3d.py' na pasta dataset-creator para analisar o vídeo desejado
+4. Execute o arquivo principal 'export-video-3d-medicoes-erros-no-3d.py' na pasta dataset-creator para analisar o vídeo desejado
 
 Em caso de dúvidas sobre os serviços ou outras questões, acesse: https://github.com/labviros, projeto original.

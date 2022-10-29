@@ -12,7 +12,7 @@ def get_person_gesture(folder):
         folder (_type_): _description_
 
     Returns:
-        _type_: _description_
+        Tuple[int]: _description_
     """    
     match = re.search(r'p(\d+)g(\d+)', folder)
     if match is None:
@@ -27,6 +27,7 @@ if not os.path.exists(options.folder):
     log.critical("Folder '{}' doesn't exist", options.folder)
     sys.exit(-1)
 
+#???
 ffmpeg_base_command = "ffmpeg -y -r {fps:.1f} -start_number 0 -i {file_pattern:s} -c:v libx264 -vf fps={fps:.1f} -vf format=rgb24 {video_file:s}"
 
 for root, dirs, files in os.walk(options.folder):
