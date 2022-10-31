@@ -13,14 +13,14 @@ Antes de tudo, instale as bibliotecas necessárias para o espaço inteligente e 
 
 A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente.
 
-- '/options/0.json' - parâmetros da câmera 0 (há também os parâmetros das câmeras 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: IP, fps, altura, largura e etc.
-- '/dataset-creator/options.json' - parâmetros da criação gravação e análise dos vídeos. Neste arquivo é possível alterar o diretório onde os frames das câmeras serão salvos, para posteriormente formarem vídeos. 
-- '/dataset-creator/capture-images.py' - realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em '/dataset-creator/options.json'. Comandos válidos: “s” inicia a gravação (salvar imagens), “p” pausa a gravação, “q” fecha o programa.
-- '/dataset-creator/make-videos.py' - A partir dos frames capturados pelo arquivo 'capture-images.py', monta os vídeos e salva em formato .mp4.
-- '/dataset-creator/export-video-3d-medicoes-e-erros.py' - programa principal que realiza a leitura dos pontos gerados, calcula os parâmetros frame a frame, classifica o movimento executado e mostra o vídeo.
-- '/dataset-creator/parameters.py' - programa que possui funções usadas no arquivo 'export-video-3d-medicoes-e-erros.py'.
-- /dataset-creator/captura-monta-e-analisa-video.py - programa para rodar todo o sistema em sequência, desde a captura até a análise.
-- 'visualizar_camera.py' - arquivo teste para visualizar a imagem de somente uma câmera.
+- [options/0.json](options/0.json) - parâmetros da câmera 0 (há também os parâmetros das câmeras 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: IP, fps, altura, largura e etc.
+- [dataset-creator/options.json](dataset-creator/options.json) - parâmetros da criação gravação e análise dos vídeos. Neste arquivo é possível alterar o diretório onde os frames das câmeras serão salvos, para posteriormente formarem vídeos. 
+- [dataset-creator/capture-images.py](dataset-creator/capture-images.py) - realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em '/dataset-creator/options.json'. Comandos válidos: “s” inicia a gravação (salvar imagens), “p” pausa a gravação, “q” fecha o programa.
+- [dataset-creator/make-videos.py](/dataset-creator/make-videos.py) - A partir dos frames capturados pelo arquivo 'capture-images.py', monta os vídeos e salva em formato .mp4.
+- [dataset-creator/export-video-3d-medicoes-e-erros.py](dataset-creator/export-video-3d-medicoes-e-erros.py) - programa principal que realiza a leitura dos pontos gerados, calcula os parâmetros frame a frame, classifica o movimento executado e mostra o vídeo.
+- [dataset-creator/parameters.py](dataset-creator/parameters.py) - programa que possui funções usadas no arquivo 'export-video-3d-medicoes-e-erros.py'.
+- [dataset-creator/captura-monta-e-analisa-video.py](dataset-creator/captura-monta-e-analisa-video.py) - programa para rodar todo o sistema em sequência, desde a captura até a análise.
+- [visualizar_camera.py](visualizar_camera.py) - arquivo teste para visualizar a imagem de somente uma câmera.
 
 Informações importantes
 
