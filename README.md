@@ -2,6 +2,8 @@
 
 ![Reconstrução tridimensional](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES/blob/main/caminhada.gif)
 
+[Instale o Github no Linux](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
 Antes de tudo, instale as bibliotecas necessárias que se encontram descritas no arquivos requiremensts.txt (que se encontra dentro da pasta Docker_files) através do comando 'pip install -r requirements.txt'.
 É recomendado utilizar um virtualenv para o espaço reservado com todas as bibliotecas desejadas.
 
