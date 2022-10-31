@@ -2,7 +2,7 @@
 
 ![Reconstrução tridimensional](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES/blob/main/caminhada.gif)
 
-[Instale o Github no Linux](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+[Instalando o Github no Linux](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
 
 Antes de tudo, instale as bibliotecas necessárias para o espaço inteligente e que se encontram no arquivo 'Docker_files/requiremensts.txt' através do comando 'pip install -r requirements.txt'. É recomendado utilizar um virtualenv para o espaço reservado com todas as bibliotecas desejadas.
 
@@ -18,8 +18,7 @@ A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente
 - '/dataset-creator/capture-images.py' - realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em '/dataset-creator/options.json'. Comandos válidos: “s” inicia a gravação (salvar imagens), “p” pausa a gravação, “q” fecha o programa.
 - '/dataset-creator/make-videos.py' - A partir dos frames capturados pelo arquivo 'capture-images.py', monta os vídeos e salva em formato .mp4.
 - '/dataset-creator/export-video-3d-medicoes-e-erros.py' - programa principal que realiza a leitura dos pontos gerados, calcula os parâmetros frame a frame, classifica o movimento executado e mostra o vídeo.
-
-
-
+- '/dataset-creator/parameters.py' - programa que possui funções usadas no arquivo 'export-video-3d-medicoes-e-erros.py'.
+- /dataset-creator/captura-monta-e-analisa-video-3d.py - programa para rodar todo o sistema em sequência, desde a captura até a análise. 
 
 Em caso de dúvidas sobre os serviços ou outras questões, acesse: https://github.com/labviros, projeto original.
