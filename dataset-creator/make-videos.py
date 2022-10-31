@@ -12,7 +12,7 @@ def get_person_gesture(folder):
         folder (_type_): _description_
 
     Returns:
-        _type_: _description_
+        Tuple[int]: _description_
     """    
     match = re.search(r'p(\d+)g(\d+)', folder)
     if match is None:
@@ -27,40 +27,36 @@ if not os.path.exists(options.folder):
     log.critical("Folder '{}' doesn't exist", options.folder)
     sys.exit(-1)
 
+#???
 ffmpeg_base_command = "ffmpeg -y -r {fps:.1f} -start_number 0 -i {file_pattern:s} -c:v libx264 -vf fps={fps:.1f} -vf format=rgb24 {video_file:s}"
 
-# only first folder level
-root, dirs, files = os.walk(options.folder)[0]
-
-#for root, dirs, files in os.walk(options.folder):
-
-
-for exp_folder in dirs:
-    pg = get_person_gesture(exp_folder)
-    if pg is None:
-        continue
-    person_id, gesture_id = pg
-    sequence_folder = os.path.join(options.folder, exp_folder)
-    for camera in options.cameras:
-        file_pattern = os.path.join(
-            sequence_folder,
-            'c{camera_id:02d}s%08d.jpeg'.format(camera_id=camera.id))
-        video_file = os.path.join(
-            options.folder, 'p{:03d}g{:02d}c{:02d}.mp4'.format(
-                person_id, gesture_id, camera.id))
-        ffmpeg_command = ffmpeg_base_command.format(
-            fps=camera.config.sampling.frequency.value,
-            file_pattern=file_pattern,
-            video_file=video_file)
-        log.info("Creating video '{}'", video_file)
-        process = Popen(ffmpeg_command.split(), stdout=PIPE, stderr=STDOUT)
-        # with process.stdout as pipe:
-            # for line in iter(pipe.readline, b''):
-                # print(line.decode('utf-8').strip())
-        if process.wait() == 0:
-            log.info("Done")
-            # shutil.rmtree(sequence_folder)
-        else:
-            log.warn("\'{}\' failed", video_file)
-#break  
-# only first folder level
+for root, dirs, files in os.walk(options.folder):
+    for exp_folder in dirs:
+        pg = get_person_gesture(exp_folder)
+        if pg is None:
+            continue
+        person_id, gesture_id = pg
+        sequence_folder = os.path.join(options.folder, exp_folder)
+        for camera in options.cameras:
+            file_pattern = os.path.join(
+                sequence_folder,
+                'c{camera_id:02d}s%08d.jpeg'.format(camera_id=camera.id))
+            video_file = os.path.join(
+                options.folder, 'p{:03d}g{:02d}c{:02d}.mp4'.format(
+                    person_id, gesture_id, camera.id))
+            ffmpeg_command = ffmpeg_base_command.format(
+                fps=camera.config.sampling.frequency.value,
+                file_pattern=file_pattern,
+                video_file=video_file)
+            log.info("Creating video '{}'", video_file)
+            process = Popen(ffmpeg_command.split(), stdout=PIPE, stderr=STDOUT)
+            # with process.stdout as pipe:
+                # for line in iter(pipe.readline, b''):
+                    # print(line.decode('utf-8').strip())
+            if process.wait() == 0:
+                log.info("Done")
+                # shutil.rmtree(sequence_folder)
+            else:
+                log.warn("\'{}\' failed", video_file)
+    # only first folder level
+    break  

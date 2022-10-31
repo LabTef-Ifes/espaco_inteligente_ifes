@@ -42,6 +42,15 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
 
 
 def render_skeletons(images, annotations, it, links, colors):
+    """_summary_
+
+    Args:
+        images (_type_): _description_
+        annotations (_type_): _description_
+        it (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+    """    
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -57,6 +66,14 @@ def render_skeletons(images, annotations, it, links, colors):
 
 
 def render_skeletons_3d(ax, skeletons, links, colors):
+    """_summary_
+
+    Args:
+        ax (_type_): _description_
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+    """    
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -77,6 +94,14 @@ def render_skeletons_3d(ax, skeletons, links, colors):
 
 
 def place_images(output_image, images, x_offset=0, y_offset=0):
+    """_summary_
+
+    Args:
+        output_image (_type_): _description_
+        images (_type_): _description_
+        x_offset (int, optional): _description_. Defaults to 0.
+        y_offset (int, optional): _description_. Defaults to 0.
+    """    
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w + x_offset, :] = images[0]
     output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w + x_offset, :] = images[1]
@@ -97,6 +122,7 @@ def axes():
     ax.set_zlabel('Z', labelpad=5)
     render_skeletons_3d(ax, localizations[it_frames], links, colors)
 
+#???
 def plot3dClass(skeletons, links, colors):
     fig = plt.figure()
     ax = plt.axes(projection='3d')
@@ -191,11 +217,13 @@ while True:
         ax.clear()
         ax.view_init(azim=28, elev=32)
         ax.set_xlim(-2.0, 0.0)
-        ax.set_xticks(np.arange(-2.0, 0.0, 0.5))
         ax.set_ylim(-6.0, 2.0)
-        ax.set_yticks(np.arange(-6.0, 2.0, 0.5))
         ax.set_zlim(-0.25, 1.5)
+
+        ax.set_xticks(np.arange(-2.0, 0.0, 0.5))
+        ax.set_yticks(np.arange(-6.0, 2.0, 0.5))
         ax.set_zticks(np.arange(0, 1.75, 0.5))
+        
         ax.set_xlabel('X', labelpad=20)
         ax.set_ylabel('Y', labelpad=10)
         ax.set_zlabel('Z', labelpad=5)

@@ -45,6 +45,15 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
 
 
 def render_skeletons(images, annotations, it, links, colors):
+    """_summary_
+
+    Args:
+        images (_type_): _description_
+        annotations (_type_): _description_
+        it (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+    """
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -62,6 +71,14 @@ def render_skeletons(images, annotations, it, links, colors):
 
 
 def render_skeletons_3d(ax, skeletons, links, colors):
+    """_summary_
+
+    Args:
+        ax (_type_): _description_
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+    """
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -83,6 +100,15 @@ def render_skeletons_3d(ax, skeletons, links, colors):
 
 
 def skeletons_localization(skeletons, initial_foot):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+        initial_foot (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -97,16 +123,42 @@ def skeletons_localization(skeletons, initial_foot):
 
 
 def calc_length(initial, final):
+    """_summary_
+
+    Args:
+        initial (_type_): _description_
+        final (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     length = np.sqrt((final[1]-initial[1])**2 + (final[0]-initial[0])**2)
     return length
 
 
 def calc_step_time(initial, final):
+    """_summary_
+
+    Args:
+        initial (_type_): _description_
+        final (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     duration = (final - initial) * (1/7.0)
     return duration
 
 
 def calc_waistline(skeletons):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     right_hip = None
     left_hip = None
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
@@ -134,6 +186,14 @@ def calc_waistline(skeletons):
 
 
 def altura_da_pessoa(skeletons):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeletons in skeletons_pb.objects:
         parts = {}
@@ -146,7 +206,15 @@ def altura_da_pessoa(skeletons):
 
 
 def place_images(output_image, images, x_offset=0, y_offset=0):
-    w, h = images[0].shape[1], images[0].shape[0]
+    """_summary_
+
+    Args:
+        output_image (_type_): _description_
+        images (_type_): _description_
+        x_offset (int, optional): _description_. Defaults to 0.
+        y_offset (int, optional): _description_. Defaults to 0.
+    """
+    h, w = images[0].shape[0], images[0].shape[1]
     output_image[0 + y_offset:h + y_offset, 0 +
                  x_offset:w + x_offset, :] = images[0]
     output_image[0 + y_offset:h + y_offset, w +
@@ -374,7 +442,7 @@ while True:
             log.warn("You must assign two steps to calculate double support!")
         else:
             print(len(step_time))
-            for i in range(0, len(step_time)-1, 2):
+            for i in range(len(step_time)-1, 2):
                 double_support.append(0.2 * (step_time[i] + step_time[i+1]))
             log.info("Double Support: {}", double_support)
 
@@ -383,7 +451,7 @@ while True:
         log.info("Altura média: {:.2f} m ", average_height)
         average_hip = 0
 
-        if len(quadril) != 0:
+        if quadril:
             average_hip = sum(quadril) / len(quadril)
         else:
             pass

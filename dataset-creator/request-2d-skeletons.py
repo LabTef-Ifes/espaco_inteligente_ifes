@@ -97,7 +97,6 @@ while True:
                     'frame_id': frame_id,
                     'requested_at': time.time()
                 }
-        
 
     elif state == State.RECV_REPLIES:
 
@@ -118,7 +117,6 @@ while True:
             state = State.CHECK_END_OF_VIDEO_AND_SAVE
         except socket.timeout:
             state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-        
 
     elif state == State.CHECK_END_OF_VIDEO_AND_SAVE:
 
@@ -126,7 +124,7 @@ while True:
             annotations_dict = annotations_received[base_name]
             if len(annotations_dict) == n_annotations[base_name]:
                 output_annotations = {
-                    'annotations':[x[1] for x in sorted(annotations_dict.items())],
+                    'annotations': [x[1] for x in sorted(annotations_dict.items())],
                     'created_at': datetime.datetime.now().isoformat()
                 }
                 filename = os.path.join(options.folder,
@@ -137,7 +135,6 @@ while True:
                 log.info('{} has been saved.', filename)
 
         state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-        
 
     elif state == State.CHECK_FOR_TIMEOUTED_REQUESTS:
 
@@ -160,7 +157,6 @@ while True:
 
         requests.update(new_requests)
         state = State.MAKE_REQUESTS
-        
 
     elif state == State.EXIT:
 
@@ -170,4 +166,3 @@ while True:
     else:
 
         state = State.MAKE_REQUESTS
-        

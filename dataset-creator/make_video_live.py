@@ -1,4 +1,8 @@
-import os,re,sys,json,time
+import os
+import re
+import sys
+import json
+import time
 import cv2
 import argparse
 import numpy as np
@@ -15,25 +19,26 @@ from itertools import permutations
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')),
-        (HKP.Value('NECK'), HKP.Value('CHEST')),
-        (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')),
-        (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
-        (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
-        (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
-        (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
-        (HKP.Value('NECK'), HKP.Value('LEFT_HIP')),
-        (HKP.Value('LEFT_HIP'), HKP.Value('LEFT_KNEE')),
-        (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
-        (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
-        (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
-        (HKP.Value('RIGHT_ELBOW'), HKP.Value('RIGHT_WRIST')),
-        (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),
-        (HKP.Value('RIGHT_HIP'), HKP.Value('RIGHT_KNEE')),
-        (HKP.Value('RIGHT_KNEE'), HKP.Value('RIGHT_ANKLE')),
-        (HKP.Value('NOSE'), HKP.Value('LEFT_EYE')),
-        (HKP.Value('LEFT_EYE'), HKP.Value('LEFT_EAR')),
-        (HKP.Value('NOSE'), HKP.Value('RIGHT_EYE')),
-        (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
+         (HKP.Value('NECK'), HKP.Value('CHEST')),
+         (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')),
+         (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
+         (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
+         (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
+         (HKP.Value('NECK'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('LEFT_HIP'), HKP.Value('LEFT_KNEE')),
+         (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
+         (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
+         (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
+         (HKP.Value('RIGHT_ELBOW'), HKP.Value('RIGHT_WRIST')),
+         (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),
+         (HKP.Value('RIGHT_HIP'), HKP.Value('RIGHT_KNEE')),
+         (HKP.Value('RIGHT_KNEE'), HKP.Value('RIGHT_ANKLE')),
+         (HKP.Value('NOSE'), HKP.Value('LEFT_EYE')),
+         (HKP.Value('LEFT_EYE'), HKP.Value('LEFT_EAR')),
+         (HKP.Value('NOSE'), HKP.Value('RIGHT_EYE')),
+         (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
+
 
 def render_skeletons(images, annotations, it, colors, links):
     """_summary_
@@ -44,9 +49,9 @@ def render_skeletons(images, annotations, it, colors, links):
         it (_type_): _description_
         colors (_type_): _description_
         links (_type_): _description_
-    """ 
+    """
 
-    #O que esse loop faz
+    # O que esse loop faz
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -79,7 +84,7 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
         images (_type_): _description_
         x_offset (int, optional): _description_. Defaults to 0.
         y_offset (int, optional): _description_. Defaults to 0.
-    """    
+    """
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w +
                  x_offset, :] = images[0]
@@ -95,6 +100,8 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
 
 
 log = Logger(name='WatchVideos')
+
+#??
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
@@ -102,13 +109,16 @@ options = load_options(print_options=False)
 if not os.path.exists(options.folder):
     log.critical("Folder '{}' doesn't exist", options.folder)
 
-with open('gestures.json', 'r') as f:
+with open('gestures.json') as f:
     gestures = json.load(f)
+    #Ordered de sorted?
     gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
 
 parser = argparse.ArgumentParser(
     description='Utility to capture a sequence of images from multiples cameras'
 )
+
+#O que sao gestures?
 parser.add_argument(
     '--person', '-p', type=int, required=True, help='ID to identity person')
 parser.add_argument(
@@ -152,7 +162,8 @@ if not all(
         person_id, gesture_id)
 
 size = (2 * options.cameras[0].config.image.resolution.height,
-        2 * options.cameras[0].config.image.resolution.width, 3)
+        2 * options.cameras[0].config.image.resolution.width,
+        3)
 full_image = np.zeros(size, dtype=np.uint8)
 
 video_loader = MultipleVideoLoader(video_files)
@@ -164,10 +175,14 @@ for cam_id, filename in json_files.items():
         annotations[cam_id] = json.load(f)['annotations']
 
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out0 = cv2.VideoWriter('cam0.avi', fourcc, 7.0, (1288,728))
-out1 = cv2.VideoWriter('cam1.avi', fourcc, 7.0, (1288,728))
-out2 = cv2.VideoWriter('cam2.avi', fourcc, 7.0, (1288,728))
-out3 = cv2.VideoWriter('cam3.avi', fourcc, 7.0, (1288,728))
+fps = 7.0
+resolution = (1288, 728)
+outlist = [cv2.VideoWriter(
+    f'cam{i}.avi', fourcc, fps, resolution) for i in range(4)]
+'''out0 = 
+out1 = cv2.VideoWriter('cam1.avi', fourcc, fps, resolution)
+out2 = cv2.VideoWriter('cam2.avi', fourcc, fps, resolution)
+out3 = cv2.VideoWriter('cam3.avi', fourcc, fps, resolution)'''
 
 update_image = True
 it_frames = 0
@@ -176,21 +191,17 @@ while True:
     frames = video_loader[it_frames]
     if frames is None:
         break
-    
+
     render_skeletons(frames, annotations, it_frames, colors, links)
     frames_list = [frames[cam] for cam in sorted(frames.keys())]
     it_frames += 1
 
-    out0.write(frames_list[0])
-    out1.write(frames_list[1])
-    out2.write(frames_list[2])
-    out3.write(frames_list[3])
+    for i in range(len(outlist)):
+        outlist[i].write(frames_list[i])
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    
-out0.release()
-out1.release()
-out2.release()
-out3.release()
+
+for i in range(len(outlist)):
+    outlist[i].release()
 log.info('Exiting')

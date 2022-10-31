@@ -3,6 +3,9 @@ from enum import Enum
 from is_wire.core import Subscription, Message, Logger, Tracer
 from is_wire.core.utils import now
 
+"""_summary_
+
+"""
 
 class RequestManager:
     """_summary_

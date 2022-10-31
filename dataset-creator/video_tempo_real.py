@@ -9,18 +9,16 @@ import numpy as np
 import statistics
 import pika
 #import mqtt
-from utils import load_options
-from utils import to_labels_array, to_labels_dict
+from utils import load_options, to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 from utils import get_np_image
 #from PIL import ImageGrab
 from is_msgs.image_pb2 import ObjectAnnotations
 from is_msgs.image_pb2 import HumanKeypoints as HKP
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
-import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from analysis import SkeletonsCoord
@@ -49,6 +47,18 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
 
 
 def render_skeletons(images, annotations, it, links, colors):
+    """_summary_
+
+    Args:
+        images (_type_): _description_
+        annotations (_type_): _description_
+        it (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     for cam_id, image in images.items():
         deteccoes = 0 # Detections in each frame
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
@@ -76,6 +86,19 @@ def render_skeletons(images, annotations, it, links, colors):
 
 
 def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
+    """_summary_
+
+    Args:
+        ax (_type_): _description_
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+        juntas_3d (_type_): _description_
+        perdidas_3d (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     deteccoes_3d = 0
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
@@ -104,6 +127,8 @@ def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
     return juntas_3d, perdidas_3d
 
 def receive_information():
+    """_summary_
+    """    
     connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
