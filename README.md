@@ -19,6 +19,6 @@ A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente
 - '/dataset-creator/make-videos.py' - A partir dos frames capturados pelo arquivo 'capture-images.py', monta os vídeos e salva em formato .mp4.
 - '/dataset-creator/export-video-3d-medicoes-e-erros.py' - programa principal que realiza a leitura dos pontos gerados, calcula os parâmetros frame a frame, classifica o movimento executado e mostra o vídeo.
 - '/dataset-creator/parameters.py' - programa que possui funções usadas no arquivo 'export-video-3d-medicoes-e-erros.py'.
-- /dataset-creator/captura-monta-e-analisa-video-3d.py - programa para rodar todo o sistema em sequência, desde a captura até a análise. 
+- /dataset-creator/captura-monta-e-analisa-video.py - programa para rodar todo o sistema em sequência, desde a captura até a análise. 
 
 Em caso de dúvidas sobre os serviços ou outras questões, acesse: https://github.com/labviros, projeto original.
