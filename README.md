@@ -19,6 +19,13 @@ A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente
 - '/dataset-creator/make-videos.py' - A partir dos frames capturados pelo arquivo 'capture-images.py', monta os vídeos e salva em formato .mp4.
 - '/dataset-creator/export-video-3d-medicoes-e-erros.py' - programa principal que realiza a leitura dos pontos gerados, calcula os parâmetros frame a frame, classifica o movimento executado e mostra o vídeo.
 - '/dataset-creator/parameters.py' - programa que possui funções usadas no arquivo 'export-video-3d-medicoes-e-erros.py'.
-- /dataset-creator/captura-monta-e-analisa-video.py - programa para rodar todo o sistema em sequência, desde a captura até a análise. 
+- /dataset-creator/captura-monta-e-analisa-video.py - programa para rodar todo o sistema em sequência, desde a captura até a análise.
+- 'visualizar_camera.py' - arquivo teste para visualizar a imagem de somente uma câmera.
 
-Em caso de dúvidas sobre os serviços ou outras questões, acesse: https://github.com/labviros, projeto original.
+Informações importantes
+
+- O arquivo 'capture-images.py' só irá mostrar as imagens das 4 câmeras com todas elas funcionando. Caso uma ou mais câmeras não esteja funcionando por algum motivo qualquer, o programa não irá mostrar as imagens.
+- A câmera do modelo BlackFly possui uma limitação quanto ao número de frames por segundo mo que diz respeito ao modelo de cores. Na opção 'RGB' a câmera irá funcionar com até 12 fps e na opção 'GRAY' irá funcionar com até X fps.  
+
+
+Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: https://github.com/labviros
