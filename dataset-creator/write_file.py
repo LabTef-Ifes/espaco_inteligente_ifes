@@ -11,6 +11,8 @@ import statistics
 import pika
 import csv
 
+"""_summary_
+"""
 k=0
 
 with open('/home/julian/docker/ifes-2019-09-09/Parâmetros_1.csv', 'w') as csvfile:

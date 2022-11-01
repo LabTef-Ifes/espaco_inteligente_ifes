@@ -1,5 +1,4 @@
 import re,os,sys,json
-
 import shutil
 import argparse
 from datetime import datetime as DT
@@ -51,6 +50,17 @@ def draw_info_bar(image, text, x, y,
                   background_color=(0, 0, 0),
                   text_color=(255, 255, 255),
                   draw_circle=False):
+    """_summary_
+
+    Args:
+        image (_type_): _description_
+        text (_type_): _description_
+        x (_type_): _description_
+        y (_type_): _description_
+        background_color (tuple, optional): _description_. Defaults to (0, 0, 0).
+        text_color (tuple, optional): _description_. Defaults to (255, 255, 255).
+        draw_circle (bool, optional): _description_. Defaults to False.
+    """    
     fontFace = cv2.FONT_HERSHEY_DUPLEX
     fontScale = 1.0
     thickness = 1
@@ -84,7 +94,7 @@ def draw_info_bar(image, text, x, y,
 
 log = Logger(name='Capture')
 
-with open('gestures.json', 'r') as f:
+with open('gestures.json') as f:
     gestures = json.load(f)
     gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
 
@@ -139,11 +149,11 @@ for camera in options.cameras:
     subscription.subscribe('CameraGateway.{}.Frame'.format(camera.id))
 
 size = (2 * options.cameras[0].config.image.resolution.height,
-        2 * options.cameras[0].config.image.resolution.width, 3)
+        2 * options.cameras[0].config.image.resolution.width, 
+        3)
 full_image = np.zeros(size, dtype=np.uint8)
 
 contador=0
-
 images_data = {}
 current_timestamps = {}
 timestamps = defaultdict(list)
