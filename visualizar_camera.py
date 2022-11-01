@@ -30,7 +30,6 @@ def to_np(input_image):
 
 if __name__ == '__main__':
 
-    
     camera_id = 3
     print('---RUNNING EXAMPLE DEMO OF THE CAMERA CLIENT---')
     broker_uri = "amqp://guest:guest@localhost:5672"
