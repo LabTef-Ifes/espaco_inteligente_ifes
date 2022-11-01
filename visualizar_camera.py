@@ -6,6 +6,9 @@ import json
 import time
 
 
+'''
+Exibe a imagem de uma câmera
+'''
 def to_np(input_image):
     """_summary_
 
@@ -27,11 +30,10 @@ def to_np(input_image):
 
 if __name__ == '__main__':
 
-   
-    print('---RUNNING EXAMPLE DEMO OF THE CAMERA CLIENT---')
-
-    broker_uri = "amqp://guest:guest@localhost:5672"
+    
     camera_id = 3
+    print('---RUNNING EXAMPLE DEMO OF THE CAMERA CLIENT---')
+    broker_uri = "amqp://guest:guest@localhost:5672"
     channel = Channel(broker_uri)
     subscription = Subscription(channel=channel)
     subscription.subscribe(topic='CameraGateway.{}.Frame'.format(camera_id))
