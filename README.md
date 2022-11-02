@@ -31,6 +31,7 @@ A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente
 
 Informações importantes
 
+- Para alterar os parâmetros de fps,width,height e color das câmeras, utlize o [options/copia_json.py](options/copia_json.py)
 - O arquivo **capture-images.py** só irá mostrar as imagens das 4 câmeras com todas elas funcionando. Caso uma ou mais câmeras não esteja funcionando por algum motivo qualquer, o programa não irá mostrar as imagens.
 - A câmera do modelo BlackFly possui uma limitação quanto ao número de frames por segundo mo que diz respeito ao modelo de cores. Na opção **RGB** a câmera atual irá funcionar com até 12 fps e na opção **GRAY** irá funcionar com até _20_ fps.  
 
