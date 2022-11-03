@@ -13,6 +13,7 @@ channel.queue_declare(queue='Receive_information')
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
+# ch, method, properties não usados???
 def callback(ch, method, properties, body):
     """_summary_
 

@@ -7,15 +7,16 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from keras.callbacks import TensorBoard
 import time
-#from keras.backend.tensorflow_backend import set_session
+
+# from keras.backend.tensorflow_backend import set_session
 
 # Not used (?)
-#import tensorflow.keras
-#from keras import regularizers
-#import sklearn
-#import pickle
+# import tensorflow.keras
+# from keras import regularizers
+# import sklearn
+# import pickle
 #
-#from sklearn.model_selection import train_test_split
+# from sklearn.model_selection import train_test_split
 
 
 # Poor definition
@@ -41,22 +42,22 @@ k = 0
 while cap.isOpened():
     # Capture frame-by-frame
     ret, frame = cap.read()
-    #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # print(frame)
     if ret:
         if k != 0:
-            #frame=cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-            frame = (frame/255)
-            aux_diferenca_frame = (frame-frame_anterior)
+            # frame=cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+            frame = (frame / 255)
+            aux_diferenca_frame = (frame - frame_anterior)
             # print(aux_diferenca_frame)
-            #cv2.imshow('Frame', aux_diferenca_frame)
-            #cv.imshow('FG Mask', fgMask)
+            # cv2.imshow('Frame', aux_diferenca_frame)
+            # cv.imshow('FG Mask', fgMask)
             if k % 2 == 0:
-                aux_soma_frame = aux_soma_frame+aux_diferenca_frame
+                aux_soma_frame = aux_soma_frame + aux_diferenca_frame
 
             if k % 50 == 0:  # Média de frames para contar 4 ciclos
                 new_array = cv2.resize(aux_soma_frame, (IMG_SIZE, IMG_SIZE))
-                new_array = (new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)/255)
+                new_array = (new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1) / 255)
                 # print(new_array,(new_array).shape)
 
                 prediction = modelo_final.predict(
@@ -67,10 +68,10 @@ while cap.isOpened():
                 print(prediction)
                 movimento = CATEGORIAS[int(prediction[0][0])]
                 text = "MOVIMENTO: {}".format(movimento)
-                #cv2.putText(frame, text, (35, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0),1, 5)
+                # cv2.putText(frame, text, (35, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0),1, 5)
                 cv2.putText(aux_soma_frame, text, (35, 50),
                             cv2.FONT_HERSHEY_SIMPLEX, 1.5, (100, 00, 10), 1, cv2.LINE_AA)
-                #cv2.imshow('', aux_soma_frame)
+                # cv2.imshow('', aux_soma_frame)
                 cv2.imshow('Frame', aux_soma_frame)
                 aux_soma_frame = 0
 

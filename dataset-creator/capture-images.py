@@ -1,7 +1,7 @@
-import re,os,sys,json
+import re, os, sys, json
 import shutil
 import argparse
-from datetime import datetime as DT
+from datetime import datetime as dt
 from collections import defaultdict, OrderedDict
 from subprocess import Popen, PIPE, STDOUT
 import time
@@ -14,6 +14,8 @@ from is_wire.core import Channel, Subscription, Message, Logger
 """_summary_
 """
 
+
+# topic não usado ???
 def get_id(topic):
     """_summary_
 
@@ -60,7 +62,7 @@ def draw_info_bar(image, text, x, y,
         background_color (tuple, optional): _description_. Defaults to (0, 0, 0).
         text_color (tuple, optional): _description_. Defaults to (255, 255, 255).
         draw_circle (bool, optional): _description_. Defaults to False.
-    """    
+    """
     fontFace = cv2.FONT_HERSHEY_DUPLEX
     fontScale = 1.0
     thickness = 1
@@ -129,7 +131,7 @@ sequence = 'p{:03d}g{:02d}'.format(person_id, gesture_id)
 sequence_folder = os.path.join(options.folder, sequence)
 if os.path.exists(sequence_folder):
     log.warn(
-        'Path to PERSON_ID={} GESTURE_ID={} already exists.\nWould you like to proceed? All data will be deleted! [y/n]',
+        'Path to PERSON_ID={} GESTURE_ID={} already exists.\nWould you like to proceed? All data will be deleted![y/n]',
         person_id, gesture_id)
     key = raw_input()
     if key == 'y':
@@ -149,11 +151,11 @@ for camera in options.cameras:
     subscription.subscribe('CameraGateway.{}.Frame'.format(camera.id))
 
 size = (2 * options.cameras[0].config.image.resolution.height,
-        2 * options.cameras[0].config.image.resolution.width, 
+        2 * options.cameras[0].config.image.resolution.width,
         3)
 full_image = np.zeros(size, dtype=np.uint8)
 
-contador=0
+contador = 0
 images_data = {}
 current_timestamps = {}
 timestamps = defaultdict(list)
@@ -176,7 +178,7 @@ while True:
         continue
     data = np.fromstring(pb_image.data, dtype=np.uint8)
     images_data[camera] = data
-    current_timestamps[camera] = DT.utcfromtimestamp(
+    current_timestamps[camera] = dt.utcfromtimestamp(
         msg.created_at).isoformat()
 
     if len(images_data) == len(options.cameras):
@@ -209,22 +211,22 @@ while True:
                 draw_circle=start_save and not sequence_saved)
 
             cv2.imshow('', display_image)
-    
+
             key = cv2.waitKey(1)
-            if key == ord('s'):# and contador==0:
+            if key == ord('s'):  # and contador==0:
                 if not start_save:
                     start_save = True
-                    contador=1
-                
+                    contador = 1
+
                 elif not sequence_saved:
                     timestamps_filename = os.path.join(options.folder, '{}_timestamps.json'.format(sequence))
                     with open(timestamps_filename, 'w') as f:
                         json.dump(timestamps, f, indent=2, sort_keys=True)
                     sequence_saved = True
-                    contador=0
+                    contador = 0
 
             if key == ord('p'):
-                start_save=False
+                start_save = False
 
             if key == ord('q'):
                 if not start_save or sequence_saved:

@@ -50,7 +50,7 @@ def render_skeletons(images, annotations, it, links, colors):
         it (_type_): _description_
         links (_type_): _description_
         colors (_type_): _description_
-    """    
+    """
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -73,7 +73,7 @@ def render_skeletons_3d(ax, skeletons, links, colors):
         skeletons (_type_): _description_
         links (_type_): _description_
         colors (_type_): _description_
-    """    
+    """
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -101,12 +101,13 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
         images (_type_): _description_
         x_offset (int, optional): _description_. Defaults to 0.
         y_offset (int, optional): _description_. Defaults to 0.
-    """    
+    """
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w + x_offset, :] = images[0]
     output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w + x_offset, :] = images[1]
     output_image[h + y_offset:2 * h + y_offset, 0 + x_offset:w + x_offset, :] = images[2]
     output_image[h + y_offset:2 * h + y_offset, w + x_offset:2 * w + x_offset, :] = images[3]
+
 
 def axes():
     ax.clear()
@@ -122,11 +123,11 @@ def axes():
     ax.set_zlabel('Z', labelpad=5)
     render_skeletons_3d(ax, localizations[it_frames], links, colors)
 
-#???
-def plot3dClass(skeletons, links, colors):
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
 
+# ???
+def plot3dClass(skeletons, links, colors):
+    plt.figure()
+    ax = plt.axes(projection='3d')
 
     render_skeletons_3d(ax, skeletons, links, colors)
 
@@ -190,15 +191,15 @@ annotations = {}
 for cam_id, filename in json_files.items():
     with open(filename, 'r') as f:
         annotations[cam_id] = json.load(f)['annotations']
-#load localizations
+# load localizations
 with open(json_locaizations_file, 'r') as f:
     localizations = json.load(f)['localizations']
 
 plt.ioff()
-fig = plt.figure(figsize=(5,5))
+fig = plt.figure(figsize=(5, 5))
 # fig = plt.figure()
 # #ax = fig.add_subplot(111, projection='3d')
-ax=Axes3D(fig)
+ax = Axes3D(fig)
 
 update_image = True
 it_frames = 0
@@ -223,22 +224,22 @@ while True:
         ax.set_xticks(np.arange(-2.0, 0.0, 0.5))
         ax.set_yticks(np.arange(-6.0, 2.0, 0.5))
         ax.set_zticks(np.arange(0, 1.75, 0.5))
-        
+
         ax.set_xlabel('X', labelpad=20)
         ax.set_ylabel('Y', labelpad=10)
         ax.set_zlabel('Z', labelpad=5)
         render_skeletons_3d(ax, localizations[it_frames], links, colors)
-       
+
         fig.canvas.draw()
         data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
         view_3d = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
         display_image = cv2.resize(full_image, dsize=(0, 0), fx=0.5, fy=0.5)
-        hd, wd, _ = display_image.shape 
+        hd, wd, _ = display_image.shape
         hv, wv, _ = view_3d.shape
 
-        display_image = np.hstack([display_image, 255*np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
-        display_image[int((hd - hv) / 2):int((hd + hv) / 2),wd:,:] = view_3d
+        display_image = np.hstack([display_image, 255 * np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
+        display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
         cv2.imshow('', display_image)
 
         update_image = False

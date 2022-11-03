@@ -99,12 +99,11 @@ def render_skeletons_3d(ax, skeletons, links, colors):
                     color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
 
 
-def skeletons_localization(skeletons, initial_foot):
+def skeletons_localization(skeletons):
     """_summary_
 
     Args:
         skeletons (_type_): _description_
-        initial_foot (_type_): _description_
 
     Returns:
         _type_: _description_
@@ -394,12 +393,12 @@ while True:
             log.warn("You must assign the initial foot")
         elif initial_foot == "left":
             initial_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[1]
+                localizations[it_frames])[1]
             step_initial_frame = it_frames
             log.info("Initial position saved as left foot")
         else:
             initial_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[0]
+                localizations[it_frames])[0]
             step_initial_frame = it_frames
             log.info("Initial position saved as right foot")
 
@@ -408,7 +407,7 @@ while True:
             log.warn('You must first assign the initial position')
         elif initial_foot == "left":
             final_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[0]
+                localizations[it_frames])[0]
             step_length.append(calc_length(initial_position, final_position))
             step_final_frame = it_frames
             step_time.append(calc_step_time(
@@ -423,7 +422,7 @@ while True:
             log.info("Step duration: {}", step_time)
         else:
             final_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[1]
+                localizations[it_frames])[1]
             step_length.append(calc_length(initial_position, final_position))
             step_final_frame = it_frames
             step_time.append(calc_step_time(

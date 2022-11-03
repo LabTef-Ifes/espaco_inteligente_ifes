@@ -5,9 +5,10 @@ from utils import load_options
 import time
 from random import randint
 
-mean_time = 100 # milliseconds
+mean_time = 100  # milliseconds
 var_time = 20
 
+# parametros não usados???
 def detect(image, ctx):
     """_summary_
 
@@ -18,13 +19,14 @@ def detect(image, ctx):
     Returns:
         _type_: _description_
     """
-    
-    #???
+
+    # ???
     # simulate error
     time.sleep(randint(mean_time - var_time, mean_time + var_time) / 1000)
     reply = ObjectAnnotations(
         frame_id=randint(0, 4), objects=[ObjectAnnotation()] * randint(1, 3))
     return reply
+
 
 options = load_options(print_options=False)
 
