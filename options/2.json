@@ -2,16 +2,16 @@
   "broker_uri": "amqp://guest:guest@localhost:5672",
   "zipkin_host": "localhost",
   "zipkin_port": 9411,
-  "camera_ip": "10.0.0.86",
+  "camera_ip": "10.0.0.67",
   "camera_id": 2,
-  "packet_delay": 3000,
+  "packet_delay": 6000,
   "packet_size": 1400,
   "reverse_x": false,
   "reverse_y": false,
   "parallelism": -1,
   "initial_config": {
     "sampling": {
-      "frequency": 30.0
+      "frequency": 15
     },
     "camera": {
       "shutter": {
@@ -21,11 +21,11 @@
     },
     "image": {
       "color_space": {
-        "value": "GRAY"
+        "value": "RGB"
       },
       "resolution": {
-        "width": 1288,
-        "height": 728
+        "width": 600,
+        "height": 400
       },
       "format": {
         "format": "JPEG",

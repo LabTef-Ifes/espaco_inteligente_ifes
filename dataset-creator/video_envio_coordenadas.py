@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 import cv2
 import json
 import time
@@ -8,12 +7,11 @@ import argparse
 import numpy as np
 import pika 
 import statistics
-from utils import load_options
-from utils import to_labels_array, to_labels_dict
+from utils import load_options,get_np_image
+from collections import OrderedDict
 from video_loader import MultipleVideoLoader
+from utils import to_labels_array, to_labels_dict
 from is_wire.core import Channel, Subscription, Message, Logger, ContentType
-from collections import defaultdict, OrderedDict
-from utils import get_np_image
 #from PIL import ImageGrab
 from is_msgs.image_pb2 import ObjectAnnotations
 from is_msgs.image_pb2 import HumanKeypoints as HKP

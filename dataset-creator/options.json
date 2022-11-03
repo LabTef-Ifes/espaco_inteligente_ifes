@@ -6,15 +6,15 @@
       "id": 0,
       "config": {
         "sampling": {
-          "frequency": 30.0
+          "frequency": 15
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 600,
+            "height": 400
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -33,15 +33,15 @@
       "id": 1,
       "config": {
         "sampling": {
-          "frequency": 30.0
+          "frequency": 15
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 600,
+            "height": 400
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -60,15 +60,15 @@
       "id": 2,
       "config": {
         "sampling": {
-          "frequency": 30.0
+          "frequency": 15
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 600,
+            "height": 400
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -87,15 +87,15 @@
       "id": 3,
       "config": {
         "sampling": {
-          "frequency": 30.0
+          "frequency": 15
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 600,
+            "height": 400
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",

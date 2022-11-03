@@ -46,7 +46,7 @@ while cap.isOpened():
     if ret:
         if k != 0:
             #frame=cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-            frame = (frame/255.0)
+            frame = (frame/255)
             aux_diferenca_frame = (frame-frame_anterior)
             # print(aux_diferenca_frame)
             #cv2.imshow('Frame', aux_diferenca_frame)

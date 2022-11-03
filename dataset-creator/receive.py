@@ -3,6 +3,8 @@ import pika
 import time
 import json
 
+"""_summary_
+"""
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='192.168.1.107'))
 channel = connection.channel()
