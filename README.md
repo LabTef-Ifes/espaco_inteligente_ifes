@@ -32,10 +32,11 @@ A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente
 
 Informações importantes
 
-- Para alterar os parâmetros de fps,width,height e color das câmeras, utlize o [options/copia_json.py](options/copia_json.py)
+- Para alterar os parâmetros de fps, width, height e color das câmeras, utlize o [options/copia_json.py](options/copia_json.py)
 - O arquivo **capture-images.py** só irá mostrar as imagens das 4 câmeras com todas elas funcionando. Caso uma ou mais câmeras não esteja funcionando por algum motivo qualquer, o programa não irá mostrar as imagens.
-- A câmera do modelo BlackFly possui uma limitação quanto ao número de frames por segundo mo que diz respeito ao modelo de cores. Na opção **RGB** a câmera atual irá funcionar com até 12 fps e na opção **GRAY** irá funcionar com até _20_ fps. 
+- A câmera do modelo BlackFly (Blackfly BFLY-PGE-09S2C) possui uma limitação quanto ao número de frames por segundo mo que diz respeito ao modelo de cores. Na opção **RGB** a câmera atual irá funcionar com até 12 fps e na opção **GRAY** irá funcionar com até _20_ fps. 
 - As alterações realizadas nos arquivos options/X.json (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers. Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
 - Para parar todos os conteiners de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
+- O espaço inteligente atual do Ifes no  roda em uma máquina Ubuntu 18.04.5 LTS, processador Intel® Core™ i5-8400 CPU @ 2.80GHz × 6, 16Gb de memória, placa de vídeo NVIDIA GeForce GTX 1070/PCIe/SSE2 e uma placa de rede fibra ótica 10Gb.   
 
 Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
