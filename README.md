@@ -34,9 +34,13 @@ A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente
 
 - Para alterar os parâmetros de fps, width, height e color das câmeras, utlize o [options/copia_json.py](options/copia_json.py)
 - O arquivo **capture-images.py** só irá mostrar as imagens das 4 câmeras com todas elas funcionando. Caso uma ou mais câmeras não esteja funcionando por algum motivo qualquer, o programa não irá mostrar as imagens.
-- A câmera do modelo BlackFly (Blackfly BFLY-PGE-09S2C) possui uma limitação quanto ao número de frames por segundo no que diz respeito ao modelo de cores. Na opção **RGB** (pixel format RGB8) as câmeras irão funcionar com até _12_ fps (1288 width, 728 heigth) e na opção **GRAY** (pixel format Mono8) as câmeras irão funcionar com até _30_ fps (1288 width, 728 heigth). Informações adicionais podem ser encontradas nas [referências técnicas](./referencias-tecnicas/)  das câmeras.
+- A câmera do modelo BlackFly (Blackfly GigE BFLY-PGE-09S2C) possui uma limitação quanto ao número de frames por segundo no que diz respeito ao modelo de cores. Na opção **RGB** (pixel format RGB8) as câmeras irão funcionar com até _12_ fps (1288 width, 728 heigth) e na opção **GRAY** (pixel format Mono8) as câmeras irão funcionar com até _30_ fps (1288 width, 728 heigth). Informações adicionais podem ser encontradas nas [referências técnicas](./referencias-tecnicas/)  das câmeras.
 - As alterações realizadas nos arquivos options/X.json (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers. Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
 - Para parar todos os conteiners de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O espaço inteligente atual do Ifes no  roda em uma máquina Ubuntu 18.04.5 LTS, processador Intel® Core™ i5-8400 CPU @ 2.80GHz × 6, 16Gb de memória, placa de vídeo NVIDIA GeForce GTX 1070/PCIe/SSE2 e uma placa de rede fibra ótica 10Gb.   
+
+**Câmeras novas e o novo serciço de gateway**
+
+As câmeras (Blackfly S GigE BFS-PGE-16S2C-CS) adquiridas recentemente para o espaço inteligente não funcionam com o serviço de gateway já disponível> desta forma, uma novo serviço de gateway foi desenvolvido e pode ser encontrado [aqui](https://github.com/LabTef-Ifes/is-cameras-py). Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualisar a imagem de uma câmera.
 
 Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
