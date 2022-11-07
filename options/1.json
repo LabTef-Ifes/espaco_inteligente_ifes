@@ -3,7 +3,7 @@
   "zipkin_host": "localhost",
   "zipkin_port": 9411,
   "camera_ip": "10.0.0.67",
-  "camera_id": 0,
+  "camera_id": 1,
   "packet_delay": 6000,
   "packet_size": 1400,
   "reverse_x": false,
@@ -11,7 +11,7 @@
   "parallelism": -1,
   "initial_config": {
     "sampling": {
-      "frequency": 30.0
+      "frequency": 15
     },
     "camera": {
       "shutter": {
@@ -24,8 +24,8 @@
         "value": "GRAY"
       },
       "resolution": {
-        "width": 1288,
-        "height": 728
+        "width": 1200,
+        "height": 800
       },
       "format": {
         "format": "JPEG",
