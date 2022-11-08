@@ -33,7 +33,6 @@ Com o venv ativo, instale as bibliotecas necessárias para o espaço inteligente
 
 # Informações importantes
 
-
 - Para alterar os parâmetros de fps,width,height e color das câmeras, utlize o [options/copia_json.py](options/copia_json.py)
 - O arquivo **capture-images.py** só irá mostrar as imagens das 4 câmeras com todas elas funcionando. Caso uma ou mais câmeras não esteja funcionando por algum motivo qualquer, o programa não irá mostrar as imagens.
 - A câmera do modelo BlackFly (Blackfly GigE BFLY-PGE-09S2C) possui uma limitação quanto ao número de frames por segundo no que diz respeito ao modelo de cores. Na opção **RGB** (pixel format RGB8) as câmeras irão funcionar com até _12_ fps (1288 width, 728 heigth) e na opção **GRAY** (pixel format Mono8) as câmeras irão funcionar com até _30_ fps (1288 width, 728 heigth). Informações adicionais podem ser encontradas nas [referências técnicas](./referencias-tecnicas/)  das câmeras.
