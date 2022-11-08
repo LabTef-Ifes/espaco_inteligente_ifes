@@ -3,23 +3,24 @@
 ![Reconstrução tridimensional](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES/blob/main/caminhada.gif)
 
 ---
-[Instalando o Github no Linux](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+# Preparando o ambiente
 
 **Para utilizar o GitHub no Linux, é recomendado utilizar a extensão github nativa no VsCode**
+
 Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes` para o repositório principal ou `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid` para o fork de atualização.
 
-É recomendado utilizar um virtualenv para o espaço reservado com todas as bibliotecas desejadas.
+É recomendado utilizar um virtualenv reservado para todas as bibliotecas desejadas no espaço inteligente.
 Para criar um venv, digite `python3 -m venv nomedovenv` no diretório reservado ao projeto
 
-Instale as bibliotecas necessárias para o espaço inteligente, descritas no arquivos [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
+Com o venv ativo, instale as bibliotecas necessárias para o espaço inteligente, descritas no arquivos [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
 
-1. Ajuste os diretórios dos arquivos is-basic.sh, is-cameras.sh, is-frame-transformation.sh e is-skeletons-grouper.sh de acordo com a sua máquina.
+1. Ajuste os diretórios dos arquivos `is-basic.sh`, `is-cameras.sh`, `is-frame-transformation.sh` e `is-skeletons-grouper.sh` de acordo com a sua máquina.
 2. Suba os containeres necessários para o funcionamento do espaço inteligente: execute o arquivo [iniciar_principais_containeres.py](iniciar_principais_containeres.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containeres.py](iniciar_principais_containeres.py) novamente.
 3. No terminal, digite `sudo docker stats` para verificar se os containeres estão rodando (*Ctrl+C para fechar*). 
 4. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **dataset-creator/options.json**.
 
 ---
-A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente.
+# Explicação de alguns arquivos do espaço inteligente.
 
 - [options/0.json](options/0.json) - parâmetros da câmera 0 (há também os parâmetros das câmeras 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: IP, fps, altura, largura e etc.
 - [dataset-creator/options.json](dataset-creator/options.json) - parâmetros da criação gravação e análise dos vídeos. Neste arquivo é possível alterar o diretório onde os frames das câmeras serão salvos, para posteriormente formarem vídeos. 
@@ -27,18 +28,22 @@ A seguir, temos uma breve explicação de alguns arquivos do espaço inteligente
 - [dataset-creator/make-videos.py](/dataset-creator/make-videos.py) - A partir dos frames capturados pelo arquivo 'capture-images.py', monta os vídeos e os salva em formato .mp4.
 - [dataset-creator/export-video-3d-medicoes-e-erros.py](dataset-creator/export-video-3d-medicoes-e-erros.py) - programa principal que realiza a leitura dos pontos gerados, calcula os parâmetros frame a frame, classifica o movimento executado e mostra o vídeo.
 - [dataset-creator/parameters.py](dataset-creator/parameters.py) - programa que possui funções usadas no arquivo 'export-video-3d-medicoes-e-erros.py'.
-- [dataset-creator/captura-monta-e-analisa-video.py](dataset-creator/captura-monta-e-analisa-video.py) - programa para executar todo o sistema em sequência, desde a captura até a análise.
+- [dataset-creator/captura-monta-e-analisa-video.py](dataset-creator/captura-monta-e-analisa-video.py) - programa para executar todo o sistema em sequência, desde a captura até a análise final.
 - [visualizar_camera.py](visualizar_camera.py) - arquivo teste para visualizar a imagem de somente uma câmera.
 
-Informações importantes
+# Informações importantes
 
-- Para calibração de câmeras, acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration)
+
 - Para alterar os parâmetros de fps,width,height e color das câmeras, utlize o [options/copia_json.py](options/copia_json.py)
 - O arquivo **capture-images.py** só irá mostrar as imagens das 4 câmeras com todas elas funcionando. Caso uma ou mais câmeras não esteja funcionando por algum motivo qualquer, o programa não irá mostrar as imagens.
 - A câmera do modelo BlackFly possui uma limitação de fps para imagem colorida. Na opção **RGB** a câmera atual irá funcionar com até 12 fps e na opção **GRAY** irá funcionar com até _20_ fps.
 - As alterações realizadas nos arquivos options/X.json (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers. Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos json, os containers deverão ser parados e reinicializados.
 - Para parar todos os conteiners de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 
-Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
+# Referências
 
-Outras referências: [Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
+-Para calibração de câmeras, acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration)
+
+-Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
+
+-[Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
