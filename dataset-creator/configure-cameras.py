@@ -15,7 +15,7 @@ for camera in options.cameras:
     msg.reply_to = sb
     msg.topic = 'CameraGateway.{}.SetConfig'.format(camera.id)
     channel.publish(msg)
-    cids[msg.correlation_id] = { 'camera': camera.id, 'ok': False }
+    cids[msg.correlation_id] = {'camera': camera.id, 'ok': False}
 
 while True:
     msg = channel.consume()

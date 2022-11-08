@@ -7,6 +7,7 @@ def valid(default, var):
 
     Args:
         default (Any): Valor padrão caso o usuário deseje pular essa alteração
+        var (Any): Nome da variável para o input
     """
     novo = input(
         f"Insira o novo valor de {var} ou enter para manter:") or default
@@ -36,14 +37,20 @@ width = valid(config['initial_config']['image']
 height = valid(config['initial_config']['image']
                ['resolution']['height'], 'height')
 
+color = input("Color(RGB ou GRAY):").upper() or config['initial_config']['image']['color_space']['value']
+while color not in ('RGB','GRAY',''):
+    print("Erro, digite um valor válido")
+    color = input("Color(RGB ou GRAY):").upper() or config['initial_config']['image']['color_space']['value']
 
+#Atualiza o dicionário
 config['initial_config']['sampling']['frequency'] = novo_fps
 config['initial_config']['image']['resolution']['height'] = height
 config['initial_config']['image']['resolution']['width'] = width
-
-# Copia o novo fps para os jsons 1-3
-for c in range(1, 4):
+config['initial_config']['image']['color_space']['value'] = color
+# Copia os novos valores para os jsons 0-3
+for c in range(0, 4):
     with open(str(c)+source_file[1:], 'w+') as f:
+        #Atualiza o id das câmeras para o valor correto
         config['camera_id'] = c
         json.dump(config, f, indent=2)
      
@@ -55,7 +62,8 @@ with open(options_path) as f:
         options["cameras"][i]['config']["sampling"]['frequency'] = novo_fps
         options["cameras"][i]['config']['image']['resolution']['width'] = width
         options["cameras"][i]['config']['image']['resolution']['height'] = height
-    print(novo_fps, width, height)
+        options["cameras"][i]['config']['image']['color_space']['value'] = color
+    print(novo_fps, width, height,color)
 
 with open(options_path, 'w+') as f:
     json.dump(options, f, indent=2)

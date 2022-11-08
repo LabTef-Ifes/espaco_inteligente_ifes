@@ -3,6 +3,8 @@ import pika
 import time
 import json
 
+"""_summary_
+"""
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='192.168.1.107'))
 channel = connection.channel()
@@ -11,6 +13,7 @@ channel.queue_declare(queue='Receive_information')
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
+# ch, method, properties não usados???
 def callback(ch, method, properties, body):
     """_summary_
 

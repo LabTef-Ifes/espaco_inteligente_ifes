@@ -99,12 +99,11 @@ def render_skeletons_3d(ax, skeletons, links, colors):
                     color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
 
 
-def skeletons_localization(skeletons, initial_foot):
+def skeletons_localization(skeletons):
     """_summary_
 
     Args:
         skeletons (_type_): _description_
-        initial_foot (_type_): _description_
 
     Returns:
         _type_: _description_
@@ -159,8 +158,7 @@ def calc_waistline(skeletons):
     Returns:
         _type_: _description_
     """
-    right_hip = None
-    left_hip = None
+    right_hip = left_hip = None
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -226,14 +224,14 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
 
 
 log = Logger(name='WatchVideos')
-with open('keymap.json', 'r') as f:
+with open('keymap.json') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
 
 if not os.path.exists(options.folder):
     log.critical("Folder '{}' doesn't exist", options.folder)
 
-with open('gestures.json', 'r') as f:
+with open('gestures.json') as f:
 
     # Semelhante ao arquivo export-video-3d
     gestures = json.load(f)
@@ -299,12 +297,11 @@ plt.ioff()
 fig = plt.figure(figsize=(5, 5))
 ax = Axes3D(fig)
 
-step_length = []
-step_time = []
-double_support = []
-right_femur, right_shin, left_femur, left_shin = [], [], [], []
 update_image = True
 it_frames = 0
+right_femur, right_shin, left_femur, left_shin = [], [], [], []
+step_length,step_time = [],[]
+double_support = []
 altura_instantanea = []
 quadril = []
 while True:
@@ -322,11 +319,13 @@ while True:
         ax.clear()
         ax.view_init()
         ax.set_xlim(-2.0, 2.0)
-        ax.set_xticks(np.arange(-2.0, 2.0, 0.5))
         ax.set_ylim(-3.0, 3.0)
-        ax.set_yticks(np.arange(-3.0, 3.0, 0.5))
         ax.set_zlim(-0.25, 1.5)
+
+        ax.set_xticks(np.arange(-2.0, 2.0, 0.5))
+        ax.set_yticks(np.arange(-3.0, 3.0, 0.5))
         ax.set_zticks(np.arange(0, 1.75, 0.5))
+        
         ax.set_xlabel('X', labelpad=20)
         ax.set_ylabel('Y', labelpad=10)
         ax.set_zlabel('Z', labelpad=5)
@@ -394,12 +393,12 @@ while True:
             log.warn("You must assign the initial foot")
         elif initial_foot == "left":
             initial_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[1]
+                localizations[it_frames])[1]
             step_initial_frame = it_frames
             log.info("Initial position saved as left foot")
         else:
             initial_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[0]
+                localizations[it_frames])[0]
             step_initial_frame = it_frames
             log.info("Initial position saved as right foot")
 
@@ -408,7 +407,7 @@ while True:
             log.warn('You must first assign the initial position')
         elif initial_foot == "left":
             final_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[0]
+                localizations[it_frames])[0]
             step_length.append(calc_length(initial_position, final_position))
             step_final_frame = it_frames
             step_time.append(calc_step_time(
@@ -423,7 +422,7 @@ while True:
             log.info("Step duration: {}", step_time)
         else:
             final_position = skeletons_localization(
-                localizations[it_frames], initial_foot)[1]
+                localizations[it_frames])[1]
             step_length.append(calc_length(initial_position, final_position))
             step_final_frame = it_frames
             step_time.append(calc_step_time(

@@ -19,25 +19,26 @@ from itertools import permutations
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')),
-        (HKP.Value('NECK'), HKP.Value('CHEST')),
-        (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')),
-        (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
-        (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
-        (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
-        (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
-        (HKP.Value('NECK'), HKP.Value('LEFT_HIP')),
-        (HKP.Value('LEFT_HIP'), HKP.Value('LEFT_KNEE')),
-        (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
-        (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
-        (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
-        (HKP.Value('RIGHT_ELBOW'), HKP.Value('RIGHT_WRIST')),
-        (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),
-        (HKP.Value('RIGHT_HIP'), HKP.Value('RIGHT_KNEE')),
-        (HKP.Value('RIGHT_KNEE'), HKP.Value('RIGHT_ANKLE')),
-        (HKP.Value('NOSE'), HKP.Value('LEFT_EYE')),
-        (HKP.Value('LEFT_EYE'), HKP.Value('LEFT_EAR')),
-        (HKP.Value('NOSE'), HKP.Value('RIGHT_EYE')),
-        (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
+         (HKP.Value('NECK'), HKP.Value('CHEST')),
+         (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')),
+         (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
+         (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
+         (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
+         (HKP.Value('NECK'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('LEFT_HIP'), HKP.Value('LEFT_KNEE')),
+         (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
+         (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
+         (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
+         (HKP.Value('RIGHT_ELBOW'), HKP.Value('RIGHT_WRIST')),
+         (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),
+         (HKP.Value('RIGHT_HIP'), HKP.Value('RIGHT_KNEE')),
+         (HKP.Value('RIGHT_KNEE'), HKP.Value('RIGHT_ANKLE')),
+         (HKP.Value('NOSE'), HKP.Value('LEFT_EYE')),
+         (HKP.Value('LEFT_EYE'), HKP.Value('LEFT_EAR')),
+         (HKP.Value('NOSE'), HKP.Value('RIGHT_EYE')),
+         (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
+
 
 def render_skeletons(images, annotations, it, colors, links):
     for cam_id, image in images.items():
@@ -67,13 +68,13 @@ def render_skeletons(images, annotations, it, colors, links):
 def place_images(output_image, images, x_offset=0, y_offset=0):
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w +
-                 x_offset, :] = images[0]
+                                                         x_offset, :] = images[0]
     output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w +
-                 x_offset, :] = images[1]
+                                                         x_offset, :] = images[1]
     output_image[h + y_offset:2 * h + y_offset, 0 + x_offset:w +
-                 x_offset, :] = images[2]
+                                                             x_offset, :] = images[2]
     output_image[h + y_offset:2 * h + y_offset, w + x_offset:2 * w +
-                 x_offset, :] = images[3]
+                                                             x_offset, :] = images[3]
 
 
 log = Logger(name='WatchVideos')

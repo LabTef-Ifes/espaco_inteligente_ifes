@@ -21,11 +21,16 @@
     },
     "image": {
       "color_space": {
-        "value": "GRAY"
+        "value": "RGB"
       },
       "resolution": {
+<<<<<<< HEAD
         "width": 1200,
         "height": 800
+=======
+        "width": 600,
+        "height": 400
+>>>>>>> cfdc29160f8cc871f6d571f5e9bd3dc3f5ba05cb
       },
       "format": {
         "format": "JPEG",
