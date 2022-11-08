@@ -40,7 +40,7 @@ Com o venv ativo, instale as bibliotecas necessárias para o espaço inteligente
 - Para parar todos os conteiners de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O espaço inteligente atual do Ifes no  roda em uma máquina Ubuntu 18.04.5 LTS, processador Intel® Core™ i5-8400 CPU @ 2.80GHz × 6, 16Gb de memória, placa de vídeo NVIDIA GeForce GTX 1070/PCIe/SSE2 e uma placa de rede fibra ótica 10Gb.   
 
-**Câmeras novas e o novo serviço de gateway**
+## Câmeras novas e o novo serviço de gateway
 
 As câmeras (Blackfly S GigE BFS-PGE-16S2C-CS) adquiridas recentemente para o espaço inteligente não funcionam com o serviço de gateway já disponível. Desta forma, uma novo serviço de gateway foi desenvolvido e pode ser encontrado [aqui](https://github.com/LabTef-Ifes/is-cameras-py). Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualisar a imagem de uma câmera. Para rodar a quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta deploy/multi-camera. As configurações das câmeras podem ser alterados nos arquivos settings-camera-X.yaml (sendo X = 0, 1, 2 ou 3) também contidos na pasta deploy/multi-camera. Caso só exista o arquivo correspondeste a uma câmera, você poderá criar os demais. Os parâmetros disponíveis para alteração são fps e mapa de cores.
 
