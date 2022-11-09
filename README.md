@@ -40,7 +40,7 @@ Com o venv ativo, instale as bibliotecas necessárias para o espaço inteligente
 - As alterações realizadas nos arquivos options/X.json (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers. Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
 - Para parar todos os conteiners de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 
-## Câmeras novas e o novo serviço de gateway
+## Câmeras novas do switch e o novo serviço de gateway
 
 As câmeras (Blackfly S GigE BFS-PGE-16S2C-CS) adquiridas recentemente para o espaço inteligente não funcionam com o serviço de gateway já disponível. Desta forma, uma novo serviço de gateway foi desenvolvido e pode ser encontrado [aqui](https://github.com/LabTef-Ifes/is-cameras-py). Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualisar a imagem de uma câmera. Para rodar a quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta deploy/multi-camera. As configurações das câmeras podem ser alterados nos arquivos settings-camera-X.yaml (sendo X = 0, 1, 2 ou 3) também contidos na pasta deploy/multi-camera. Caso só exista o arquivo correspondeste a uma câmera, você poderá criar os demais. Os parâmetros disponíveis para alteração são fps e mapa de cores.
 
