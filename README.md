@@ -57,8 +57,8 @@ Para rodar a quatro câmeras de uma só vez, execute o comando `sudo docker comp
 O espaço inteligente atual do Ifes Vitória roda em uma máquina Ubuntu 18.04.5 LTS, processador Intel® Core™ i5-8400 CPU @ 2.80GHz × 6, 16Gb de memória, placa de vídeo NVIDIA GeForce GTX 1070/PCIe/SSE2 e uma placa de rede fibra ótica 10Gb.
 # Referências
 
--Para calibração de câmeras, acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration)
+- Para calibração de câmeras, acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration)
 
--Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
+- Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
 
--[Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
+- [Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
