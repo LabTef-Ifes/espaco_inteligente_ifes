@@ -3,14 +3,12 @@ import re
 import sys
 import cv2
 import json
-import time
 import argparse
 import numpy as np
 from utils import load_options
-from utils import to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 
 from is_msgs.image_pb2 import ObjectAnnotations
 from is_msgs.image_pb2 import HumanKeypoints as HKP
@@ -126,6 +124,13 @@ def axes():
 
 # ???
 def plot3dClass(skeletons, links, colors):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+    """    
     plt.figure()
     ax = plt.axes(projection='3d')
 
@@ -228,6 +233,7 @@ while True:
         ax.set_xlabel('X', labelpad=20)
         ax.set_ylabel('Y', labelpad=10)
         ax.set_zlabel('Z', labelpad=5)
+        
         render_skeletons_3d(ax, localizations[it_frames], links, colors)
 
         fig.canvas.draw()
