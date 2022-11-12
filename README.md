@@ -7,8 +7,8 @@
 
 **Para utilizar o GitHub no Linux, é recomendado utilizar a extensão github nativa no VsCode**
 
--Crie uma pasta local para o projeto com o nome `desenvolvimento`
--Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes` para o repositório principal ou `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid` para clonar o fork de atualização.
+- Crie uma pasta local para o projeto com o nome `desenvolvimento`
+- Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes` para o repositório principal ou `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid` para clonar o fork de atualização.
 
 É recomendado utilizar um virtualenv reservado para todas as bibliotecas desejadas no espaço inteligente.
 Para criar um venv, digite `python3 -m venv nomedovenv` no diretório reservado ao projeto.
