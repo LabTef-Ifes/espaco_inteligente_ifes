@@ -1,15 +1,13 @@
 import docker
-
-cli = docker.DockerClient(base_url='unix:///var/run/docker.sock')
-containers = cli.containers.list(sparse = True)
-print(containers)
-
-'''from typing import Optional
-
-import docker
+from time import sleep
 
 
-def is_container_running(container_name: str) -> Optional[bool]:
+# Checks if the containers are running, if not, it starts them
+
+# cli = docker.DockerClient(base_url='unix:///var/run/docker.sock')
+# containers = cli.containers.list(sparse=True)
+
+def is_container_running(container_name: str):
     """Verify the status of a container by it's name
 
     :param container_name: the name of the container
@@ -33,6 +31,18 @@ def is_container_running(container_name: str) -> Optional[bool]:
 
 
 if __name__ == "__main__":
-    container_name = "localredis"
-    result = is_container_running(container_name)
-    print(result)'''
+    containeres = ['rabbitmq', 'zipkin', 'cam0', 'cam1', 'cam2', 'cam3',
+                   'sk1', 'sk2', 'is-frame_transformation', 'grouper']
+    for c in containeres:
+        result = is_container_running(c)
+        print(c, result)
+        if not result:
+            down_containeres.append(c)
+
+    while down_containeres:
+        sleep(3)
+        for c in down_containeres:
+            result = is_container_running(c)
+            print(c, result)
+            if result:
+                down_containeres.remove(c)
