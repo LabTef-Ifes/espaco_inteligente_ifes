@@ -21,7 +21,7 @@ with open('gestures.json', 'r') as f:
 vl = MultipleVideoLoader({0: 'gestures_.MOV'})
 
 it = 0
-labels = set([0, vl.n_frames() - 1])
+labels = {0, vl.n_frames() - 1}
 n_labels = 2 + 2 * len(gestures)
 while True:
     n_loaded = vl.load_next()

@@ -31,7 +31,7 @@ def load_options():
                 log.critical('Unable to load options from \'{}\'. \n{}', op_file, ex)
             except:
                 log.critical('Unable to load options from \'{}\'', op_file)
-    except Exception as ex:
+    except Exception:
         log.critical('Unable to open file \'{}\'', op_file)
 
 def get_links(model='COCO'):
@@ -170,5 +170,5 @@ def draw_skeletons(input_image, skeletons):
             cv2.circle(image, center=center, radius=radius, color=(255, 255, 255), thickness=-1)
     return image
 
-#???
+# ???
 # def get_3d_skeletons()

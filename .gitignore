@@ -10,3 +10,8 @@ is-skeletons-detector.sh
 is-skeletons-grouper.sh
 options/optionstest.json
 guia-markdown.pdf
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/espaco_inteligente_ifes-deivid.iml

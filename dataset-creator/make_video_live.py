@@ -87,21 +87,21 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
     """
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w +
-                 x_offset, :] = images[0]
+                                                         x_offset, :] = images[0]
 
     output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w +
-                 x_offset, :] = images[1]
+                                                         x_offset, :] = images[1]
 
     output_image[h + y_offset:2 * h + y_offset, 0 + x_offset:w +
-                 x_offset, :] = images[2]
+                                                             x_offset, :] = images[2]
 
     output_image[h + y_offset:2 * h + y_offset, w + x_offset:2 * w +
-                 x_offset, :] = images[3]
+                                                             x_offset, :] = images[3]
 
 
 log = Logger(name='WatchVideos')
 
-#??
+# ??
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
@@ -111,14 +111,14 @@ if not os.path.exists(options.folder):
 
 with open('gestures.json') as f:
     gestures = json.load(f)
-    #Ordered de sorted?
+    # Ordered de sorted?
     gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
 
 parser = argparse.ArgumentParser(
     description='Utility to capture a sequence of images from multiples cameras'
 )
 
-#O que sao gestures?
+# O que sao gestures?
 parser.add_argument(
     '--person', '-p', type=int, required=True, help='ID to identity person')
 parser.add_argument(

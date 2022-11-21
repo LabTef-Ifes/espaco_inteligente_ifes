@@ -7,9 +7,11 @@ from is_wire.core.utils import now
 
 """
 
+
 class RequestManager:
     """_summary_
-    """    
+    """
+
     def __init__(self,
                  channel,
                  max_requests,
@@ -27,7 +29,7 @@ class RequestManager:
 
         Raises:
             Exception: _description_
-        """                
+        """
         if min_requests is None:
             min_requests = max_requests
         if min_requests < 0:
@@ -67,7 +69,7 @@ class RequestManager:
 
         Raises:
             Exception: _description_
-        """        
+        """
         if not self.can_request():
             raise Exception("Can't request more than {}. Use 'RequestManager.can_request' "
                             "method to check if you can do requests.")
@@ -109,7 +111,7 @@ class RequestManager:
                         received_msgs.append((msg, self._requests[cid]["metadata"]))
                         del self._requests[cid]
 
-        #???
+        # ???
         except socket.timeout:
             pass
 

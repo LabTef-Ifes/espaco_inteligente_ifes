@@ -3,9 +3,6 @@ import statistics
 import numpy as np
 import cv2
 
-# should not exist
-from numpy import *
-
 import pandas as pd
 import sklearn
 from sklearn import preprocessing as prepro
@@ -35,6 +32,7 @@ with open('keymap.json') as f:
 options = load_options(print_options=False)
 
 
+# classe sem self???
 class Parameters:
     def perdas_3d(ax, skeletons, links, colors):
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
@@ -54,6 +52,7 @@ class Parameters:
                     #print("Perdas na detecção: " +   str(perdas) + "%")
                     return perdas
 
+    #perna direita e angulo_real_joelho_esquerdo não usados
     def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo_caminhada, altura_quadril, perna_direita, left_knee_angle, angulo_real_joelho_esquerdo, flexion_left_knee, flexion_right_knee, simetria_comprimento_passo, largura_da_passada, left_extension_hip_angle, right_extension_hip_angle):
         """_summary_
 
@@ -171,7 +170,7 @@ class Parameters:
         # print(c)
         a = Stance_real
         aux = (pow(c, 2)+pow(b, 2))-pow(a, 2)
-        aux2 = aux/(2*b*c)
+        #aux2 = aux/(2*b*c)
         # erro_medio_angulo=math.degrees(math.acos(aux2))-statistics.mean(angulo_caminhada)
         # print("Ângulo real de abertura das pernas: %.3f °" % math.degrees(math.acos(aux2)))
         # print(math.degrees(math.acos(aux2)))
@@ -320,11 +319,12 @@ class Parameters:
     def ang_plano_torax(skeletons):
         neck = 0
         left_hip = left_knee = right_hip = right_knee = 0
-        v1 = v2 = 0
         vetor_normal = [0, 0, 0]
-        angle = ang = angle_test = 0
-        angle_right = angle_left = 0
+        angle_test = 0
         ponto_peito = [0, 0, 0]
+        # Não usados???
+        v1 = v2 = 0
+        angle = ang = angle_right = angle_left = 0
 
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
 

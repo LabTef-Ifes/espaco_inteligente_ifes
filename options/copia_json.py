@@ -25,6 +25,9 @@ def valid(default, var):
 
 
 source_file = '0.json'
+# Path para o arquivo options.json
+options_path = '../dataset-creator/options.json'
+
 
 with open(source_file) as f:
     config = json.load(f)
@@ -37,12 +40,14 @@ width = valid(config['initial_config']['image']
 height = valid(config['initial_config']['image']
                ['resolution']['height'], 'height')
 
-color = input("Color(RGB ou GRAY):").upper() or config['initial_config']['image']['color_space']['value']
-while color not in ('RGB','GRAY',''):
+color = input("Color(RGB ou GRAY):").upper(
+) or config['initial_config']['image']['color_space']['value']
+while color not in ('RGB', 'GRAY', ''):
     print("Erro, digite um valor válido")
-    color = input("Color(RGB ou GRAY):").upper() or config['initial_config']['image']['color_space']['value']
+    color = input("Color(RGB ou GRAY):").upper(
+    ) or config['initial_config']['image']['color_space']['value']
 
-#Atualiza o dicionário
+# Atualiza o dicionario
 config['initial_config']['sampling']['frequency'] = novo_fps
 config['initial_config']['image']['resolution']['height'] = height
 config['initial_config']['image']['resolution']['width'] = width
@@ -50,20 +55,18 @@ config['initial_config']['image']['color_space']['value'] = color
 # Copia os novos valores para os jsons 0-3
 for c in range(0, 4):
     with open(str(c)+source_file[1:], 'w+') as f:
-        #Atualiza o id das câmeras para o valor correto
+        # Atualiza o id das câmeras para o valor correto
         config['camera_id'] = c
         json.dump(config, f, indent=2)
-     
-# Atualiza o options.json na outra pasta
-options_path = '../dataset-creator/options.json'
-with open(options_path) as f:
-    options = json.load(f)
-    for i, cam in enumerate(options["cameras"]):
-        options["cameras"][i]['config']["sampling"]['frequency'] = novo_fps
-        options["cameras"][i]['config']['image']['resolution']['width'] = width
-        options["cameras"][i]['config']['image']['resolution']['height'] = height
-        options["cameras"][i]['config']['image']['color_space']['value'] = color
-    print(novo_fps, width, height,color)
 
+# Atualiza o options.json na outra pasta
+with open(options_path) as f:
+    options = json.load(f)  
+for i, _ in enumerate(options["cameras"]):
+    options["cameras"][i]['config']["sampling"]['frequency'] = novo_fps
+    options["cameras"][i]['config']['image']['resolution']['width'] = width
+    options["cameras"][i]['config']['image']['resolution']['height'] = height
+    options["cameras"][i]['config']['image']['color_space']['value'] = color
+print(novo_fps, width, height, color)
 with open(options_path, 'w+') as f:
     json.dump(options, f, indent=2)

@@ -3,14 +3,12 @@ import re
 import sys
 import cv2
 import json
-import time
 import argparse
 import numpy as np
 from utils import load_options
-from utils import to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 
 from is_msgs.image_pb2 import ObjectAnnotations
 from is_msgs.image_pb2 import HumanKeypoints as HKP
@@ -19,27 +17,37 @@ from itertools import permutations
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')),
-        (HKP.Value('NECK'), HKP.Value('CHEST')),
-        (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')),
-        (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
-        (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
-        (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
-        (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
-        (HKP.Value('NECK'), HKP.Value('LEFT_HIP')),
-        (HKP.Value('LEFT_HIP'), HKP.Value('LEFT_KNEE')),
-        (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
-        (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
-        (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
-        (HKP.Value('RIGHT_ELBOW'), HKP.Value('RIGHT_WRIST')),
-        (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),
-        (HKP.Value('RIGHT_HIP'), HKP.Value('RIGHT_KNEE')),
-        (HKP.Value('RIGHT_KNEE'), HKP.Value('RIGHT_ANKLE')),
-        (HKP.Value('NOSE'), HKP.Value('LEFT_EYE')),
-        (HKP.Value('LEFT_EYE'), HKP.Value('LEFT_EAR')),
-        (HKP.Value('NOSE'), HKP.Value('RIGHT_EYE')),
-        (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
+         (HKP.Value('NECK'), HKP.Value('CHEST')),
+         (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')),
+         (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
+         (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
+         (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
+         (HKP.Value('NECK'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('LEFT_HIP'), HKP.Value('LEFT_KNEE')),
+         (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
+         (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
+         (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
+         (HKP.Value('RIGHT_ELBOW'), HKP.Value('RIGHT_WRIST')),
+         (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),
+         (HKP.Value('RIGHT_HIP'), HKP.Value('RIGHT_KNEE')),
+         (HKP.Value('RIGHT_KNEE'), HKP.Value('RIGHT_ANKLE')),
+         (HKP.Value('NOSE'), HKP.Value('LEFT_EYE')),
+         (HKP.Value('LEFT_EYE'), HKP.Value('LEFT_EAR')),
+         (HKP.Value('NOSE'), HKP.Value('RIGHT_EYE')),
+         (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
+
 
 def render_skeletons(images, annotations, it, colors, links):
+    """_summary_
+
+    Args:
+        images (_type_): _description_
+        annotations (_type_): _description_
+        it (_type_): _description_
+        colors (_type_): _description_
+        links (_type_): _description_
+    """    
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -55,7 +63,7 @@ def render_skeletons(images, annotations, it, colors, links):
                         parts[end],
                         color=color,
                         thickness=4)
-            for _, center in parts.items():
+            for center in parts.values():
                 cv2.circle(
                     image,
                     center=center,
@@ -65,6 +73,14 @@ def render_skeletons(images, annotations, it, colors, links):
 
 
 def place_images(output_image, images, x_offset=0, y_offset=0):
+    """_summary_
+
+    Args:
+        output_image (_type_): _description_
+        images (_type_): _description_
+        x_offset (int, optional): _description_. Defaults to 0.
+        y_offset (int, optional): _description_. Defaults to 0.
+    """    
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w +
                  x_offset, :] = images[0]
@@ -130,7 +146,8 @@ if not all(
         person_id, gesture_id)
 
 size = (2 * options.cameras[0].config.image.resolution.height,
-        2 * options.cameras[0].config.image.resolution.width, 3)
+        2 * options.cameras[0].config.image.resolution.width,
+        3)
 full_image = np.zeros(size, dtype=np.uint8)
 
 video_loader = MultipleVideoLoader(video_files)

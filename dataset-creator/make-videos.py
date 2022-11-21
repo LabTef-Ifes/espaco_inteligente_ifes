@@ -1,4 +1,4 @@
-import os,re,sys
+import os, re, sys
 import shutil
 from subprocess import Popen, PIPE, STDOUT
 from utils import load_options
@@ -13,11 +13,11 @@ def get_person_gesture(folder):
 
     Returns:
         Tuple[int]: _description_
-    """    
+    """
     match = re.search(r'p(\d+)g(\d+)', folder)
     if match is None:
         return None
-    return (int(match.group(1)), int(match.group(2)))
+    return int(match.group(1)), int(match.group(2))
 
 
 log = Logger(name='Capture')
@@ -27,8 +27,9 @@ if not os.path.exists(options.folder):
     log.critical("Folder '{}' doesn't exist", options.folder)
     sys.exit(-1)
 
-#???
-ffmpeg_base_command = "ffmpeg -y -r {fps:.1f} -start_number 0 -i {file_pattern:s} -c:v libx264 -vf fps={fps:.1f} -vf format=rgb24 {video_file:s}"
+# ???
+ffmpeg_base_command = "ffmpeg -y -r {fps:.1f} -start_number 0 -i {file_pattern:s} -c:v libx264 -vf fps={fps:.1f} -vf " \
+                      "format=rgb24 {video_file:s} "
 
 for root, dirs, files in os.walk(options.folder):
     for exp_folder in dirs:
@@ -51,12 +52,12 @@ for root, dirs, files in os.walk(options.folder):
             log.info("Creating video '{}'", video_file)
             process = Popen(ffmpeg_command.split(), stdout=PIPE, stderr=STDOUT)
             # with process.stdout as pipe:
-                # for line in iter(pipe.readline, b''):
-                    # print(line.decode('utf-8').strip())
+            # for line in iter(pipe.readline, b''):
+            # print(line.decode('utf-8').strip())
             if process.wait() == 0:
                 log.info("Done")
                 # shutil.rmtree(sequence_folder)
             else:
                 log.warn("\'{}\' failed", video_file)
     # only first folder level
-    break  
+    break

@@ -6,7 +6,7 @@ import json
 import time
 import argparse
 import numpy as np
-from utils import load_options,to_labels_array, to_labels_dict
+from utils import load_options, to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
 from collections import OrderedDict
@@ -20,7 +20,7 @@ from analysis import SkeletonsCoord
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-#Código igual ao outro watch???
+# Código igual ao outro watch???
 """_summary_
 
 """
@@ -55,7 +55,7 @@ def render_skeletons(images, annotations, it, links, colors):
         it (_type_): _description_
         links (_type_): _description_
         colors (_type_): _description_
-    """    
+    """
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -78,7 +78,7 @@ def render_skeletons_3d(ax, skeletons, links, colors):
         skeletons (_type_): _description_
         links (_type_): _description_
         colors (_type_): _description_
-    """    
+    """
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -90,10 +90,10 @@ def render_skeletons_3d(ax, skeletons, links, colors):
                 x_pair = [parts[begin][0], parts[end][0]]
                 y_pair = [parts[begin][1], parts[end][1]]
                 z_pair = [parts[begin][2], parts[end][2]]
-                #perdas=(15-len(parts))/15.0
-                #perdas=perdas*100.0
-                #print("Perdas na detecção: " +   str(perdas) + "%")
-                #print(skeleton.keypoints)
+                # perdas=(15-len(parts))/15.0
+                # perdas=perdas*100.0
+                # print("Perdas na detecção: " +   str(perdas) + "%")
+                # print(skeleton.keypoints)
                 ax.plot(
                     x_pair,
                     y_pair,
@@ -101,7 +101,8 @@ def render_skeletons_3d(ax, skeletons, links, colors):
                     linewidth=3,
                     color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
         break
-                    
+
+
 def left_leg(skeletons):
     """_summary_
 
@@ -110,31 +111,34 @@ def left_leg(skeletons):
 
     Returns:
         _type_: _description_
-    """    
-    skeletons_pb = ParseDict( skeletons, ObjectAnnotations())
+    """
+    skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeletons in skeletons_pb.objects:
         left_hip = None
         left_knee = None
         left_ankle = None
         parts = {}
         for part in skeletons.keypoints:
-            parts[part.id]=(part.position.x,part.position.y,part.position.z)
+            parts[part.id] = (part.position.x, part.position.y, part.position.z)
             if part.id == 13:
                 left_hip = parts[13]
             if part.id == 14:
-                left_knee=parts[14]
+                left_knee = parts[14]
             if part.id == 15:
-                left_ankle=parts[15]
+                left_ankle = parts[15]
 
         if left_hip and left_knee and left_ankle:
-            a=np.sqrt((left_ankle[0]-left_knee[0])**2+(left_ankle[1]-left_knee[1])**2+(left_ankle[2]-left_knee[2])**2)
-            b=np.sqrt((left_knee[0]-left_hip[0])**2 +(left_knee[1]-left_hip[1])**2 +(left_knee[2]-left_hip[2])**2)
-            left_leg=a+b
+            a = np.sqrt((left_ankle[0] - left_knee[0]) ** 2 + (left_ankle[1] - left_knee[1]) ** 2 + (
+                        left_ankle[2] - left_knee[2]) ** 2)
+            b = np.sqrt((left_knee[0] - left_hip[0]) ** 2 + (left_knee[1] - left_hip[1]) ** 2 + (
+                        left_knee[2] - left_hip[2]) ** 2)
+            left_leg = a + b
             return left_leg
         else:
             left_leg = 0
             return left_leg
         break
+
 
 def right_leg(skeletons):
     """_summary_
@@ -144,42 +148,46 @@ def right_leg(skeletons):
 
     Returns:
         _type_: _description_
-    """    
-    skeletons_pb = ParseDict( skeletons, ObjectAnnotations())
-    right_hip=None  
-    right_ankle=None 
-    right_knee=None
-    right_leg=None 
-    mid_point_ankle=None 
-    left_ankle=None 
+    """
+    skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
+    right_hip = None
+    right_ankle = None
+    right_knee = None
+    left_ankle = None
+
+    # Não usados ???
+    right_leg = None
+    mid_point_ankle = None
 
     for skeletons in skeletons_pb.objects:
         parts = {}
         for part in skeletons.keypoints:
-            parts[part.id]=(part.position.x,part.position.y,part.position.z)
+            parts[part.id] = (part.position.x, part.position.y, part.position.z)
             if part.id == 10:
                 right_hip = parts[10]
             if part.id == 11:
-                right_knee=parts[11]
+                right_knee = parts[11]
             if part.id == 12:
-                right_ankle=parts[12]
-            
+                right_ankle = parts[12]
+
             if part.id == 15:
-                left_ankle=parts[15]
+                left_ankle = parts[15]
 
         if right_ankle and right_knee and right_hip and left_ankle:
-            a=np.sqrt((right_ankle[0]-right_knee[0])**2+(right_ankle[1]-right_knee[1])**2+(right_ankle[2]-right_knee[2])**2)
-            b=np.sqrt((right_knee[0]-right_hip[0])**2 +(right_knee[1]-right_hip[1])**2 +(right_knee[2]-right_hip[2])**2)
-            right_leg=a+b
-            mid_point_ankle=(left_ankle[2]+right_ankle[2])/2
+            a = np.sqrt((right_ankle[0] - right_knee[0]) ** 2 + (right_ankle[1] - right_knee[1]) ** 2 + (
+                        right_ankle[2] - right_knee[2]) ** 2)
+            b = np.sqrt((right_knee[0] - right_hip[0]) ** 2 + (right_knee[1] - right_hip[1]) ** 2 + (
+                        right_knee[2] - right_hip[2]) ** 2)
+            right_leg = a + b
+            mid_point_ankle = (left_ankle[2] + right_ankle[2]) / 2
             return right_leg, mid_point_ankle
         else:
-            mid_point_ankle=0
-            right_leg=0
-            return right_leg,mid_point_ankle
+            mid_point_ankle = 0
+            right_leg = 0
+            return right_leg, mid_point_ankle
         break
 
-
+# ax não usado ???
 def perdas_3d(ax, skeletons, links, colors):
     """_summary_
 
@@ -191,7 +199,7 @@ def perdas_3d(ax, skeletons, links, colors):
 
     Returns:
         _type_: _description_
-    """    
+    """
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -200,13 +208,16 @@ def perdas_3d(ax, skeletons, links, colors):
         for link_parts, color in zip(links, colors):
             begin, end = link_parts
             if begin in parts and end in parts:
+                # pair's não usado ???
                 x_pair = [parts[begin][0], parts[end][0]]
                 y_pair = [parts[begin][1], parts[end][1]]
                 z_pair = [parts[begin][2], parts[end][2]]
-                perdas=(15-len(parts))/15.0
-                perdas=perdas*100.0
-                #print("Perdas na detecção: " +   str(perdas) + "%")
+
+                perdas = (15 - len(parts)) / 15
+                perdas *= 100
+                # print("Perdas na detecção: " +   str(perdas) + "%")
                 return perdas
+
 
 def altura_da_pessoa(skeletons):
     """_summary_
@@ -216,16 +227,17 @@ def altura_da_pessoa(skeletons):
 
     Returns:
         _type_: _description_
-    """    
-    skeletons_pb= ParseDict(skeletons,ObjectAnnotations())
+    """
+    skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeletons in skeletons_pb.objects:
         parts = {}
         for part in skeletons.keypoints:
             parts[part.id] = (part.position.x, part.position.y, part.position.z)
-            
-        altura_da_pessoa=parts[1][2]
+
+        altura_da_pessoa = parts[1][2]
         break
     return altura_da_pessoa
+
 
 def place_images(output_image, images, x_offset=0, y_offset=0):
     """_summary_
@@ -235,7 +247,7 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
         images (_type_): _description_
         x_offset (int, optional): _description_. Defaults to 0.
         y_offset (int, optional): _description_. Defaults to 0.
-    """    
+    """
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w + x_offset, :] = images[0]
     output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w + x_offset, :] = images[1]
@@ -243,20 +255,21 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
     output_image[h + y_offset:2 * h + y_offset, w + x_offset:2 * w + x_offset, :] = images[3]
 
 
-def plota_grafico_perdas(x,y):
+def plota_grafico_perdas(x, y):
     """_summary_
 
     Args:
         x (_type_): _description_
         y (_type_): _description_
-    """    
-    fig2,AX=plt.subplots()
-    AX.plot(x,y)
-    AX.set(xlabel='Medição',ylabel='Perda percentual (%)',title='Perdas na reconstrução 3D em função da amostragem')
+    """
+    fig2, AX = plt.subplots()
+    AX.plot(x, y)
+    AX.set(xlabel='Medição', ylabel='Perda percentual (%)', title='Perdas na reconstrução 3D em função da amostragem')
     AX.grid()
     plt.show()
 
-def data_sheet_of_members(alt_torn,comprimento_medio_perna_esquerda,comprimento_medio_perna_direita,altura_media):
+
+def data_sheet_of_members(alt_torn, comprimento_medio_perna_esquerda, comprimento_medio_perna_direita, altura_media):
     """_summary_
 
     Args:
@@ -264,8 +277,8 @@ def data_sheet_of_members(alt_torn,comprimento_medio_perna_esquerda,comprimento_
         comprimento_medio_perna_esquerda (_type_): _description_
         comprimento_medio_perna_direita (_type_): _description_
         altura_media (_type_): _description_
-    """    
-    file_results=open("Resultados_medições_dos_membros.txt","w")
+    """
+    file_results = open("Resultados_medições_dos_membros.txt", "w")
 
     file_results.write("Distância do tornozelo ao chão: %5.3f m" % alt_torn)
     file_results.write("\n")
@@ -274,9 +287,10 @@ def data_sheet_of_members(alt_torn,comprimento_medio_perna_esquerda,comprimento_
     file_results.write("Tamanho da perna direita: %5.3f m" % comprimento_medio_perna_direita)
     file_results.write("\n")
 
-    file_results.write("Altura média: %5.3f m" % altura_media) #(sum(altura_pessoa)/len(altura_pessoa)))
+    file_results.write("Altura média: %5.3f m" % altura_media)  # (sum(altura_pessoa)/len(altura_pessoa)))
     file_results.write("\n")
     file_results.close()
+
 
 log = Logger(name='WatchVideos')
 with open('keymap.json', 'r') as f:
@@ -338,32 +352,32 @@ annotations = {}
 for cam_id, filename in json_files.items():
     with open(filename, 'r') as f:
         annotations[cam_id] = json.load(f)['annotations']
-#load localizations
+# load localizations
 with open(json_locaizations_file, 'r') as f:
     localizations = json.load(f)['localizations']
 
 plt.ioff()
-fig = plt.figure(figsize=(5,5))
+fig = plt.figure(figsize=(5, 5))
 ax = Axes3D(fig)
 
 update_image = True
 it_frames = 0
-x,y = [],[]
-i=0
+x, y = [], []
+i = 0
 
-#Poderia ser um defaultdict
-picos_distancia=[]
-perna_esquerda=[]
-perna_direita=[]
-dist_chao=[]
-altura_pessoa=[]
+# Poderia ser um defaultdict
+picos_distancia = []
+perna_esquerda = []
+perna_direita = []
+dist_chao = []
+altura_pessoa = []
 distance_feet = []
-picos_maximos_distancia=[]
-dist_do_chao=[]
-perna_direita_aux=0
-dist_do_chao_aux=0
+picos_maximos_distancia = []
+dist_do_chao = []
+perna_direita_aux = 0
+dist_do_chao_aux = 0
 
-tempo_inicial=time.time()
+tempo_inicial = time.time()
 while True:
     if video_loader.n_loaded_frames() < video_loader.n_frames():
         update_image = True
@@ -375,7 +389,6 @@ while True:
             render_skeletons(frames, annotations, it_frames, links, colors)
             frames_list = [frames[cam] for cam in sorted(frames.keys())]
             place_images(full_image, frames_list)
-        
 
         ax.clear()
         ax.view_init(azim=28, elev=32)
@@ -391,52 +404,55 @@ while True:
         ax.set_ylabel('Y', labelpad=10)
         ax.set_zlabel('Z', labelpad=5)
         render_skeletons_3d(ax, localizations[it_frames], links, colors)
-        perdas_no_3d=perdas_3d(ax, localizations[it_frames], links, colors)
-        
+        perdas_no_3d = perdas_3d(ax, localizations[it_frames], links, colors)
+
         if perdas_no_3d is None:
-            perdas_no_3d=100
+            perdas_no_3d = 100
 
         y.append(perdas_no_3d)
-        x.append(i) 
+        x.append(i)
 
         perna_esquerda.append(left_leg(localizations[it_frames]))
-        aux_right_leg,dist_do_chao=right_leg(localizations[it_frames])
+        aux_right_leg, dist_do_chao = right_leg(localizations[it_frames])
         perna_direita.append(aux_right_leg)
-        
-        if SkeletonsCoord.joint_coord(localizations[it_frames], 12) and SkeletonsCoord.joint_coord(localizations[it_frames], 15):
+
+        if SkeletonsCoord.joint_coord(localizations[it_frames], 12) and SkeletonsCoord.joint_coord(
+                localizations[it_frames], 15):
             right_foot = SkeletonsCoord.joint_coord(localizations[it_frames], 12)
             left_foot = SkeletonsCoord.joint_coord(localizations[it_frames], 15)
-            distance_feet.append(np.sqrt((right_foot[0]-left_foot[0])**2 + (right_foot[1]-left_foot[1])**2 + (right_foot[2]-left_foot[2])**2))
-            #instante.append(time.time() -tempo_inicial)
-            #tempo_inicial
+            distance_feet.append(np.sqrt((right_foot[0] - left_foot[0]) ** 2 + (right_foot[1] - left_foot[1]) ** 2 + (
+                        right_foot[2] - left_foot[2]) ** 2))
+            # instante.append(time.time() -tempo_inicial)
+            # tempo_inicial
 
         # print(distance_feet)
 
         print("Perna direita: %5.3f" % aux_right_leg)
         dist_chao.append(dist_do_chao)
         print("Distancia do chao: %5.3f m" % dist_do_chao)
-        print("Perdas no 3D: %5.2f"  % perdas_no_3d + "%")
-        average_height=altura_da_pessoa(localizations[it_frames])
+        print("Perdas no 3D: %5.2f" % perdas_no_3d + "%")
+        average_height = altura_da_pessoa(localizations[it_frames])
         altura_pessoa.append(average_height)
         fig.canvas.draw()
-        #cv2.putText(titulo, "Taxa de perda: %.2f " % perdas_no_3d + " %", (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+        # cv2.putText(titulo, "Taxa de perda: %.2f " % perdas_no_3d + " %", (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+        # (0, 255, 255), 2)
 
         data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
         view_3d = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
         display_image = cv2.resize(full_image, dsize=(0, 0), fx=0.5, fy=0.5)
-        hd, wd, _ = display_image.shape 
+        hd, wd, _ = display_image.shape
         hv, wv, _ = view_3d.shape
 
-        display_image = np.hstack([display_image, 255*np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
-        #???
-        display_image[int((hd - hv) / 2):int((hd + hv) / 2),wd:,:] = view_3d
+        display_image = np.hstack([display_image, 255 * np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
+        # ???
+        display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
 
         cv2.imshow('', display_image)
         update_image = False
-      
+
         key = cv2.waitKey(1)
-          
+
     if key == -1:
         continue
 
@@ -444,59 +460,59 @@ while True:
         it_frames += keymap['big_step']
         it_frames = it_frames if it_frames < n_loaded_frames else 0
         update_image = True
-        i+=1
+        i += 1
 
     if key == ord(keymap['next_frame']):
         it_frames += 1
         it_frames = it_frames if it_frames < n_loaded_frames else 0
         update_image = True
-        i+=1
+        i += 1
 
     if key == ord(keymap['previous_frames']):
         it_frames -= keymap['big_step']
         it_frames = n_loaded_frames - 1 if it_frames < 0 else it_frames
         update_image = True
-        i=i+1
+        i = i + 1
 
     if key == ord(keymap['previous_frame']):
         it_frames -= 1
         it_frames = n_loaded_frames - 1 if it_frames < 0 else it_frames
         update_image = True
-        i+=1
+        i += 1
 
-    #if key == ord(keymap['exit']):
+    # if key == ord(keymap['exit']):
     #   sys.exit(0)    
     if cv2.waitKey(0) & 0xFF == ord('q'):
-       break
+        break
 
-for j in range(len(distance_feet)-2):
-    if distance_feet[j+1] > distance_feet[j+2] and distance_feet[j+1] > distance_feet[j]:
-        picos_distancia.append(distance_feet[j+1])
+for j in range(len(distance_feet) - 2):
+    if distance_feet[j + 1] > distance_feet[j + 2] and distance_feet[j + 1] > distance_feet[j]:
+        picos_distancia.append(distance_feet[j + 1])
 
-for r in range(len(picos_distancia)-2):
-    if picos_distancia[r+1] > picos_distancia[r+2] and picos_distancia[r+1] > picos_distancia[r]:
-        picos_maximos_distancia.append(picos_distancia[r+1])
+for r in range(len(picos_distancia) - 2):
+    if picos_distancia[r + 1] > picos_distancia[r + 2] and picos_distancia[r + 1] > picos_distancia[r]:
+        picos_maximos_distancia.append(picos_distancia[r + 1])
 
 print(picos_distancia)
 
-#print(picos_maximos_distancia)
-#print(len(picos_distancia))
+# print(picos_maximos_distancia)
+# print(len(picos_distancia))
 
-soma_perdas=sum(y)
-tempo_final=time.time()
-tempo_duplo_suporte=(tempo_final-tempo_inicial)
-alt_torn=0.135#sum(dist_chao)/len(dist_chao)
+soma_perdas = sum(y)
+tempo_final = time.time()
+tempo_duplo_suporte = (tempo_final - tempo_inicial)
+alt_torn = 0.135  # sum(dist_chao)/len(dist_chao)
 print("Tempo total: %5.4f" % tempo_duplo_suporte)
-perda_media=soma_perdas/len(x)
+perda_media = soma_perdas / len(x)
 print("Perda média: %5.2f" % perda_media + " %")
-comprimento_medio_perna_esquerda=sum(perna_esquerda)/len(perna_esquerda) + alt_torn
+comprimento_medio_perna_esquerda = sum(perna_esquerda) / len(perna_esquerda) + alt_torn
 print("Tamanho da perna esquerda: %5.3f m" % comprimento_medio_perna_esquerda)
-comprimento_medio_perna_direita=sum(perna_direita)/len(perna_direita) + alt_torn
+comprimento_medio_perna_direita = sum(perna_direita) / len(perna_direita) + alt_torn
 print("Tamanho da perna direita: %5.3f m" % comprimento_medio_perna_direita)
-altura_media=statistics.mean(altura_pessoa)
+altura_media = statistics.mean(altura_pessoa)
 log.info("Altura da pessoa: {0:5.3f}", altura_media)
 
-data_sheet_of_members(alt_torn,comprimento_medio_perna_esquerda,comprimento_medio_perna_direita,altura_media)
+data_sheet_of_members(alt_torn, comprimento_medio_perna_esquerda, comprimento_medio_perna_direita, altura_media)
 
-plota_grafico_perdas(x,y) 
+plota_grafico_perdas(x, y)
 log.info('Exiting')
