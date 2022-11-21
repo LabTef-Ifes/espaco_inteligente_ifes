@@ -5,7 +5,7 @@ import cv2
 
 import pandas as pd
 import sklearn
-from sklearn import preprocessing as prepro
+from sklearn import preprocessing
 
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
@@ -20,10 +20,8 @@ import time
 import csv
 import json
 import io
-
 from utils import load_options
-from is_msgs.image_pb2 import ObjectAnnotations
-from is_msgs.image_pb2 import HumanKeypoints as HKP
+from is_msgs.image_pb2 import ObjectAnnotations, HumanKeypoints as HKP
 from google.protobuf.json_format import ParseDict
 
 with open('keymap.json') as f:
@@ -34,6 +32,7 @@ options = load_options(print_options=False)
 
 # classe sem self???
 class Parameters:
+    @staticmethod
     def perdas_3d(ax, skeletons, links, colors):
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         for skeleton in skeletons_pb.objects:
@@ -52,7 +51,8 @@ class Parameters:
                     #print("Perdas na detecção: " +   str(perdas) + "%")
                     return perdas
 
-    #perna direita e angulo_real_joelho_esquerdo não usados
+    # perna direita e angulo_real_joelho_esquerdo não usados
+    @staticmethod
     def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo_caminhada, altura_quadril, perna_direita, left_knee_angle, angulo_real_joelho_esquerdo, flexion_left_knee, flexion_right_knee, simetria_comprimento_passo, largura_da_passada, left_extension_hip_angle, right_extension_hip_angle):
         """_summary_
 
@@ -208,6 +208,7 @@ class Parameters:
         print("Desvio padrão da simetria do comprimento de passo: %.3f " %
               statistics.pstdev(simetria_comprimento_passo))
 
+    @staticmethod
     def left_leg(skeletons):
         left_ankle = 0
         left_hip = 0
@@ -275,7 +276,7 @@ class Parameters:
                     ang = degrees(np.math.atan2(
                         np.linalg.det([v0, v1]), np.dot(v0, v1)))
                     # print(v0,v1)
-                    if(ang < 0):
+                    if (ang < 0):
                         quadril_ang = 180+ang
                         quadril_ang = -1*quadril_ang
                         # print("aqui",quadril_ang)
@@ -316,6 +317,7 @@ class Parameters:
             # print(left_leg,aux_left_leg,left_knee_angle)
             return left_leg, aux_left_leg, left_knee_angle, quadril_ang
 
+    @staticmethod
     def ang_plano_torax(skeletons):
         neck = 0
         left_hip = left_knee = right_hip = right_knee = 0
@@ -391,6 +393,7 @@ class Parameters:
 
         return angle_test, vetor_normal, ponto_peito
 
+    @staticmethod
     def flexion_left_knee(skeletons):
         """_summary_
 
@@ -423,6 +426,7 @@ class Parameters:
                     # print(a,b,ang_flex_left_knee)
         return ang_flex_left_knee
 
+    @staticmethod
     def angulo_joelho_esquerdo_nathan(skeletons):
         """_summary_
 
@@ -448,9 +452,9 @@ class Parameters:
                     part.position.x, part.position.y, part.position.z)
                 if part.id == 13:
                     junta_quadril_esquerdo = parts[13]
-                if part.id == 14:
+                elif part.id == 14:
                     junta_joelho_esquerdo = parts[14]
-                if part.id == 15:
+                elif part.id == 15:
                     junta_tornozelo_esquerdo = parts[15]
 
         if junta_joelho_esquerdo and junta_quadril_esquerdo and junta_tornozelo_esquerdo:
@@ -475,9 +479,9 @@ class Parameters:
             return angulo_joelho_esquerdo
 
         else:
-           # print("0")
             return 0
 
+    @staticmethod
     def right_leg(skeletons):
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         right_hip = None
@@ -570,10 +574,12 @@ class Parameters:
             right_ankle, left_ankle
             return right_leg, height_mid_point_ankle, largura_de_passo, right_knee_angle, altura_pe_direito, altura_pe_esquerdo, right_ankle, left_ankle
 
+    @staticmethod
     def velocidade_angular(angulo, intervalo_de_tempo):
         velocidade_angular = angulo/intervalo_de_tempo
         return velocidade_angular
 
+    @staticmethod
     def fuzzy(velocidade_media, cadencia_medido, largura_media, comprimento_passo_medido, comprimento_passo_real_medido, dist_dos_pes_inicial):
         """_summary_
 
@@ -694,6 +700,7 @@ class Parameters:
         # time.time()
         return resultado
 
+    @staticmethod
     def fuzzy_6_movimentos(velocidade_media, cadencia_medido, largura_media, comprimento_medio_passada, comprimento_passo_medido, flexion_left_knee_angle, flexion_right_knee_angle, simetria_comprimento_passo, ang_ext_quadril, aux_angulo):
         import statistics
         import numpy as np
@@ -860,7 +867,7 @@ class Parameters:
         movimento['Circundacao do pe'] = fuzz.trapmf(
             movimento.universe, [4, 5, 6, 7])
 
-        # Deveria ser um dicionário ou lista
+        # Deveria ser um dicionário ou lista???
         rule1 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_time_up'] & comprimento_medio_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_time_up']
                           & angulo_flexao_joelho_direito['normal_time_up'] | angulo_extensao_do_quadril['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] | simetria_passo['normal_time_up'], movimento['Time Up and Go'])
         rule2 = ctrl.Rule(velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] & largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circulos']
@@ -1027,15 +1034,15 @@ class Parameters:
 
         print(resultado)
         try:
-            if(resultado < 1):
+            if resultado < 1:
                 print("Time Up and Go")
-            elif((resultado >= 1) and (resultado < 2)):
+            elif (resultado >= 1) and (resultado < 2):
                 print("Em círculos")
-            elif((resultado >= 2) and (resultado < 3)):
+            elif ((resultado >= 2) and (resultado < 3)):
                 print("Em linha reta")
-            elif((resultado >= 3) and (resultado < 4)):
+            elif ((resultado >= 3) and (resultado < 4)):
                 print("Elevação do calcanhar")
-            elif((resultado >= 5) and (resultado < 6)):
+            elif ((resultado >= 5) and (resultado < 6)):
                 print("Assimetria de passo")
             else:
                 print("Circundação do pé")
@@ -1044,6 +1051,7 @@ class Parameters:
         # print(resultado)
         return resultado
 
+    @staticmethod
     def altura_da_pessoa(skeletons):
         """_summary_
 
@@ -1069,6 +1077,7 @@ class Parameters:
             break
         return altura_da_pessoa
 
+    @staticmethod
     def angulo_caminhada(perna_direita, perna_esquerda, picos_distancia, altura_quadril):
         """_summary_
 
@@ -1110,6 +1119,7 @@ class Parameters:
         return teta_angulo_dist_entre_pes
 
     # Estou usando apenas este atualmente para conseguir o angulo durante a caminhada
+    @staticmethod
     def angulo_caminhada_real(perna_direita, perna_esquerda, distance_feet):
         """_summary_
 
@@ -1134,6 +1144,7 @@ class Parameters:
             angulo = 0
         return angulo
 
+    @staticmethod
     def left_knee_angle(skeletons):
         """_summary_
 
@@ -1185,6 +1196,7 @@ class Parameters:
                 left_knee_angle = 0
         return left_knee_angle
 
+    @staticmethod
     def file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_height, idade, porcentagem, porcentagem_3d, perda_media, variancia, y, x, perna_esquerda, perna_direita, maior_passo_medido, tempo_total, velocidade_media, passos_por_min, contador, tempo_total_em_min, dist_do_chao, comprimento_passo_real, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo, altura_quadril, left_knee_angle, angulo_real_joelho_esquerdo, comprimento_passo_real_medido, flexion_left_knee, simetria_comprimento_passo, largura_da_passada, ang_ext_quadril):
         """_summary_
 
@@ -1449,6 +1461,7 @@ class Parameters:
                            statistics.pstdev(simetria_comprimento_passo))
         file_results.close()
 
+    @staticmethod
     def file_maker_csv(comprimento_passo_real_medido, cadencia, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, aux_angulo, altura_quadril, idade, velocidade_media, perna_direita, altura_real, left_knee_angle, angulo_real_joelho_esquerdo, sexo, flexion_left_knee, flexion_right_knee, simetria_comprimento_passo, largura_da_passada, ang_ext_quadril, left_extension_hip_angle, right_extension_hip_angle, movimento, CAPTURA, quant_de_ciclos_desejado):
         """_summary_
 
@@ -1621,6 +1634,7 @@ class Parameters:
             # k=k+1
             # print(len(angulo_caminhada))
 
+    @staticmethod
     def Array_coordenadas(skeletons):
         """_summary_
 
@@ -1656,6 +1670,7 @@ class Parameters:
                 (nome_das_coordenadas, ['Movimento']), axis=None)
         return aux_array_coordenadas, nome_das_coordenadas
 
+    @staticmethod
     def write_json(data):
         try:
             to_unicode = unicode
@@ -1669,6 +1684,7 @@ class Parameters:
                               separators=(',', ': '), ensure_ascii=True)
             outfile.write(to_unicode(str_))
 
+    @staticmethod
     def rede_neural(velocidade_media, comprimento_passo_medido, largura_da_passada, simetria_comprimento_passo, cadencia):
         """_summary_
 
@@ -1693,10 +1709,10 @@ class Parameters:
                         largura_da_passada, simetria_comprimento_passo, cadencia]
         input_values = array(input_values)
         # print(input_values)
-        # pt=prepro.PowerTransformer(method='box-cox',standardize=False)
+        # pt=preprocessing.PowerTransformer(method='box-cox',standardize=False)
         input_values = input_values.reshape([1, 5])  # ,bacth_size=32])
         # print(input_values)
-        scaler = prepro.MinMaxScaler()  # preprocessing.normalize(input_values)
+        scaler = preprocessing.MinMaxScaler()  # preprocessing.normalize(input_values)
         input_values_normalize = scaler.fit_transform(input_values)
         # print(input_values_normalize)
         # input_values=(input_values/np.argmax(input_values))
@@ -1726,6 +1742,7 @@ class Parameters:
 
         # return "Errado"
 
+    @staticmethod
     def prepare(filepath):
         """_summary_
 
@@ -1739,6 +1756,7 @@ class Parameters:
         new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
         return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
+    @staticmethod
     def slide_gait_cycle(slide):
         """_summary_
 
@@ -1755,6 +1773,7 @@ class Parameters:
 
         return result
 
+    @staticmethod
     def prepara_split_do_array(array, quant_de_ciclos):
         """_summary_
 
@@ -1768,11 +1787,12 @@ class Parameters:
         div = int(len(array)/quant_de_ciclos)
         # print(div)
         ref_tamanho = quant_de_ciclos*div
-        while(len(array) != ref_tamanho):
+        while (len(array) != ref_tamanho):
             array = array[:-1]
             # print(len(aux_angulo),ref_tamanho)
         return array
 
+    @staticmethod
     def normaliza_vetor(y, quant_de_ciclos, quant_de_ciclos_desejado, pico_do_sinal):
         """_summary_
 
@@ -1837,17 +1857,18 @@ class Parameters:
 
         #### Alinhamento final!!!!!#####
         for i in range(len(y_refencia)):  # Array de referência !!!!!
-            if (i == indice_maior_valor):
+            if i == indice_maior_valor:
                 aux_array.append(1)
             else:
                 aux_array.append(0)
 
-        while ((indice_maior_valor) != (index_array_deslocado)):
+        while (indice_maior_valor) != (index_array_deslocado):
             index_array_deslocado = np.argmax(aux)
             aux = np.roll(aux, 1)
 
         return aux  # Vetor final após o processo de normalização
 
+    @staticmethod
     def marca_frame(contador_numero_de_passos, frame):
         """_summary_
 
