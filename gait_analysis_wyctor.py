@@ -1,20 +1,15 @@
 import os
 import re
-import sys
 import cv2
 import json
-import time
 import argparse
 import numpy as np
 import time
 from utils import load_options
-from utils import to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
-
-from is_msgs.image_pb2 import ObjectAnnotations
-from is_msgs.image_pb2 import HumanKeypoints as HKP
+from collections import OrderedDict
+from is_msgs.image_pb2 import ObjectAnnotations,HumanKeypoints as HKP
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
 
@@ -43,6 +38,18 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
 
 
 def render_skeletons(images, annotations, it, links, colors):
+    """_summary_
+
+    Args:
+        images (_type_): _description_
+        annotations (_type_): _description_
+        it (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     for cam_id, image in images.items():
         deteccoes = 0 # Detections in each frame
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
@@ -67,15 +74,23 @@ def render_skeletons(images, annotations, it, links, colors):
     
     return juntas, perdidas
         
-def step_length():
-    if len(posicao_inicial) == 0:
-        sdfsfsd
-    if len(posicao_final) == 0:
-        sdfsdfsd
-    if pe_id == 0:
-        adfsdfds
+#def step_length():
+ #   if len(posicao_inicial) == 0:
+#        sdfsfsd
+#    if len(posicao_final) == 0:
+#        sdfsdfsd
+#    if pe_id == 0:
+#        adfsdfds
     
 def left_leg(skeletons):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     skeletons_pb = ParseDict( skeletons, ObjectAnnotations())
     for skeletons in skeletons_pb.objects:
         parts = {}
@@ -92,6 +107,14 @@ def left_leg(skeletons):
     return left_leg
 
 def right_leg(skeletons):
+    """_summary_
+
+    Args:
+        skeletons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     skeletons_pb = ParseDict( skeletons, ObjectAnnotations())
     for skeletons in skeletons_pb.objects:
         parts = {}
@@ -109,6 +132,23 @@ def right_leg(skeletons):
 
 
 def render_skeletons_3d(ax, skeletons, links, colors, posicao_inicial, final_passo, pe_id, pe_direito, pe_esquerdo, posicao_final):
+    """_summary_
+
+    Args:
+        ax (_type_): _description_
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+        posicao_inicial (_type_): _description_
+        final_passo (_type_): _description_
+        pe_id (_type_): _description_
+        pe_direito (_type_): _description_
+        pe_esquerdo (_type_): _description_
+        posicao_final (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     comprimento_passo=0
     for skeleton in skeletons_pb.objects:
@@ -166,6 +206,14 @@ def render_skeletons_3d(ax, skeletons, links, colors, posicao_inicial, final_pas
     return posicao_inicial, posicao_final, final_passo, comprimento_passo, pe_id, pe_direito, pe_esquerdo, posicao_final
 
 def place_images(output_image, images, x_offset=0, y_offset=0):
+    """_summary_
+
+    Args:
+        output_image (_type_): _description_
+        images (_type_): _description_
+        x_offset (int, optional): _description_. Defaults to 0.
+        y_offset (int, optional): _description_. Defaults to 0.
+    """    
     w, h = images[0].shape[1], images[0].shape[0]
     output_image[0 + y_offset:h + y_offset, 0 + x_offset:w + x_offset, :] = images[0]
     output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w + x_offset, :] = images[1]
