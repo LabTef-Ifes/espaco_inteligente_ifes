@@ -22,6 +22,7 @@ options = load_options(print_options=False)
 
 # Classe sem self???
 class Plota_graficos:
+    @staticmethod
     def plota_grafico_perdas(y):
         fig, AX = plt.subplots()
         # y=y[1:]
@@ -35,6 +36,7 @@ class Plota_graficos:
         plt.savefig(options.folder + '/Perdas_na_reconstrucao3D.png')
         plt.show()
 
+    @staticmethod
     def plota_grafico(y, title):
         fig, AX = plt.subplots()
         # y=y[1:]
@@ -47,6 +49,7 @@ class Plota_graficos:
         plt.savefig(options.folder + '/' + title + '.png')
         plt.show()
 
+    @staticmethod
     def plota_grafico_distance_feet(x, y):
         fig, AX = plt.subplots()
         y = y[2:]
@@ -56,6 +59,7 @@ class Plota_graficos:
         plt.savefig(options.folder + '/Medidas_das_distancias_pelo_tempo.png')
         plt.show()
 
+    @staticmethod
     def plota_grafico_tempo_de_passo(x, y, x_label='Tempo(s)', y_label='Comprimento(m)', titulo='Titulo'):
         fig, AX = plt.subplots()
         # y=y[1:]
@@ -65,6 +69,7 @@ class Plota_graficos:
         plt.savefig(options.folder + '/Tempo_por_passo.png')
         plt.show()
 
+    @staticmethod
     def plota_angulo_medido(y, titulo):
         x = len(y)
         # print(x)
@@ -79,6 +84,7 @@ class Plota_graficos:
         plt.savefig(options.folder + '/' + titulo + '.png')
         plt.show()
 
+    @staticmethod
     def plota_simetria(y, titulo):
         x = len(y)
         k = []
@@ -92,6 +98,7 @@ class Plota_graficos:
         plt.savefig(options.folder + '/' + titulo + '.png')
         plt.show()
 
+    @staticmethod
     def plota_angulo_medido_normalizado(y, titulo):
         #     k_referencia=[]
 
@@ -193,6 +200,7 @@ class Plota_graficos:
         plt.savefig(options.folder + '/' + titulo + '.png')
         plt.show()
 
+    @staticmethod
     def trajetoria_vetor(vetor):
         X, Y, Z = [0], [0], [0]
 
