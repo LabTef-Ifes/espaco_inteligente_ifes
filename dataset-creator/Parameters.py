@@ -2,9 +2,8 @@ import math
 import statistics
 import numpy as np
 import cv2
-
+import statistics
 import pandas as pd
-import sklearn
 from sklearn import preprocessing
 
 import skfuzzy as fuzz
@@ -13,8 +12,8 @@ import matplotlib.pyplot as plt
 
 # ???
 import tensorflow as tf
-from keras import *
-from tensorflow.keras import *
+# from keras import *
+# from tensorflow.keras import *
 
 import time
 import csv
@@ -34,6 +33,17 @@ options = load_options(print_options=False)
 class Parameters:
     @staticmethod
     def perdas_3d(ax, skeletons, links, colors):
+        """
+
+        Args:
+            ax: não usado???
+            skeletons:
+            links:
+            colors:
+
+        Returns:
+
+        """
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         for skeleton in skeletons_pb.objects:
             parts = {}
@@ -43,17 +53,23 @@ class Parameters:
             for link_parts, color in zip(links, colors):
                 begin, end = link_parts
                 if begin in parts and end in parts:
-                    x_pair = [parts[begin][0], parts[end][0]]
+                    # Não usado???
+                    '''x_pair = [parts[begin][0], parts[end][0]]
                     y_pair = [parts[begin][1], parts[end][1]]
-                    z_pair = [parts[begin][2], parts[end][2]]
-                    perdas = (15-len(parts))/15.0
-                    perdas = perdas*100.0
-                    #print("Perdas na detecção: " +   str(perdas) + "%")
+                    z_pair = [parts[begin][2], parts[end][2]]'''
+                    perdas = (15 - len(parts)) / 15.0
+                    perdas = perdas * 100.0
+                    # print("Perdas na detecção: " +   str(perdas) + "%")
                     return perdas
 
     # perna direita e angulo_real_joelho_esquerdo não usados
     @staticmethod
-    def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo_caminhada, altura_quadril, perna_direita, left_knee_angle, angulo_real_joelho_esquerdo, flexion_left_knee, flexion_right_knee, simetria_comprimento_passo, largura_da_passada, left_extension_hip_angle, right_extension_hip_angle):
+    def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet,
+                                dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing,
+                                comprimento_stance, angulo_caminhada, altura_quadril, perna_direita, left_knee_angle,
+                                angulo_real_joelho_esquerdo, flexion_left_knee, flexion_right_knee,
+                                simetria_comprimento_passo, largura_da_passada, left_extension_hip_angle,
+                                right_extension_hip_angle):
         """_summary_
 
         Args:
@@ -87,35 +103,35 @@ class Parameters:
         vetor_erro_distancia_dos_pes_inicial = []
         dist = [dist_dos_pes_inicial, distance_feet[0]]
 
-        comprimento_medio_real_de_meio_passo = (Stance_real+Swing_real)/2
+        comprimento_medio_real_de_meio_passo = (Stance_real + Swing_real) / 2
         # print(comprimento_passo_real_medido,statistics.mean(comprimento_passo_medido))
         erro_medio_comprimento_de_passo = comprimento_passo_real_medido - \
-            statistics.mean(comprimento_passo_medido)
+                                          statistics.mean(comprimento_passo_medido)
         # print(erro_medio_comprimento_de_passo)
 
         # Poderia ser generator
         for j in range(len(comprimento_passo_medido)):
             vetor_erro_comprimento_de_passo.append(
-                abs(comprimento_passo_real_medido-comprimento_passo_medido[j]))
+                abs(comprimento_passo_real_medido - comprimento_passo_medido[j]))
 
         for j in range(len(picos_distancia)):
             vetor_erro_comprimento_de_meio_passo.append(
-                abs(comprimento_medio_real_de_meio_passo-picos_distancia[j]))
+                abs(comprimento_medio_real_de_meio_passo - picos_distancia[j]))
 
         for j in range(len(comprimento_stance)):
             vetor_erro_comprimento_stance.append(
-                abs(Stance_real-comprimento_stance[j]))
+                abs(Stance_real - comprimento_stance[j]))
 
         for j in range(len(comprimento_swing)):
             vetor_erro_comprimento_swing.append(
-                abs(Swing_real-comprimento_swing[j]))
+                abs(Swing_real - comprimento_swing[j]))
 
         for j in range(len(dist)):
             vetor_erro_distancia_dos_pes_inicial.append(
-                abs(dist_dos_pes_inicial-dist[j]))
+                abs(dist_dos_pes_inicial - dist[j]))
 
         erro_medio_meio_comprimento_de_passo = (
-            comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
+                comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
         print("Comprimento médio de passada: %.4f m " %
               statistics.mean(comprimento_passo_medido))
         print("Erro absoluto médio do comprimento da passada: %.3f m" %
@@ -131,12 +147,12 @@ class Parameters:
         print("Desvio padrão do comprimento médio de meio passo: %.3f m" %
               abs(statistics.pstdev(picos_distancia)))
 
-        erro_swing = Swing_real-statistics.mean(comprimento_swing)
+        erro_swing = Swing_real - statistics.mean(comprimento_swing)
         print("Desvio padrão do erro de comprimento de meio passo em %.3f m" %
               abs(statistics.pstdev(vetor_erro_comprimento_de_meio_passo)))
         print("Largura de passo: %.3f " % statistics.mean(largura_da_passada))
         print("Erro da largura de passo: %.3f " %
-              (dist_dos_pes_inicial-statistics.mean(largura_da_passada)))
+              (dist_dos_pes_inicial - statistics.mean(largura_da_passada)))
         print("Desvio padrão da largura de passo: %.3f" %
               statistics.pstdev(largura_da_passada))
         print("Comprimento do Swing: %.4f m " %
@@ -147,7 +163,7 @@ class Parameters:
         print("Desvio padrão do erro de swing em %.4f m " %
               abs(statistics.pstdev(vetor_erro_comprimento_swing)))
 
-        erro_stance = Stance_real-statistics.mean(comprimento_stance)
+        erro_stance = Stance_real - statistics.mean(comprimento_stance)
         print("Comprimento do Stance: %.4f m " %
               statistics.mean(comprimento_stance))
         print("Erro absoluto médio do stance: %.3f m" % abs(erro_stance))
@@ -164,13 +180,8 @@ class Parameters:
               abs(statistics.pstdev(dist)))
         print("Desvio padrão do erro da distância inicial entre os pés em %.4f m" % abs(
             statistics.pstdev(vetor_erro_distancia_dos_pes_inicial)))
-        b = c = altura_quadril
 
-        # print(b)
-        # print(c)
-        a = Stance_real
-        aux = (pow(c, 2)+pow(b, 2))-pow(a, 2)
-        #aux2 = aux/(2*b*c)
+        # aux2 = aux/(2*b*c)
         # erro_medio_angulo=math.degrees(math.acos(aux2))-statistics.mean(angulo_caminhada)
         # print("Ângulo real de abertura das pernas: %.3f °" % math.degrees(math.acos(aux2)))
         # print(math.degrees(math.acos(aux2)))
@@ -184,7 +195,8 @@ class Parameters:
             angulo_caminhada))
         print("Ângulo médio da coxa do joelho da perna esquerda: %.3f graus" %
               statistics.mean(left_knee_angle))
-        # print("Erro do angulo do joelho esquerdo: %.3f graus" % (angulo_real_joelho_esquerdo-(statistics.mean(left_knee_angle))))
+        # print("Erro do angulo do joelho esquerdo: %.3f graus" % (angulo_real_joelho_esquerdo-(statistics.mean(
+        # left_knee_angle))))
         print("Desvio padrao do angulo médio de abertura do joelho da perna esquerda: %.3f graus" %
               statistics.pstdev(left_knee_angle))
         print("Ângulo de flexão do joelho esquerdo: %.3f ° " %
@@ -213,14 +225,15 @@ class Parameters:
         left_ankle = 0
         left_hip = 0
         left_knee = 0
-        left_leg = 0
-        aux_left_leg = 0
         quadril_ang = 0
+        # Não usados???
+        '''left_leg = 0
+        aux_left_leg = 0
         left_knee_angle = 0
         razao = 0
         angle_test = 0
         delta_y = 0
-        delta_z = 0
+        delta_z = 0'''
         neck = []
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
 
@@ -246,11 +259,12 @@ class Parameters:
                     left_hip = parts[13]
                     left_knee = parts[14]
                     left_ankle = parts[15]
-                    a = np.sqrt((left_ankle[0]-left_knee[0])**2+(
-                        left_ankle[1]-left_knee[1])**2+(left_ankle[2]-left_knee[2])**2)
-                    b = np.sqrt((left_knee[0]-left_hip[0])**2 + (left_knee[1] -
-                                left_hip[1])**2 + (left_knee[2]-left_hip[2])**2)
-                    left_leg = a+b
+                    a = np.sqrt((left_ankle[0] - left_knee[0]) ** 2 + (
+                            left_ankle[1] - left_knee[1]) ** 2 + (left_ankle[2] - left_knee[2]) ** 2)
+                    b = np.sqrt((left_knee[0] - left_hip[0]) ** 2 + (left_knee[1] -
+                                                                     left_hip[1]) ** 2 + (
+                                        left_knee[2] - left_hip[2]) ** 2)
+                    left_leg = a + b
                     aux_left_leg = left_leg
                     # left_knee_angle_e_quadril_ang=math.degrees(math.atan(abs((left_ankle[1]-left_knee[1])/(left_knee[2]-left_ankle[2]))))
                     # quadril_ang=math.degrees(abs(math.atan(abs((left_knee[1]-left_hip[1])/(left_hip[2]-left_knee[2])))))
@@ -261,33 +275,31 @@ class Parameters:
                     #    left_knee_angle=-left_knee_angle_e_quadril_ang+quadril_ang
                     #    print(left_knee_angle)
 
-                    c = np.sqrt((left_hip[1]-left_ankle[1])
-                                ** 2+(left_hip[2]-left_ankle[2])**2)
-                    a = np.sqrt((left_hip[1]-left_knee[1])
-                                ** 2+(left_hip[2]-left_knee[2])**2)
-                    b = np.sqrt((left_knee[1]-left_ankle[1])
-                                ** 2+(left_knee[2]-left_ankle[2])**2)
-                    produto = ((pow(a, 2)+pow(b, 2)-pow(c, 2))/(2*a*b))
-                    left_knee_angle = (180-math.degrees(math.acos(produto)))
+                    c = np.sqrt((left_hip[1] - left_ankle[1])
+                                ** 2 + (left_hip[2] - left_ankle[2]) ** 2)
+                    a = np.sqrt((left_hip[1] - left_knee[1])
+                                ** 2 + (left_hip[2] - left_knee[2]) ** 2)
+                    b = np.sqrt((left_knee[1] - left_ankle[1])
+                                ** 2 + (left_knee[2] - left_ankle[2]) ** 2)
+                    produto = ((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b))
+                    left_knee_angle = (180 - math.degrees(math.acos(produto)))
 
-                    v0 = ((neck[1]-left_hip[1]), (neck[2]-left_hip[2]))
-                    v1 = ((left_knee[1]-left_hip[1]),
-                          (left_knee[2]-left_hip[2]))
+                    v0 = ((neck[1] - left_hip[1]), (neck[2] - left_hip[2]))
+                    v1 = ((left_knee[1] - left_hip[1]),
+                          (left_knee[2] - left_hip[2]))
                     ang = degrees(np.math.atan2(
                         np.linalg.det([v0, v1]), np.dot(v0, v1)))
                     # print(v0,v1)
-                    if (ang < 0):
-                        quadril_ang = 180+ang
-                        quadril_ang = -1*quadril_ang
-                        # print("aqui",quadril_ang)
+                    '''if ang < 0:
+                        quadril_ang = -(180 + ang)
                     else:
-                        quadril_ang = 180-ang
+                        quadril_ang = 180 - ang'''
 
-                    delta_y = left_knee[1]-left_hip[1]
-                    delta_z = left_knee[2]-left_hip[2]
-                    razao = delta_y/delta_z
+                    delta_y = left_knee[1] - left_hip[1]
+                    delta_z = left_knee[2] - left_hip[2]
+                    razao = delta_y / delta_z
                     # CALCULADO COM A LUÍZA DIA 08/01/2021 - extansão do quadril esquerdo
-                    angle_test = -1*degrees(np.math.atan(razao))
+                    angle_test = -1 * degrees(np.math.atan(razao))
                     quadril_ang = angle_test
                     # B=pow(c,2)-(pow(a,2)+pow(b,2))
                     # A=-2*b*c
@@ -305,7 +317,8 @@ class Parameters:
                     left_leg = 0
                     left_knee_angle = 0
                     aux_left_leg = 0
-                    neck = 0
+                    # Não usado???
+                    # neck = 0
                     # print(left_leg,aux_left_leg,left_knee_angle)
                     # print("aqui")
                     return left_leg, aux_left_leg, left_knee_angle, quadril_ang
@@ -325,8 +338,8 @@ class Parameters:
         angle_test = 0
         ponto_peito = [0, 0, 0]
         # Não usados???
-        v1 = v2 = 0
-        angle = ang = angle_right = angle_left = 0
+        '''v1 = v2 = 0
+        angle = ang = angle_right = angle_left = 0'''
 
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
 
@@ -350,45 +363,44 @@ class Parameters:
 
                 if left_hip and right_hip and neck and right_knee and left_knee:
                     v1_x, v1_y, v1_z = (
-                        right_hip[0]-left_hip[0]), (right_hip[1]-left_hip[1]), (right_hip[2]-left_hip[2])
+                                               right_hip[0] - left_hip[0]), (right_hip[1] - left_hip[1]), (
+                                               right_hip[2] - left_hip[2])
 
                     v1 = np.array([v1_x, v1_y, v1_z])
                     v2_x, v2_y, v2_z = (
-                        right_hip[0]-neck[0]), (right_hip[1]-neck[1]), (right_hip[2]-neck[2])
+                                               right_hip[0] - neck[0]), (right_hip[1] - neck[1]), (
+                                               right_hip[2] - neck[2])
                     v2 = np.array([v2_x, v2_y, v2_z])
                     vetor_normal = np.cross(v1, v2)
 
-                    v3 = ((right_hip[0]+left_hip[0]), (right_hip[1] +
-                          left_hip[1]), (right_hip[2]+left_hip[2])/2)
+                    v3 = ((right_hip[0] + left_hip[0]), (right_hip[1] +
+                                                         left_hip[1]), (right_hip[2] + left_hip[2]) / 2)
                     # (neck[0]-v3[0],neck[1]-v3[1],neck[2]-v3[2])
                     v3_1 = (0, 0, 1)
                     vetor_normal = vetor_normal / np.linalg.norm(vetor_normal)
                     v3_1 = v3_1 / np.linalg.norm(v3_1)
-                    dot_product = np.dot(vetor_normal, v3_1)
                     # Flexão do tórax durante a caminhada
-                    angle = 90-math.degrees(np.arccos(dot_product))
-                    v0 = ((neck[1]-right_hip[1]), (neck[2]-right_hip[2]))
-                    v1 = ((right_knee[1]-right_hip[1]),
-                          (right_knee[2]-right_hip[2]))
+                    # angle = 90 - math.degrees(np.arccos(dot_product))
+                    v0 = ((neck[1] - right_hip[1]), (neck[2] - right_hip[2]))
+                    v1 = ((right_knee[1] - right_hip[1]),
+                          (right_knee[2] - right_hip[2]))
                     ang = degrees(np.math.atan2(
                         np.linalg.det([v0, v1]), np.dot(v0, v1)))
-                    delta_y = right_knee[1]-right_hip[1]
-                    delta_z = right_knee[2]-right_hip[2]
-                    razao = delta_y/delta_z
+                    delta_y = right_knee[1] - right_hip[1]
+                    delta_z = right_knee[2] - right_hip[2]
+                    razao = delta_y / delta_z
                     # CALCULADO COM A LUÍZA DIA 08/01/2021 - extensão do quadril direito
-                    angle_test = -1*degrees(np.math.atan(razao))
+                    angle_test = -1 * degrees(np.math.atan(razao))
 
-                    if ang < 0:
-                        angle_right = 180+ang
-                        angle_right = -1*angle_right
+                    '''if ang < 0:
+                        angle_right = -(180 + ang)
                         # print("aqui")
                     else:
-                        angle_right = 180-ang
+                        angle_right = 180 - ang'''
                     # np.dot(vetor_lateral_right_costas,vetor_lateral_right_coxa)))
                     # angle_left=degrees(np.arccos(dot_product))
                     # print(angle_right)
                 else:
-                    angle = angle_right = 0
                     vetor_normal = [0, 0, 0]
 
         return angle_test, vetor_normal, ponto_peito
@@ -406,7 +418,6 @@ class Parameters:
 
         left_hip = left_knee = left_leg = 0
         ang_flex_left_knee = 0
-        a = b = 0
 
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         for skeletons in skeletons_pb.objects:
@@ -419,9 +430,9 @@ class Parameters:
                 elif part.id == 14:
                     left_knee = parts[14]
                 if left_hip and left_knee:
-                    a = left_hip[1]-left_knee[1]
-                    b = left_hip[0]-left_knee[0]
-                    c = (a/b)
+                    a = left_hip[1] - left_knee[1]
+                    b = left_hip[0] - left_knee[0]
+                    c = (a / b)
                     ang_flex_left_knee = math.degrees(math.atan(c))
                     # print(a,b,ang_flex_left_knee)
         return ang_flex_left_knee
@@ -440,10 +451,11 @@ class Parameters:
         junta_joelho_esquerdo = None
         junta_tornozelo_esquerdo = None
         junta_quadril_esquerdo = None
-        distancia_quadril_joelho = None
+        # Não usados???
+        '''distancia_quadril_joelho = None
         distancia_quadril_tornozelo = None
         distancia_joelho_tornozelo = None
-        cosseno_ang = None
+        cosseno_ang = None'''
 
         for skeletons in skeletons_pb.objects:
             parts = {}
@@ -458,24 +470,29 @@ class Parameters:
                     junta_tornozelo_esquerdo = parts[15]
 
         if junta_joelho_esquerdo and junta_quadril_esquerdo and junta_tornozelo_esquerdo:
-            distancia_quadril_joelho = math.sqrt(((junta_joelho_esquerdo[2] - junta_quadril_esquerdo[2])**2) + (
-                (junta_joelho_esquerdo[1] - junta_quadril_esquerdo[1])**2) + ((junta_joelho_esquerdo[0] - junta_quadril_esquerdo[0])**2))
-           ## print("Distancia Quadril Joelho= ", distancia_quadril_joelho)
-            distancia_quadril_tornozelo = math.sqrt(((junta_tornozelo_esquerdo[2] - junta_quadril_esquerdo[2])**2) + (
-                (junta_tornozelo_esquerdo[1] - junta_quadril_esquerdo[1])**2) + ((junta_tornozelo_esquerdo[0] - junta_quadril_esquerdo[0])**2))
-           ## print("Distancia Quadril Tornozelo= ", distancia_quadril_tornozelo)
-            distancia_joelho_tornozelo = math.sqrt(((junta_joelho_esquerdo[2] - junta_tornozelo_esquerdo[2])**2) + (
-                (junta_joelho_esquerdo[1] - junta_tornozelo_esquerdo[1])**2) + ((junta_joelho_esquerdo[0] - junta_tornozelo_esquerdo[0])**2))
-           ## print("Distancia Joelho Tornozelo= ", distancia_joelho_tornozelo)
+            distancia_quadril_joelho = math.sqrt(((junta_joelho_esquerdo[2] - junta_quadril_esquerdo[2]) ** 2) + (
+                    (junta_joelho_esquerdo[1] - junta_quadril_esquerdo[1]) ** 2) + ((junta_joelho_esquerdo[0] -
+                                                                                     junta_quadril_esquerdo[0]) ** 2))
+            # print("Distancia Quadril Joelho= ", distancia_quadril_joelho)
+            distancia_quadril_tornozelo = math.sqrt(((junta_tornozelo_esquerdo[2] - junta_quadril_esquerdo[2]) ** 2) + (
+                    (junta_tornozelo_esquerdo[1] - junta_quadril_esquerdo[1]) ** 2) + ((junta_tornozelo_esquerdo[0] -
+                                                                                        junta_quadril_esquerdo[
+                                                                                            0]) ** 2))
+            # print("Distancia Quadril Tornozelo= ", distancia_quadril_tornozelo)
+            distancia_joelho_tornozelo = math.sqrt(((junta_joelho_esquerdo[2] - junta_tornozelo_esquerdo[2]) ** 2) + (
+                    (junta_joelho_esquerdo[1] - junta_tornozelo_esquerdo[1]) ** 2) + ((junta_joelho_esquerdo[0] -
+                                                                                       junta_tornozelo_esquerdo[
+                                                                                           0]) ** 2))
+            # print("Distancia Joelho Tornozelo= ", distancia_joelho_tornozelo)
 
-            cosseno_ang = (-1)*((distancia_quadril_tornozelo**2)-(distancia_quadril_joelho**2)-(
-                distancia_joelho_tornozelo**2))/(2*distancia_joelho_tornozelo*distancia_quadril_joelho)
+            cosseno_ang = (-1) * ((distancia_quadril_tornozelo ** 2) - (distancia_quadril_joelho ** 2) - (
+                    distancia_joelho_tornozelo ** 2)) / (2 * distancia_joelho_tornozelo * distancia_quadril_joelho)
 
             angulo_joelho_esquerdo = math.acos(cosseno_ang)
 
             angulo_joelho_esquerdo = 180 - math.degrees(angulo_joelho_esquerdo)
 
-           # print(angulo_joelho_esquerdo)
+            # print(angulo_joelho_esquerdo)
             return angulo_joelho_esquerdo
 
         else:
@@ -487,12 +504,12 @@ class Parameters:
         right_hip = None
         right_knee = None
         right_ankle = None
-        right_leg = None
         left_ankle = None
-        height_mid_point_ankle = None
-        largura_de_passo = None
         altura_pe_esquerdo = altura_pe_direito = 0
-        ang_produto = 0
+        # Não usados???
+        '''right_leg = None
+        height_mid_point_ankle = None
+        largura_de_passo = None'''
 
         if skeletons_pb.objects:
             for skeletons in skeletons_pb.objects:
@@ -510,34 +527,34 @@ class Parameters:
                         left_ankle = parts[15]
 
                 if right_ankle and right_knee and right_hip and left_ankle:
-                    a = np.sqrt((right_ankle[0]-right_knee[0])**2+(
-                        right_ankle[1]-right_knee[1])**2+(right_ankle[2]-right_knee[2])**2)
-                    b = np.sqrt((right_knee[0]-right_hip[0])**2 + (
-                        right_knee[1]-right_hip[1])**2 + (right_knee[2]-right_hip[2])**2)
-                    right_leg = a+b
+                    a = np.sqrt((right_ankle[0] - right_knee[0]) ** 2 + (
+                            right_ankle[1] - right_knee[1]) ** 2 + (right_ankle[2] - right_knee[2]) ** 2)
+                    b = np.sqrt((right_knee[0] - right_hip[0]) ** 2 + (
+                            right_knee[1] - right_hip[1]) ** 2 + (right_knee[2] - right_hip[2]) ** 2)
+                    right_leg = a + b
                     altura_pe_esquerdo = left_ankle[2]
                     altura_pe_direito = right_ankle[2]
-                    height_mid_point_ankle = (left_ankle[2]+right_ankle[2])/2
+                    height_mid_point_ankle = (left_ankle[2] + right_ankle[2]) / 2
                     # Largura de passo - distância entre os pés
                     largura_de_passo = np.sqrt(
-                        (right_ankle[0]-left_ankle[0])**2)
+                        (right_ankle[0] - left_ankle[0]) ** 2)
 
                     right_leg_angle_e_quadril_ang = math.degrees(
-                        math.atan(abs((right_ankle[1]-right_knee[1])/(right_knee[2]-right_ankle[2]))))
-                    quadril_ang = math.degrees(
-                        abs(math.atan(abs((right_knee[1]-right_hip[1])/(right_hip[2]-right_knee[2])))))
+                        math.atan(abs((right_ankle[1] - right_knee[1]) / (right_knee[2] - right_ankle[2]))))
+                    # quadril_ang = math.degrees(
+                    #    abs(math.atan(abs((right_knee[1] - right_hip[1]) / (right_hip[2] - right_knee[2])))))
 
-                    C = np.sqrt((right_hip[1]-right_ankle[1])
-                                ** 2+(right_hip[2]-right_ankle[2])**2)
-                    A = np.sqrt((right_hip[1]-right_knee[1])
-                                ** 2+(right_hip[2]-right_knee[2])**2)
-                    B = np.sqrt((right_knee[1]-right_ankle[1])
-                                ** 2+(right_knee[2]-right_ankle[2])**2)
-                    produto = ((pow(A, 2)+pow(B, 2)-pow(C, 2))/(2*A*B))
+                    C = np.sqrt((right_hip[1] - right_ankle[1])
+                                ** 2 + (right_hip[2] - right_ankle[2]) ** 2)
+                    A = np.sqrt((right_hip[1] - right_knee[1])
+                                ** 2 + (right_hip[2] - right_knee[2]) ** 2)
+                    B = np.sqrt((right_knee[1] - right_ankle[1])
+                                ** 2 + (right_knee[2] - right_ankle[2]) ** 2)
+                    produto = ((pow(A, 2) + pow(B, 2) - pow(C, 2)) / (2 * A * B))
                     ang_produto = math.degrees(math.acos(produto))
 
                     if right_leg_angle_e_quadril_ang:
-                        right_knee_angle = (180-ang_produto)
+                        right_knee_angle = (180 - ang_produto)
                         # right_knee_angle=right_leg_angle_e_quadril_ang-quadril_ang
                         # print(right_knee_angle)
                     else:
@@ -571,16 +588,16 @@ class Parameters:
             right_leg = 0
             largura_de_passo = 0
             right_knee_angle = 0
-            right_ankle, left_ankle
             return right_leg, height_mid_point_ankle, largura_de_passo, right_knee_angle, altura_pe_direito, altura_pe_esquerdo, right_ankle, left_ankle
 
     @staticmethod
     def velocidade_angular(angulo, intervalo_de_tempo):
-        velocidade_angular = angulo/intervalo_de_tempo
+        velocidade_angular = angulo / intervalo_de_tempo
         return velocidade_angular
 
     @staticmethod
-    def fuzzy(velocidade_media, cadencia_medido, largura_media, comprimento_passo_medido, comprimento_passo_real_medido, dist_dos_pes_inicial):
+    def fuzzy(velocidade_media, cadencia_medido, largura_media, comprimento_passo_medido, comprimento_passo_real_medido,
+              dist_dos_pes_inicial):
         """_summary_
 
         Args:
@@ -624,19 +641,19 @@ class Parameters:
         comprimento['grande'] = fuzz.trimf(comprimento.universe, [1, 2, 3])
 
         resultado['errado'] = fuzz.trimf(resultado.universe, [0, 0, 5])
-        #resultado['indefinido'] = fuzz.trimf(resultado.universe, [0, 5, 9])
+        # resultado['indefinido'] = fuzz.trimf(resultado.universe, [0, 5, 9])
         resultado['certo'] = fuzz.trimf(resultado.universe, [5, 9, 9])
 
         velocidade.view()
-        plt.savefig(options.folder+'/velocidade.png')
+        plt.savefig(options.folder + '/velocidade.png')
         largura.view()
-        plt.savefig(options.folder+'/largura.png')
+        plt.savefig(options.folder + '/largura.png')
         cadencia.view()
-        plt.savefig(options.folder+'/cadencia.png')
+        plt.savefig(options.folder + '/cadencia.png')
         comprimento.view()
-        plt.savefig(options.folder+'/comprimento.png')
+        plt.savefig(options.folder + '/comprimento.png')
         resultado.view()
-        plt.savefig(options.folder+'/resultado.png')
+        plt.savefig(options.folder + '/resultado.png')
 
         # Regras para a classificação
 
@@ -675,12 +692,12 @@ class Parameters:
         movimento_simulador = ctrl.ControlSystemSimulation(movimento_ctrl)
 
         # Entrando com alguns valores para qualidade da comida e do serviço
-        movimento_simulador.input['velocidade'] = (velocidade_media/1.37)
+        movimento_simulador.input['velocidade'] = (velocidade_media / 1.37)
         movimento_simulador.input['cadencia'] = cadencia_medido
         movimento_simulador.input['largura'] = (
-            largura_media/dist_dos_pes_inicial)
+                largura_media / dist_dos_pes_inicial)
         movimento_simulador.input['comprimento'] = (statistics.mean(
-            comprimento_passo_medido)/comprimento_passo_real_medido)
+            comprimento_passo_medido) / comprimento_passo_real_medido)
 
         # Computando o resultado
         movimento_simulador.compute()
@@ -688,25 +705,22 @@ class Parameters:
         # print(resultado)
 
         velocidade.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/velocidade_simulator.png')
+        plt.savefig(options.folder + '/velocidade_simulator.png')
         cadencia.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/cadencia_simulator.png')
+        plt.savefig(options.folder + '/cadencia_simulator.png')
         largura.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/largura_simulator.png')
+        plt.savefig(options.folder + '/largura_simulator.png')
         comprimento.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/comprimento_simulator.png')
+        plt.savefig(options.folder + '/comprimento_simulator.png')
         # resultado.view(sim=movimento_simulador)
         # plt.savefig(options.folder+'/resultado_simulator.png')
         # time.time()
         return resultado
 
     @staticmethod
-    def fuzzy_6_movimentos(velocidade_media, cadencia_medido, largura_media, comprimento_medio_passada, comprimento_passo_medido, flexion_left_knee_angle, flexion_right_knee_angle, simetria_comprimento_passo, ang_ext_quadril, aux_angulo):
-        import statistics
-        import numpy as np
-        import skfuzzy as fuzz
-        from skfuzzy import control as ctrl
-        import matplotlib.pyplot as plt
+    def fuzzy_6_movimentos(velocidade_media, cadencia_medido, largura_media, comprimento_medio_passada,
+                           comprimento_passo_medido, flexion_left_knee_angle, flexion_right_knee_angle,
+                           simetria_comprimento_passo, ang_ext_quadril, aux_angulo):
 
         velocidade = ctrl.Antecedent(np.arange(0, 420, 1), 'velocidade')
         cadencia = ctrl.Antecedent(np.arange(0, 120, 1), 'cadencia')
@@ -868,129 +882,297 @@ class Parameters:
             movimento.universe, [4, 5, 6, 7])
 
         # Deveria ser um dicionário ou lista???
-        rule1 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_time_up'] & comprimento_medio_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_time_up']
-                          & angulo_flexao_joelho_direito['normal_time_up'] | angulo_extensao_do_quadril['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] | simetria_passo['normal_time_up'], movimento['Time Up and Go'])
-        rule2 = ctrl.Rule(velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] & largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circulos']
-                          & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] & angulo_abertura_entre_as_pernas['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
-        rule3 = ctrl.Rule(velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo['normal_elevacao_excessiva'] & largura_da_passada['normal_elevacao_excessiva'] & comprimento_medio_da_passada['normal_elevacao_excessiva'] & angulo_flexao_joelho_esquerdo['normal_elevacao_excessiva']
-                          & angulo_flexao_joelho_direito['normal_elevacao_excessiva'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'] & angulo_abertura_entre_as_pernas['normal_elevacao_excessiva'] & simetria_passo['normal_elevacao_excessiva'], movimento['Elevação excessiva'])
-        rule4 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo['normal_assimetria'] & largura_da_passada['normal_assimetria'] & comprimento_medio_da_passada['normal_assimetria'] & angulo_flexao_joelho_esquerdo['normal_assimetria']
-                          & angulo_flexao_joelho_direito['normal_assimetria'] & angulo_extensao_do_quadril['normal_assimetria'] & angulo_abertura_entre_as_pernas['normal_assimetria'] & simetria_passo['normal_assimetria'], movimento['Assimetria'])
-        rule5 = ctrl.Rule(velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada['normal_circundacao_do_pe'] & angulo_flexao_joelho_esquerdo['normal_circundacao_do_pe']
-                          & angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_circundacao_do_pe'] & simetria_passo['normal_circundacao_do_pe'], movimento['Circundacao do pe'])
-        rule6 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_linha_reta'] & largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo['normal_linha_reta']
-                          & angulo_flexao_joelho_direito['normal_linha_reta'] & angulo_extensao_do_quadril['normal_linha_reta'] & angulo_abertura_entre_as_pernas['normal_linha_reta'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
-        rule7 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada['normal_time_up'] &
-                          angulo_flexao_joelho_esquerdo['normal_time_up'] & angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_time_up'] & simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
-        rule8 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_time_up'] &
-                          comprimento_medio_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_time_up'] & angulo_flexao_joelho_direito['normal_time_up'], movimento['Time Up and Go'])
-        rule9 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up']
-                          & largura_da_passada['normal_time_up'] & simetria_passo['normal_time_up'], movimento['Time Up and Go'])
-        rule10 = ctrl.Rule(velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] &
-                           largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
-        rule11 = ctrl.Rule(velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos']
-                           & largura_da_passada['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
-        rule12 = ctrl.Rule(velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] & largura_da_passada['normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circulos']
-                           & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] & angulo_abertura_entre_as_pernas['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
-        rule13 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_linha_reta'] & largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada['normal_linha_reta']
-                           & angulo_flexao_joelho_esquerdo['normal_linha_reta'] & angulo_flexao_joelho_direito['normal_linha_reta'] & angulo_extensao_do_quadril['normal_linha_reta'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
-        rule14 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_linha_reta'] & largura_da_passada['normal_linha_reta'] &
-                           comprimento_medio_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo['normal_linha_reta'] & angulo_flexao_joelho_direito['normal_linha_reta'], movimento['Em linha reta'])
-        rule15 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_linha_reta']
-                           & largura_da_passada['normal_linha_reta'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
-        rule16 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo['normal_assimetria'] & largura_da_passada['normal_assimetria'] & comprimento_medio_da_passada['normal_assimetria']
-                           & angulo_flexao_joelho_esquerdo['normal_assimetria'] & angulo_flexao_joelho_direito['normal_assimetria'] & angulo_extensao_do_quadril['normal_assimetria'] & simetria_passo['normal_assimetria'], movimento['Assimetria'])
-        rule17 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo['normal_assimetria'] & largura_da_passada['normal_assimetria'] &
-                           comprimento_medio_da_passada['normal_assimetria'] & angulo_flexao_joelho_esquerdo['normal_assimetria'] & angulo_flexao_joelho_direito['normal_assimetria'], movimento['Assimetria'])
-        rule18 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo['normal_assimetria']
-                           & largura_da_passada['normal_assimetria'] & simetria_passo['normal_assimetria'], movimento['Assimetria'])
-        rule19 = ctrl.Rule(velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo['normal_elevacao_excessiva'] & largura_da_passada['normal_elevacao_excessiva'] & comprimento_medio_da_passada['normal_elevacao_excessiva']
-                           & angulo_flexao_joelho_esquerdo['normal_elevacao_excessiva'] & angulo_flexao_joelho_direito['normal_elevacao_excessiva'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'] & simetria_passo['normal_elevacao_excessiva'], movimento['Elevação excessiva'])
-        rule20 = ctrl.Rule(velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo['normal_elevacao_excessiva'] & largura_da_passada['normal_elevacao_excessiva'] &
-                           comprimento_medio_da_passada['normal_elevacao_excessiva'] & angulo_flexao_joelho_esquerdo['normal_elevacao_excessiva'] & angulo_flexao_joelho_direito['normal_elevacao_excessiva'], movimento['Elevação excessiva'])
-        rule21 = ctrl.Rule(velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo['normal_elevacao_excessiva']
-                           & largura_da_passada['normal_elevacao_excessiva'] & simetria_passo['normal_elevacao_excessiva'], movimento['Elevação excessiva'])
-        rule22 = ctrl.Rule(velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada['normal_circundacao_do_pe']
-                           & angulo_flexao_joelho_esquerdo['normal_circundacao_do_pe'] & angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_circundacao_do_pe'] & simetria_passo['normal_circundacao_do_pe'], movimento['Circundacao do pe'])
-        rule23 = ctrl.Rule(velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_circundacao_do_pe'] &
-                           comprimento_medio_da_passada['normal_circundacao_do_pe'] & angulo_flexao_joelho_esquerdo['normal_circundacao_do_pe'] & angulo_flexao_joelho_direito['normal_circundacao_do_pe'], movimento['Circundacao do pe'])
-        rule24 = ctrl.Rule(velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe']
-                           & largura_da_passada['normal_circundacao_do_pe'] & simetria_passo['normal_circundacao_do_pe'], movimento['Circundacao do pe'])
-        rule25 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_time_up']
-                           & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_time_up'], movimento['Time Up and Go'])
-        rule26 = ctrl.Rule(velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] & largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos']
-                           & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] & angulo_abertura_entre_as_pernas['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
-        rule27 = ctrl.Rule(cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] & largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] &
-                           angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
-        rule28 = ctrl.Rule(cadencia['normal_circulos'] & largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos']
-                           & angulo_extensao_do_quadril['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
-        rule29 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_time_up'] & comprimento_medio_da_passada['normal_circulos'] &
-                           angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_linha_reta'], movimento['Círculos'])
-        rule30 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada['normal_circulos'] &
-                           angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_assimetria'] & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_assimetria'], movimento['Círculos'])
-        rule31 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_assimetria'] & largura_da_passada['normal_elevacao_excessiva'] & comprimento_medio_da_passada['normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circundacao_do_pe']
-                           & angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_linha_reta'], movimento['Círculos'])
-        rule32 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo['normal_circulos']
-                           & angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_time_up'], movimento['Círculos'])
+        rule1 = ctrl.Rule(
+            velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] &
+            largura_da_passada['normal_time_up'] & comprimento_medio_da_passada['normal_time_up'] &
+            angulo_flexao_joelho_esquerdo['normal_time_up']
+            & angulo_flexao_joelho_direito['normal_time_up'] | angulo_extensao_do_quadril['normal_time_up'] &
+            angulo_abertura_entre_as_pernas['normal_time_up'] | simetria_passo['normal_time_up'],
+            movimento['Time Up and Go'])
+        rule2 = ctrl.Rule(
+            velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] &
+            largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] &
+            angulo_flexao_joelho_esquerdo['normal_circulos']
+            & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] &
+            angulo_abertura_entre_as_pernas['normal_circulos'] & simetria_passo['normal_circulos'],
+            movimento['Círculos'])
+        rule3 = ctrl.Rule(
+            velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo[
+                'normal_elevacao_excessiva'] & largura_da_passada['normal_elevacao_excessiva'] &
+            comprimento_medio_da_passada['normal_elevacao_excessiva'] & angulo_flexao_joelho_esquerdo[
+                'normal_elevacao_excessiva']
+            & angulo_flexao_joelho_direito['normal_elevacao_excessiva'] & angulo_extensao_do_quadril[
+                'normal_elevacao_excessiva'] & angulo_abertura_entre_as_pernas['normal_elevacao_excessiva'] &
+            simetria_passo['normal_elevacao_excessiva'], movimento['Elevação excessiva'])
+        rule4 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo[
+            'normal_assimetria'] & largura_da_passada['normal_assimetria'] & comprimento_medio_da_passada[
+                              'normal_assimetria'] & angulo_flexao_joelho_esquerdo['normal_assimetria']
+                          & angulo_flexao_joelho_direito['normal_assimetria'] & angulo_extensao_do_quadril[
+                              'normal_assimetria'] & angulo_abertura_entre_as_pernas['normal_assimetria'] &
+                          simetria_passo['normal_assimetria'], movimento['Assimetria'])
+        rule5 = ctrl.Rule(
+            velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+                'normal_circundacao_do_pe'] & largura_da_passada['normal_circundacao_do_pe'] &
+            comprimento_medio_da_passada['normal_circundacao_do_pe'] & angulo_flexao_joelho_esquerdo[
+                'normal_circundacao_do_pe']
+            & angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril[
+                'normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_circundacao_do_pe'] &
+            simetria_passo['normal_circundacao_do_pe'], movimento['Circundacao do pe'])
+        rule6 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo[
+            'normal_linha_reta'] & largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada[
+                              'normal_linha_reta'] & angulo_flexao_joelho_esquerdo['normal_linha_reta']
+                          & angulo_flexao_joelho_direito['normal_linha_reta'] & angulo_extensao_do_quadril[
+                              'normal_linha_reta'] & angulo_abertura_entre_as_pernas['normal_linha_reta'] &
+                          simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
+        rule7 = ctrl.Rule(
+            velocidade['normal_assimetria'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_time_up'] &
+            largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada['normal_time_up'] &
+            angulo_flexao_joelho_esquerdo['normal_time_up'] & angulo_flexao_joelho_direito['normal_time_up'] &
+            angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_time_up'] &
+            simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
+        rule8 = ctrl.Rule(
+            velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] &
+            largura_da_passada['normal_time_up'] &
+            comprimento_medio_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_time_up'] &
+            angulo_flexao_joelho_direito['normal_time_up'], movimento['Time Up and Go'])
+        rule9 = ctrl.Rule(
+            velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up']
+            & largura_da_passada['normal_time_up'] & simetria_passo['normal_time_up'], movimento['Time Up and Go'])
+        rule10 = ctrl.Rule(
+            velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] &
+            largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] & simetria_passo[
+                'normal_circulos'], movimento['Círculos'])
+        rule11 = ctrl.Rule(
+            velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos']
+            & largura_da_passada['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
+        rule12 = ctrl.Rule(
+            velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] &
+            largura_da_passada['normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circulos']
+            & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] &
+            angulo_abertura_entre_as_pernas['normal_circulos'] & simetria_passo['normal_circulos'],
+            movimento['Círculos'])
+        rule13 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo[
+            'normal_linha_reta'] & largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada[
+                               'normal_linha_reta']
+                           & angulo_flexao_joelho_esquerdo['normal_linha_reta'] & angulo_flexao_joelho_direito[
+                               'normal_linha_reta'] & angulo_extensao_do_quadril['normal_linha_reta'] & simetria_passo[
+                               'normal_linha_reta'], movimento['Em linha reta'])
+        rule14 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo[
+            'normal_linha_reta'] & largura_da_passada['normal_linha_reta'] &
+                           comprimento_medio_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo[
+                               'normal_linha_reta'] & angulo_flexao_joelho_direito['normal_linha_reta'],
+                           movimento['Em linha reta'])
+        rule15 = ctrl.Rule(
+            velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_linha_reta']
+            & largura_da_passada['normal_linha_reta'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
+        rule16 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo[
+            'normal_assimetria'] & largura_da_passada['normal_assimetria'] & comprimento_medio_da_passada[
+                               'normal_assimetria']
+                           & angulo_flexao_joelho_esquerdo['normal_assimetria'] & angulo_flexao_joelho_direito[
+                               'normal_assimetria'] & angulo_extensao_do_quadril['normal_assimetria'] & simetria_passo[
+                               'normal_assimetria'], movimento['Assimetria'])
+        rule17 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo[
+            'normal_assimetria'] & largura_da_passada['normal_assimetria'] &
+                           comprimento_medio_da_passada['normal_assimetria'] & angulo_flexao_joelho_esquerdo[
+                               'normal_assimetria'] & angulo_flexao_joelho_direito['normal_assimetria'],
+                           movimento['Assimetria'])
+        rule18 = ctrl.Rule(
+            velocidade['normal_assimetria'] & cadencia['normal_assimetria'] & comprimento_do_passo['normal_assimetria']
+            & largura_da_passada['normal_assimetria'] & simetria_passo['normal_assimetria'], movimento['Assimetria'])
+        rule19 = ctrl.Rule(
+            velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo[
+                'normal_elevacao_excessiva'] & largura_da_passada['normal_elevacao_excessiva'] &
+            comprimento_medio_da_passada['normal_elevacao_excessiva']
+            & angulo_flexao_joelho_esquerdo['normal_elevacao_excessiva'] & angulo_flexao_joelho_direito[
+                'normal_elevacao_excessiva'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'] & simetria_passo[
+                'normal_elevacao_excessiva'], movimento['Elevação excessiva'])
+        rule20 = ctrl.Rule(
+            velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo[
+                'normal_elevacao_excessiva'] & largura_da_passada['normal_elevacao_excessiva'] &
+            comprimento_medio_da_passada['normal_elevacao_excessiva'] & angulo_flexao_joelho_esquerdo[
+                'normal_elevacao_excessiva'] & angulo_flexao_joelho_direito['normal_elevacao_excessiva'],
+            movimento['Elevação excessiva'])
+        rule21 = ctrl.Rule(
+            velocidade['normal_elevacao_excessiva'] & cadencia['normal_elevacao_excessiva'] & comprimento_do_passo[
+                'normal_elevacao_excessiva']
+            & largura_da_passada['normal_elevacao_excessiva'] & simetria_passo['normal_elevacao_excessiva'],
+            movimento['Elevação excessiva'])
+        rule22 = ctrl.Rule(
+            velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+                'normal_circundacao_do_pe'] & largura_da_passada['normal_circundacao_do_pe'] &
+            comprimento_medio_da_passada['normal_circundacao_do_pe']
+            & angulo_flexao_joelho_esquerdo['normal_circundacao_do_pe'] & angulo_flexao_joelho_direito[
+                'normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_circundacao_do_pe'] & simetria_passo[
+                'normal_circundacao_do_pe'], movimento['Circundacao do pe'])
+        rule23 = ctrl.Rule(
+            velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+                'normal_circundacao_do_pe'] & largura_da_passada['normal_circundacao_do_pe'] &
+            comprimento_medio_da_passada['normal_circundacao_do_pe'] & angulo_flexao_joelho_esquerdo[
+                'normal_circundacao_do_pe'] & angulo_flexao_joelho_direito['normal_circundacao_do_pe'],
+            movimento['Circundacao do pe'])
+        rule24 = ctrl.Rule(
+            velocidade['normal_circundacao_do_pe'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+                'normal_circundacao_do_pe']
+            & largura_da_passada['normal_circundacao_do_pe'] & simetria_passo['normal_circundacao_do_pe'],
+            movimento['Circundacao do pe'])
+        rule25 = ctrl.Rule(
+            velocidade['normal_time_up'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] &
+            largura_da_passada['normal_time_up']
+            & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_time_up'],
+            movimento['Time Up and Go'])
+        rule26 = ctrl.Rule(
+            velocidade['normal_circulos'] & cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] &
+            largura_da_passada['normal_circulos'] & comprimento_medio_da_passada['normal_circulos']
+            & angulo_flexao_joelho_direito['normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] &
+            angulo_abertura_entre_as_pernas['normal_circulos'] & simetria_passo['normal_circulos'],
+            movimento['Círculos'])
+        rule27 = ctrl.Rule(cadencia['normal_circulos'] & comprimento_do_passo['normal_circulos'] & largura_da_passada[
+            'normal_circulos'] & comprimento_medio_da_passada['normal_circulos'] &
+                           angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito[
+                               'normal_circulos'] & angulo_extensao_do_quadril['normal_circulos'] & simetria_passo[
+                               'normal_circulos'], movimento['Círculos'])
+        rule28 = ctrl.Rule(
+            cadencia['normal_circulos'] & largura_da_passada['normal_circulos'] & comprimento_medio_da_passada[
+                'normal_circulos']
+            & angulo_extensao_do_quadril['normal_circulos'] & simetria_passo['normal_circulos'], movimento['Círculos'])
+        rule29 = ctrl.Rule(
+            velocidade['normal_assimetria'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+                'normal_circundacao_do_pe'] & largura_da_passada['normal_time_up'] & comprimento_medio_da_passada[
+                'normal_circulos'] &
+            angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito['normal_circulos'] &
+            angulo_extensao_do_quadril['normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_time_up'] &
+            simetria_passo['normal_linha_reta'], movimento['Círculos'])
+        rule30 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+            'normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada[
+                               'normal_circulos'] &
+                           angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito[
+                               'normal_circulos'] & angulo_extensao_do_quadril['normal_assimetria'] &
+                           angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_assimetria'],
+                           movimento['Círculos'])
+        rule31 = ctrl.Rule(
+            velocidade['normal_assimetria'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+                'normal_assimetria'] & largura_da_passada['normal_elevacao_excessiva'] & comprimento_medio_da_passada[
+                'normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circundacao_do_pe']
+            & angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril[
+                'normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo[
+                'normal_linha_reta'], movimento['Círculos'])
+        rule32 = ctrl.Rule(velocidade['normal_time_up'] & cadencia['normal_circundacao_do_pe'] & comprimento_do_passo[
+            'normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo[
+                               'normal_circulos']
+                           & angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril[
+                               'normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas['normal_time_up'] &
+                           simetria_passo['normal_time_up'], movimento['Círculos'])
         rule33 = ctrl.Rule(cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe'] &
-                           largura_da_passada['normal_linha_reta'] & angulo_abertura_entre_as_pernas['normal_time_up'], movimento['Em linha reta'])
+                           largura_da_passada['normal_linha_reta'] & angulo_abertura_entre_as_pernas['normal_time_up'],
+                           movimento['Em linha reta'])
         rule34 = ctrl.Rule(cadencia['normal_circundacao_do_pe'] & comprimento_do_passo['normal_circundacao_do_pe']
-                           & largura_da_passada['normal_time_up'] & simetria_passo['normal_assimetria'], movimento['Círculos'])
+                           & largura_da_passada['normal_time_up'] & simetria_passo['normal_assimetria'],
+                           movimento['Círculos'])
         rule35 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_circulos'] &
-                           angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito['normal_circulos'], movimento['Círculos'])
-        rule36 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_circulos'] & angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito['normal_circulos']
-                           & angulo_extensao_do_quadril['normal_linha_reta'] | angulo_abertura_entre_as_pernas['normal_circundacao_do_pe'] & simetria_passo['normal_linha_reta'], movimento['Círculos'])
-        rule37 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_time_up']
-                           & angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] | angulo_extensao_do_quadril['normal_time_up'] | simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
-        rule38 = ctrl.Rule(velocidade['normal_circundacao_do_pe'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada['normal_time_up'] &
-                           angulo_flexao_joelho_esquerdo['normal_time_up'] & angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_time_up'] | simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
-        rule39 = ctrl.Rule(velocidade['normal_circundacao_do_pe'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_circundacao_do_pe']
-                           & comprimento_medio_da_passada['normal_time_up'] & angulo_extensao_do_quadril['normal_time_up'] & simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
-        rule40 = ctrl.Rule(velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada['normal_time_up']
-                           & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'] & simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
-        rule41 = ctrl.Rule(cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_circundacao_do_pe'] &
-                           angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'] | simetria_passo['normal_linha_reta'], movimento['Circundacao do pe'])
-        rule42 = ctrl.Rule(cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_time_up'] &
-                           angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_assimetria'], movimento['Circundacao do pe'])
-        rule43 = ctrl.Rule(cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_circulos'] &
-                           angulo_flexao_joelho_direito['normal_circulos'] & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'], movimento['Circundacao do pe'])
-        rule44 = ctrl.Rule(cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_time_up'] & angulo_flexao_joelho_direito['normal_circulos']
-                           & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'], movimento['Circundacao do pe'])
-        rule45 = ctrl.Rule(cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_circulos']
-                           & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_elevacao_excessiva'], movimento['Circundacao do pe'])
-        rule46 = ctrl.Rule(comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo['normal_circulos'] &
-                           angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
-        rule47 = ctrl.Rule(comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo['normal_circulos'] &
-                           angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_linha_reta'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
-        rule48 = ctrl.Rule(comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_linha_reta'] & angulo_flexao_joelho_esquerdo['normal_time_up'] &
-                           angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] & simetria_passo['normal_assimetria'], movimento['Time Up and Go'])
+                           angulo_flexao_joelho_esquerdo['normal_circulos'] & angulo_flexao_joelho_direito[
+                               'normal_circulos'], movimento['Círculos'])
+        rule36 = ctrl.Rule(
+            velocidade['normal_linha_reta'] & cadencia['normal_circulos'] & angulo_flexao_joelho_esquerdo[
+                'normal_circulos'] & angulo_flexao_joelho_direito['normal_circulos']
+            & angulo_extensao_do_quadril['normal_linha_reta'] | angulo_abertura_entre_as_pernas[
+                'normal_circundacao_do_pe'] & simetria_passo['normal_linha_reta'], movimento['Círculos'])
+        rule37 = ctrl.Rule(
+            velocidade['normal_assimetria'] & cadencia['normal_time_up'] & comprimento_do_passo['normal_time_up'] &
+            largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada['normal_time_up'] &
+            angulo_flexao_joelho_esquerdo['normal_time_up']
+            & angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas['normal_time_up'] |
+            angulo_extensao_do_quadril['normal_time_up'] | simetria_passo['normal_linha_reta'],
+            movimento['Time Up and Go'])
+        rule38 = ctrl.Rule(
+            velocidade['normal_circundacao_do_pe'] & cadencia['normal_linha_reta'] & comprimento_do_passo[
+                'normal_time_up'] & largura_da_passada['normal_circundacao_do_pe'] & comprimento_medio_da_passada[
+                'normal_time_up'] &
+            angulo_flexao_joelho_esquerdo['normal_time_up'] & angulo_flexao_joelho_direito['normal_time_up'] &
+            angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril['normal_time_up'] |
+            simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
+        rule39 = ctrl.Rule(
+            velocidade['normal_circundacao_do_pe'] & cadencia['normal_linha_reta'] & comprimento_do_passo[
+                'normal_time_up'] & largura_da_passada['normal_circundacao_do_pe']
+            & comprimento_medio_da_passada['normal_time_up'] & angulo_extensao_do_quadril['normal_time_up'] &
+            simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
+        rule40 = ctrl.Rule(
+            velocidade['normal_linha_reta'] & cadencia['normal_linha_reta'] & comprimento_do_passo['normal_time_up'] &
+            largura_da_passada['normal_linha_reta'] & comprimento_medio_da_passada['normal_time_up']
+            & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril[
+                'normal_elevacao_excessiva'] & simetria_passo['normal_linha_reta'], movimento['Time Up and Go'])
+        rule41 = ctrl.Rule(
+            cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada[
+                'normal_circundacao_do_pe'] &
+            angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril[
+                'normal_elevacao_excessiva'] | simetria_passo['normal_linha_reta'], movimento['Circundacao do pe'])
+        rule42 = ctrl.Rule(
+            cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada[
+                'normal_time_up'] &
+            angulo_flexao_joelho_direito['normal_circundacao_do_pe'] & angulo_extensao_do_quadril['normal_assimetria'],
+            movimento['Circundacao do pe'])
+        rule43 = ctrl.Rule(
+            cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada[
+                'normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_circulos'] &
+            angulo_flexao_joelho_direito['normal_circulos'] & angulo_abertura_entre_as_pernas['normal_time_up'] &
+            angulo_extensao_do_quadril['normal_elevacao_excessiva'], movimento['Circundacao do pe'])
+        rule44 = ctrl.Rule(
+            cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada[
+                'normal_time_up'] & angulo_flexao_joelho_direito['normal_circulos']
+            & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril[
+                'normal_elevacao_excessiva'], movimento['Circundacao do pe'])
+        rule45 = ctrl.Rule(
+            cadencia['normal_assimetria'] & comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada[
+                'normal_time_up'] & angulo_flexao_joelho_esquerdo['normal_circulos']
+            & angulo_abertura_entre_as_pernas['normal_time_up'] & angulo_extensao_do_quadril[
+                'normal_elevacao_excessiva'], movimento['Circundacao do pe'])
+        rule46 = ctrl.Rule(comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] &
+                           angulo_flexao_joelho_esquerdo['normal_circulos'] &
+                           angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas[
+                               'normal_time_up'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
+        rule47 = ctrl.Rule(comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_linha_reta'] &
+                           angulo_flexao_joelho_esquerdo['normal_circulos'] &
+                           angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas[
+                               'normal_linha_reta'] & simetria_passo['normal_linha_reta'], movimento['Em linha reta'])
+        rule48 = ctrl.Rule(comprimento_do_passo['normal_time_up'] & largura_da_passada['normal_linha_reta'] &
+                           angulo_flexao_joelho_esquerdo['normal_time_up'] &
+                           angulo_flexao_joelho_direito['normal_time_up'] & angulo_abertura_entre_as_pernas[
+                               'normal_time_up'] & simetria_passo['normal_assimetria'], movimento['Time Up and Go'])
         rule49 = ctrl.Rule(velocidade['normal_assimetria'] & cadencia['normal_assimetria'] &
-                           comprimento_do_passo['normal_circundacao_do_pe'] & simetria_passo['normal_time_up'], movimento['Time Up and Go'])
+                           comprimento_do_passo['normal_circundacao_do_pe'] & simetria_passo['normal_time_up'],
+                           movimento['Time Up and Go'])
         rule50 = ctrl.Rule(angulo_flexao_joelho_esquerdo['normal_circundacao_do_pe'] & angulo_flexao_joelho_direito[
-                           'normal_circulos'] & angulo_abertura_entre_as_pernas['normal_time_up'], movimento['Time Up and Go'])
+            'normal_circulos'] & angulo_abertura_entre_as_pernas['normal_time_up'], movimento['Time Up and Go'])
         rule51 = ctrl.Rule(comprimento_do_passo['normal_circundacao_do_pe'] & angulo_abertura_entre_as_pernas[
-                           'normal_linha_reta'] & simetria_passo['normal_assimetria'], movimento['Time Up and Go'])
+            'normal_linha_reta'] & simetria_passo['normal_assimetria'], movimento['Time Up and Go'])
         rule52 = ctrl.Rule(
             simetria_passo['normal_time_up'], movimento['Time Up and Go'])
         rule53 = ctrl.Rule(comprimento_do_passo['normal_circundacao_do_pe'] & largura_da_passada['normal_circulos'] &
-                           angulo_flexao_joelho_esquerdo['normal_assimetria'] & angulo_flexao_joelho_direito['normal_time_up'], movimento['Time Up and Go'])
+                           angulo_flexao_joelho_esquerdo['normal_assimetria'] & angulo_flexao_joelho_direito[
+                               'normal_time_up'], movimento['Time Up and Go'])
         rule54 = ctrl.Rule(cadencia['normal_assimetria'] &
                            largura_da_passada['normal_circulos'], movimento['Circundacao do pe'])
 
-        #movimento_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, rule11, rule12, rule13, rule14, rule15, rule16, rule17, rule18, rule19, rule20, rule21, rule22, rule23, rule24,rule25, rule26, rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35, rule36])
-        ##movimento_ctrl = ctrl.ControlSystem([rule1, rule2, rule5, rule6, rule7, rule22, rule23, rule24, rule25, rule26, rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35, rule36, rule37])
-        movimento_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, rule11, rule12, rule13, rule14, rule15, rule16, rule17, rule18, rule19, rule20, rule21, rule22, rule23, rule24, rule25, rule26,
-                                            rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35, rule36, rule37, rule38, rule39, rule40, rule41, rule42, rule43, rule44, rule45, rule46, rule47, rule48, rule49, rule50, rule51, rule52, rule53, rule54])
+        # movimento_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10,
+        # rule11, rule12, rule13, rule14, rule15, rule16, rule17, rule18, rule19, rule20, rule21, rule22, rule23,
+        # rule24,rule25, rule26, rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35,
+        # rule36]) movimento_ctrl = ctrl.ControlSystem([rule1, rule2, rule5, rule6, rule7, rule22, rule23, rule24,
+        # rule25, rule26, rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35, rule36, rule37])
+        movimento_ctrl = ctrl.ControlSystem(
+            [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, rule11, rule12, rule13, rule14,
+             rule15, rule16, rule17, rule18, rule19, rule20, rule21, rule22, rule23, rule24, rule25, rule26,
+             rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35, rule36, rule37, rule38, rule39,
+             rule40, rule41, rule42, rule43, rule44, rule45, rule46, rule47, rule48, rule49, rule50, rule51, rule52,
+             rule53, rule54])
         movimento_simulador = ctrl.ControlSystemSimulation(movimento_ctrl)
 
         # ???
         # Entrando com alguns valores para qualidade da comida e do serviço
-        movimento_simulador.input['velocidade'] = velocidade_media*100
+        movimento_simulador.input['velocidade'] = velocidade_media * 100
         movimento_simulador.input['cadencia'] = cadencia_medido
         movimento_simulador.input['largura_da_passada'] = (
-            statistics.mean(largura_media)*100)
+                statistics.mean(largura_media) * 100)
         movimento_simulador.input['comprimento_do_passo'] = (
-            statistics.mean(comprimento_passo_medido)*100)
+                statistics.mean(comprimento_passo_medido) * 100)
         movimento_simulador.input['comprimento_medio_da_passada'] = (
             statistics.mean(comprimento_medio_passada))
         movimento_simulador.input['angulo_flexao_joelho_esquerdo'] = statistics.mean(
@@ -1002,35 +1184,37 @@ class Parameters:
         movimento_simulador.input['angulo_abertura_entre_as_pernas'] = statistics.mean(
             aux_angulo)
         movimento_simulador.input['simetria_passo'] = (
-            simetria_comprimento_passo[-1])*100
+                                                          simetria_comprimento_passo[-1]) * 100
 
-        print(velocidade_media*100, cadencia_medido, (statistics.mean(largura_media)*100), (statistics.mean(comprimento_passo_medido)*100), (statistics.mean(comprimento_medio_passada)),
-              statistics.mean(flexion_left_knee_angle), statistics.mean(flexion_right_knee_angle), statistics.mean(ang_ext_quadril), statistics.mean(aux_angulo), (simetria_comprimento_passo[-1])*100)
+        print(velocidade_media * 100, cadencia_medido, (statistics.mean(largura_media) * 100),
+              (statistics.mean(comprimento_passo_medido) * 100), (statistics.mean(comprimento_medio_passada)),
+              statistics.mean(flexion_left_knee_angle), statistics.mean(flexion_right_knee_angle),
+              statistics.mean(ang_ext_quadril), statistics.mean(aux_angulo), (simetria_comprimento_passo[-1]) * 100)
         # Computando o resultado
         movimento_simulador.compute()
         resultado = movimento_simulador.output['movimento']
 
         # Aparentemente salva os resultados em imagem
         velocidade.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/velocidade.png')
+        plt.savefig(options.folder + '/velocidade.png')
         cadencia.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/cadencia.png')
+        plt.savefig(options.folder + '/cadencia.png')
         comprimento_do_passo.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/comprimento_do_passo.png')
+        plt.savefig(options.folder + '/comprimento_do_passo.png')
         largura_da_passada.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/largura_da_passada.png')
+        plt.savefig(options.folder + '/largura_da_passada.png')
         comprimento_medio_da_passada.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/comprimento_medio_da_passada.png')
+        plt.savefig(options.folder + '/comprimento_medio_da_passada.png')
         angulo_flexao_joelho_esquerdo.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/angulo_flexao_joelho_esquerdo.png')
+        plt.savefig(options.folder + '/angulo_flexao_joelho_esquerdo.png')
         angulo_flexao_joelho_direito.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/angulo_flexao_joelho_direito.png')
+        plt.savefig(options.folder + '/angulo_flexao_joelho_direito.png')
         angulo_extensao_do_quadril.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/angulo_extensao_quadril.png')
+        plt.savefig(options.folder + '/angulo_extensao_quadril.png')
         angulo_abertura_entre_as_pernas.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/angulo_de_abertura.png')
+        plt.savefig(options.folder + '/angulo_de_abertura.png')
         simetria_passo.view(sim=movimento_simulador)
-        plt.savefig(options.folder+'/simetria.png')
+        plt.savefig(options.folder + '/simetria.png')
 
         print(resultado)
         try:
@@ -1038,11 +1222,11 @@ class Parameters:
                 print("Time Up and Go")
             elif (resultado >= 1) and (resultado < 2):
                 print("Em círculos")
-            elif ((resultado >= 2) and (resultado < 3)):
+            elif (resultado >= 2) and (resultado < 3):
                 print("Em linha reta")
-            elif ((resultado >= 3) and (resultado < 4)):
+            elif (resultado >= 3) and (resultado < 4):
                 print("Elevação do calcanhar")
-            elif ((resultado >= 5) and (resultado < 6)):
+            elif (resultado >= 5) and (resultado < 6):
                 print("Assimetria de passo")
             else:
                 print("Circundação do pé")
@@ -1091,9 +1275,10 @@ class Parameters:
             _type_: _description_
         """
         teta_angulo_dist_entre_pes = []
-        k = 0
+        # Não usados???
+        '''k = 0
         aux_perna_direita = perna_direita
-        aux_perna_esquerda = perna_esquerda
+        aux_perna_esquerda = perna_esquerda'''
         aux1_cosseno = aux2_cosseno = 0
         # print(len(picos_distancia))
         for k in range(len(picos_distancia)):
@@ -1108,7 +1293,7 @@ class Parameters:
             if aux1_cosseno <= 1:
                 # teta_angulo_dist_entre_pes.append(math.degrees(math.acos(aux2_cosseno)))
                 teta_angulo_dist_entre_pes.append(
-                    math.degrees(math.atan(aux1_cosseno/A)))
+                    math.degrees(math.atan(aux1_cosseno / A)))
             else:
                 teta_angulo_dist_entre_pes.append(0)
 
@@ -1134,11 +1319,11 @@ class Parameters:
         angulo = 0
         # print(distance_feet)
         B = pow(distance_feet, 2) - \
-            (pow(perna_esquerda, 2)+pow(perna_direita, 2))
-        A = -2*perna_direita*perna_esquerda
+            (pow(perna_esquerda, 2) + pow(perna_direita, 2))
+        A = -2 * perna_direita * perna_esquerda
 
-        if (A != 0) and (B/A) < 1:
-            angulo = math.degrees(math.acos(B/A))
+        if (A != 0) and (B / A) < 1:
+            angulo = math.degrees(math.acos(B / A))
 
         else:
             angulo = 0
@@ -1179,17 +1364,19 @@ class Parameters:
 
                 # a,b,c ???
 
-                a = np.sqrt((left_ankle[0]-left_knee[0])**2+(left_ankle[1] -
-                            left_knee[1])**2+(left_ankle[2]-left_knee[2])**2)
-                b = np.sqrt((left_knee[0]-left_hip[0])**2 + (left_knee[1] -
-                            left_hip[1])**2 + (left_knee[2]-left_hip[2])**2)
-                c = np.sqrt((left_hip[0]-left_ankle[0])**2+(left_hip[1] -
-                            left_ankle[1])**2+(left_hip[2]-left_ankle[2])**2)
-                B = pow(c, 2)-(pow(a, 2)+pow(b, 2))
-                A = -2*b*c
-                if (A != 0):
-                    if ((B/A) < 1):
-                        left_knee_angle = math.degrees(math.acos(B/A))
+                a = np.sqrt((left_ankle[0] - left_knee[0]) ** 2 + (left_ankle[1] -
+                                                                   left_knee[1]) ** 2 + (
+                                    left_ankle[2] - left_knee[2]) ** 2)
+                b = np.sqrt((left_knee[0] - left_hip[0]) ** 2 + (left_knee[1] -
+                                                                 left_hip[1]) ** 2 + (left_knee[2] - left_hip[2]) ** 2)
+                c = np.sqrt((left_hip[0] - left_ankle[0]) ** 2 + (left_hip[1] -
+                                                                  left_ankle[1]) ** 2 + (
+                                    left_hip[2] - left_ankle[2]) ** 2)
+                B = pow(c, 2) - (pow(a, 2) + pow(b, 2))
+                A = -2 * b * c
+                if A != 0:
+                    if (B / A) < 1:
+                        left_knee_angle = math.degrees(math.acos(B / A))
                 else:
                     left_knee_angle = 0
             else:
@@ -1197,7 +1384,13 @@ class Parameters:
         return left_knee_angle
 
     @staticmethod
-    def file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_height, idade, porcentagem, porcentagem_3d, perda_media, variancia, y, x, perna_esquerda, perna_direita, maior_passo_medido, tempo_total, velocidade_media, passos_por_min, contador, tempo_total_em_min, dist_do_chao, comprimento_passo_real, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo, altura_quadril, left_knee_angle, angulo_real_joelho_esquerdo, comprimento_passo_real_medido, flexion_left_knee, simetria_comprimento_passo, largura_da_passada, ang_ext_quadril):
+    def file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_height, idade, porcentagem, porcentagem_3d,
+                   perda_media, variancia, y, x, perna_esquerda, perna_direita, maior_passo_medido, tempo_total,
+                   velocidade_media, passos_por_min, contador, tempo_total_em_min, dist_do_chao, comprimento_passo_real,
+                   Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia,
+                   comprimento_passo_medido, comprimento_swing, comprimento_stance, angulo, altura_quadril,
+                   left_knee_angle, angulo_real_joelho_esquerdo, comprimento_passo_real_medido, flexion_left_knee,
+                   simetria_comprimento_passo, largura_da_passada, ang_ext_quadril):
         """_summary_
 
         Args:
@@ -1244,10 +1437,10 @@ class Parameters:
         """
 
         file_results = open(
-            options.folder+"/Resultados_reconstrucao_3D.txt", "w")
+            options.folder + "/Resultados_reconstrucao_3D.txt", "w")
         file_results.write("Resultados da reconstrução 3D \n")
         for cam_id in range(0, 4):
-            porcentagem = (perdidas[cam_id]/juntas[cam_id]) * 100
+            porcentagem = (perdidas[cam_id] / juntas[cam_id]) * 100
             file_results.write("cam{}: Juntas detectadas: {} | Perdidas: {} |  {:.2f} %".format(
                 cam_id, juntas[cam_id], perdidas[cam_id], porcentagem))
             file_results.write("\n")
@@ -1264,17 +1457,17 @@ class Parameters:
         file_results.write(
             "Desvio padrão das medições das perdas no 3D: %5.2f" % statistics.pstdev(y) + " %")
         file_results.write("\n")
-        altura_media = sum(average_height)/len(x)
+        altura_media = sum(average_height) / len(x)
         file_results.write("Altura média: %5.3f m" % altura_media)
         file_results.write("\n")
         file_results.write("Idade: %.3s anos" % idade)
         file_results.write("\n")
         perna_esquerda_media = sum(
-            perna_esquerda)/len(perna_esquerda) + statistics.mean(dist_do_chao)
+            perna_esquerda) / len(perna_esquerda) + statistics.mean(dist_do_chao)
         file_results.write("Perna esquerda: %5.3f m" % perna_esquerda_media)
         file_results.write("\n")
         perna_direita_media = sum(
-            perna_direita)/len(perna_direita)+statistics.mean(dist_do_chao)
+            perna_direita) / len(perna_direita) + statistics.mean(dist_do_chao)
         file_results.write("Perna direita: %5.3f m" % perna_direita_media)
         file_results.write("\n")
         file_results.write("Maior comprimento de passo: %.3f m" %
@@ -1283,7 +1476,7 @@ class Parameters:
         file_results.write("Tempo total: %5.4f" % tempo_total)
         file_results.write("\n")
         file_results.write("Tempo de suporte duplo: %.3f s " %
-                           (0.2*tempo_total))
+                           (0.2 * tempo_total))
         file_results.write("\n")
         file_results.write("Velocidade média: %.3f m/s " % velocidade_media)
         file_results.write("\n")
@@ -1300,30 +1493,30 @@ class Parameters:
         dist.append(dist_dos_pes_inicial)
         dist.append(distance_feet[0])
 
-        comprimento_medio_real_de_meio_passo = (Stance_real+Swing_real)/2
+        comprimento_medio_real_de_meio_passo = (Stance_real + Swing_real) / 2
         erro_medio_comprimento_de_passo = comprimento_passo_real_medido - \
-            statistics.mean(comprimento_passo_medido)
+                                          statistics.mean(comprimento_passo_medido)
 
         # Deveria ser generator
         for j in range(0, len(comprimento_passo_medido)):
             vetor_erro_comprimento_de_passo.append(
-                abs(comprimento_passo_real-comprimento_passo_medido[j]))
+                abs(comprimento_passo_real - comprimento_passo_medido[j]))
 
         for i in range(0, len(picos_distancia)):
             vetor_erro_comprimento_de_meio_passo.append(
-                abs(comprimento_medio_real_de_meio_passo-picos_distancia[i]))
+                abs(comprimento_medio_real_de_meio_passo - picos_distancia[i]))
 
         for j in range(0, len(comprimento_stance)):
             vetor_erro_comprimento_stance.append(
-                abs(Stance_real-comprimento_stance[j]))
+                abs(Stance_real - comprimento_stance[j]))
 
         for j in range(0, len(comprimento_swing)):
             vetor_erro_comprimento_swing.append(
-                abs(Swing_real-comprimento_swing[j]))
+                abs(Swing_real - comprimento_swing[j]))
 
         for j in range(0, len(dist)):
             vetor_erro_distancia_dos_pes_inicial.append(
-                abs(dist_dos_pes_inicial-dist[j]))
+                abs(dist_dos_pes_inicial - dist[j]))
 
         # print("Erro stride")
         # print(vetor_erro_comprimento_de_passo)
@@ -1332,9 +1525,9 @@ class Parameters:
         # print(vetor_erro_comprimento_de_meio_passo)
 
         erro_medio_comprimento_da_passada = (
-            comprimento_passo_real_medido - statistics.mean(comprimento_passo_medido))
+                comprimento_passo_real_medido - statistics.mean(comprimento_passo_medido))
         erro_medio_meio_comprimento_de_passo = (
-            comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
+                comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
 
         # ???
 
@@ -1355,7 +1548,7 @@ class Parameters:
         file_results.write("\n")
         file_results.write("Desvio padrão do comprimento médio do passo: %.3f m" %
                            statistics.pstdev(picos_distancia))
-        erro_swing = Swing_real-statistics.mean(comprimento_swing)
+        erro_swing = Swing_real - statistics.mean(comprimento_swing)
         file_results.write("\n")
         file_results.write("Desvio padrão do erro de comprimento do passo em %.3f m" %
                            statistics.pstdev(vetor_erro_comprimento_de_meio_passo))
@@ -1364,7 +1557,7 @@ class Parameters:
                            statistics.mean(largura_da_passada))
         file_results.write("\n")
         file_results.write("Erro da largura de passo: %.3f " % (
-            dist_dos_pes_inicial-statistics.mean(largura_da_passada)))
+                dist_dos_pes_inicial - statistics.mean(largura_da_passada)))
         file_results.write("\n")
         file_results.write("Desvio padrão da largura de passo: %.3f" %
                            statistics.pstdev(largura_da_passada))
@@ -1379,7 +1572,7 @@ class Parameters:
         file_results.write("\n")
         file_results.write("Desvio padrão do erro de swing em %.4f m " %
                            statistics.pstdev(vetor_erro_comprimento_swing))
-        erro_stance = Stance_real-statistics.mean(comprimento_stance)
+        erro_stance = Stance_real - statistics.mean(comprimento_stance)
         file_results.write("\n")
         file_results.write("Comprimento do Stance: %.4f m " %
                            statistics.mean(comprimento_stance))
@@ -1405,7 +1598,7 @@ class Parameters:
                            statistics.pstdev(vetor_erro_comprimento_de_passo))
 
         erro_dist_inicial = dist_dos_pes_inicial - \
-            statistics.mean(largura_da_passada)
+                            statistics.mean(largura_da_passada)
         file_results.write("\n")
         file_results.write("Distância inicial do pé: %.3f m " %
                            dist_dos_pes_inicial)
@@ -1425,10 +1618,10 @@ class Parameters:
         c = altura_quadril
         b = altura_quadril
         a = Stance_real
-        aux = (pow(c, 2)+pow(b, 2))-pow(a, 2)
-        aux2 = aux/(2*b*c)
-        # erro_medio_angulo=math.degrees(math.acos(aux2))-statistics.mean(angulo)
-        # file_results.write("Erro médio, em graus, do angulo entre as pernas durante a caminhada: %.3f " % abs(erro_medio_angulo))
+        aux = (pow(c, 2) + pow(b, 2)) - pow(a, 2)
+        aux2 = aux / (2 * b * c)
+        # erro_medio_angulo=math.degrees(math.acos(aux2))-statistics.mean(angulo) file_results.write("Erro médio,
+        # em graus, do angulo entre as pernas durante a caminhada: %.3f " % abs(erro_medio_angulo))
         # file_results.write("\n")
         file_results.write("Desvio padrão do ângulo médio entre as pernas durante a caminhada em graus: %.3f " % abs(
             statistics.pstdev(angulo)))
@@ -1437,7 +1630,7 @@ class Parameters:
             statistics.mean(left_knee_angle)))
         file_results.write("\n")
         file_results.write("Erro do angulo da coxa do joelho da perna esquerda: %.3f graus" % (
-            angulo_real_joelho_esquerdo-(statistics.mean(left_knee_angle))))
+                angulo_real_joelho_esquerdo - (statistics.mean(left_knee_angle))))
         file_results.write("\n")
         file_results.write("Desvio padrão do ângulo da coxa do joelho esquerdo: %.3f graus" % (
             statistics.pstdev(left_knee_angle)))
@@ -1462,7 +1655,13 @@ class Parameters:
         file_results.close()
 
     @staticmethod
-    def file_maker_csv(comprimento_passo_real_medido, cadencia, Stance_real, Swing_real, distance_feet, dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing, comprimento_stance, aux_angulo, altura_quadril, idade, velocidade_media, perna_direita, altura_real, left_knee_angle, angulo_real_joelho_esquerdo, sexo, flexion_left_knee, flexion_right_knee, simetria_comprimento_passo, largura_da_passada, ang_ext_quadril, left_extension_hip_angle, right_extension_hip_angle, movimento, CAPTURA, quant_de_ciclos_desejado):
+    def file_maker_csv(comprimento_passo_real_medido, cadencia, Stance_real, Swing_real, distance_feet,
+                       dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing,
+                       comprimento_stance, aux_angulo, altura_quadril, idade, velocidade_media, perna_direita,
+                       altura_real, left_knee_angle, angulo_real_joelho_esquerdo, sexo, flexion_left_knee,
+                       flexion_right_knee, simetria_comprimento_passo, largura_da_passada, ang_ext_quadril,
+                       left_extension_hip_angle, right_extension_hip_angle, movimento, CAPTURA,
+                       quant_de_ciclos_desejado):
         """_summary_
 
         Args:
@@ -1535,46 +1734,44 @@ class Parameters:
         #     # print("Erro comprimento de meio passo")
         #     # print(vetor_erro_comprimento_de_meio_passo)
 
-        #      erro_medio_meio_comprimento_de_passo=(comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
-        #      filewriter.writerow(["1","Comprimento médio de passo em metros", "%.4f" % statistics.mean(comprimento_passo_medido)])
-        #      filewriter.writerow(["2","Erro absoluto médio do comprimento de passo em metros","%.4f" % abs(erro_medio_comprimento_de_passo)])
-        #      filewriter.writerow(["3","Desvio padrão comprimento passo medido em metros", "%.4f" % abs(statistics.pstdev(comprimento_passo_medido))])
-        #      filewriter.writerow(["4","Desvio padrão do erro de comprimento de passo em metros", " %.2f" % abs(statistics.pstdev(vetor_erro_comprimento_de_passo))])
-        #      filewriter.writerow(["5","Comprimento médio de meio passo em metros","%.4f" % statistics.mean(picos_distancia)])
-        #      filewriter.writerow(["6","Erro absoluto médio do meio comprimento de passo em metros", "%.4f" % abs(erro_medio_meio_comprimento_de_passo)])
-        #      filewriter.writerow(["7","Desvio padrão do comprimento médio de meio passo em metros", "%.4f"% abs(statistics.pstdev(picos_distancia))])
-        #      erro_swing= Swing_real-statistics.mean(comprimento_swing)
-        #      filewriter.writerow(["8","Desvio padrão do erro de comprimento de meio passo em metros","%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_de_meio_passo))])
-        #      filewriter.writerow(["9","Comprimento do Swing em metros"," %.4f" % statistics.mean(comprimento_swing)])
-        #      filewriter.writerow(["10","Erro absoluto médio do swing em metros","%.4f" % abs(erro_swing)])
-        #      filewriter.writerow(["11","Desvio padrão do swing em metros","%.4f" % abs(statistics.pstdev(comprimento_swing))])
-        #      filewriter.writerow(["12","Desvio padrão do erro de swing em metros","%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_swing))])
-        #      erro_stance= Stance_real-statistics.mean(comprimento_stance)
-        #      filewriter.writerow(["13","Comprimento do Stance em metros:","%.4f" % statistics.mean(comprimento_stance)])
-        #      filewriter.writerow(["14","Erro absoluto médio do stance em metros"," %.4f" % abs(erro_stance)])
-        #      filewriter.writerow(["15","Desvio padrão do stance em metros", "%.4f " % abs(statistics.pstdev(comprimento_stance))])
-        #      filewriter.writerow(["16","Desvio padrão do erro de stance em metros","%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_stance))])
-        #      erro_dist_inicial=dist_dos_pes_inicial - distance_feet[0]
-        #      filewriter.writerow(["17","Distância inicial do pé em metros","%.4f" % distance_feet[0]])
-        #      filewriter.writerow(["18","Erro absoluto médio da distância entre os pés em metros"," %.4f" % abs(erro_dist_inicial)])
-        #      filewriter.writerow(["19","Desvio padrão da distância inicial entre os pés"," %.4f" % abs(statistics.pstdev(dist))])
-        #      filewriter.writerow(["20","Desvio padrão do erro da distância inicial entre os pés em metros","%.4f" % abs(statistics.pstdev(vetor_erro_distancia_dos_pes_inicial))])
-        #      c=altura_quadril
-        #      b=altura_quadril
-        #      #print(c)
-        #      #print(b)
-        #      a=Stance_real
-        #      #print(c)
-        #      aux=(pow(c,2)+pow(b,2))-pow(a,2)
-        #      aux2=aux/(2*b*c)
-        #      erro_medio_angulo=math.degrees(math.acos(aux2))-statistics.mean(angulo_caminhada)
-        #      filewriter.writerow(["21","Ângulo real de abertura das pernas em graus", "%.4f" % math.degrees(math.acos(aux2))])
-        #      #print(math.degrees(math.acos(aux2)))
-        #      #print(math.degrees(math.acos(((2*((altura_quadril)**2)-Stance_real)/(2*((statistics.mean(perna_direita))**2))))))
-        #      filewriter.writerow(["22","Ângulo médio de abertura das pernas em graus", "%.4f" % statistics.mean(angulo_caminhada)])
-        #      filewriter.writerow(["23","Erro absoluto médio do angulo entre as pernas em graus", "%5.4f" % abs(erro_medio_angulo)])
-        #      filewriter.writerow(["24","Desvio padrão do ângulo médio dos passos em graus", "%5.4f" % abs(statistics.pstdev(angulo_caminhada))])
-        #      filewriter.writerow(["25","Número de amostras do ângulo","%i" % len(angulo_caminhada)])
+        # erro_medio_meio_comprimento_de_passo=(comprimento_medio_real_de_meio_passo - statistics.mean(
+        # picos_distancia)) filewriter.writerow(["1","Comprimento médio de passo em metros",
+        # "%.4f" % statistics.mean(comprimento_passo_medido)]) filewriter.writerow(["2","Erro absoluto médio do
+        # comprimento de passo em metros","%.4f" % abs(erro_medio_comprimento_de_passo)]) filewriter.writerow(["3",
+        # "Desvio padrão comprimento passo medido em metros", "%.4f" % abs(statistics.pstdev(
+        # comprimento_passo_medido))]) filewriter.writerow(["4","Desvio padrão do erro de comprimento de passo em
+        # metros", " %.2f" % abs(statistics.pstdev(vetor_erro_comprimento_de_passo))]) filewriter.writerow(["5",
+        # "Comprimento médio de meio passo em metros","%.4f" % statistics.mean(picos_distancia)])
+        # filewriter.writerow(["6","Erro absoluto médio do meio comprimento de passo em metros", "%.4f" % abs(
+        # erro_medio_meio_comprimento_de_passo)]) filewriter.writerow(["7","Desvio padrão do comprimento médio de
+        # meio passo em metros", "%.4f"% abs(statistics.pstdev(picos_distancia))]) erro_swing=
+        # Swing_real-statistics.mean(comprimento_swing) filewriter.writerow(["8","Desvio padrão do erro de
+        # comprimento de meio passo em metros","%.4f" % abs(statistics.pstdev(
+        # vetor_erro_comprimento_de_meio_passo))]) filewriter.writerow(["9","Comprimento do Swing em metros",
+        # " %.4f" % statistics.mean(comprimento_swing)]) filewriter.writerow(["10","Erro absoluto médio do swing em
+        # metros","%.4f" % abs(erro_swing)]) filewriter.writerow(["11","Desvio padrão do swing em metros",
+        # "%.4f" % abs(statistics.pstdev(comprimento_swing))]) filewriter.writerow(["12","Desvio padrão do erro de
+        # swing em metros","%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_swing))]) erro_stance=
+        # Stance_real-statistics.mean(comprimento_stance) filewriter.writerow(["13","Comprimento do Stance em
+        # metros:","%.4f" % statistics.mean(comprimento_stance)]) filewriter.writerow(["14","Erro absoluto médio do
+        # stance em metros"," %.4f" % abs(erro_stance)]) filewriter.writerow(["15","Desvio padrão do stance em
+        # metros", "%.4f " % abs(statistics.pstdev(comprimento_stance))]) filewriter.writerow(["16","Desvio padrão do
+        # erro de stance em metros","%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_stance))])
+        # erro_dist_inicial=dist_dos_pes_inicial - distance_feet[0] filewriter.writerow(["17","Distância inicial do
+        # pé em metros","%.4f" % distance_feet[0]]) filewriter.writerow(["18","Erro absoluto médio da distância entre
+        # os pés em metros"," %.4f" % abs(erro_dist_inicial)]) filewriter.writerow(["19","Desvio padrão da distância
+        # inicial entre os pés"," %.4f" % abs(statistics.pstdev(dist))]) filewriter.writerow(["20","Desvio padrão do
+        # erro da distância inicial entre os pés em metros","%.4f" % abs(statistics.pstdev(
+        # vetor_erro_distancia_dos_pes_inicial))]) c=altura_quadril b=altura_quadril #print(c) #print(b)
+        # a=Stance_real #print(c) aux=(pow(c,2)+pow(b,2))-pow(a,2) aux2=aux/(2*b*c) erro_medio_angulo=math.degrees(
+        # math.acos(aux2))-statistics.mean(angulo_caminhada) filewriter.writerow(["21","Ângulo real de abertura das
+        # pernas em graus", "%.4f" % math.degrees(math.acos(aux2))]) #print(math.degrees(math.acos(aux2))) #print(
+        # math.degrees(math.acos(((2*((altura_quadril)**2)-Stance_real)/(2*((statistics.mean(perna_direita))**2))))))
+        # filewriter.writerow(["22","Ângulo médio de abertura das pernas em graus", "%.4f" % statistics.mean(
+        # angulo_caminhada)]) filewriter.writerow(["23","Erro absoluto médio do angulo entre as pernas em graus",
+        # "%5.4f" % abs(erro_medio_angulo)]) filewriter.writerow(["24","Desvio padrão do ângulo médio dos passos em
+        # graus", "%5.4f" % abs(statistics.pstdev(angulo_caminhada))]) filewriter.writerow(["25","Número de amostras
+        # do ângulo","%i" % len(angulo_caminhada)])
         vetor_erro_comprimento_de_passo = []
         vetor_erro_comprimento_de_meio_passo = []
         vetor_erro_comprimento_swing = []
@@ -1584,7 +1781,7 @@ class Parameters:
         dist.append(dist_dos_pes_inicial)
         dist.append(distance_feet[0])
 
-        comprimento_medio_real_de_meio_passo = (Stance_real+Swing_real)/2
+        comprimento_medio_real_de_meio_passo = (Stance_real + Swing_real) / 2
         erro_medio_comprimento_de_passo = statistics.pstdev(
             comprimento_passo_medido)
 
@@ -1592,45 +1789,69 @@ class Parameters:
         # Repete muitas vezes
         for j in range(len(comprimento_passo_medido)):
             vetor_erro_comprimento_de_passo.append(
-                abs(comprimento_passo_real_medido-comprimento_passo_medido[j]))
+                abs(comprimento_passo_real_medido - comprimento_passo_medido[j]))
 
         for i in range(len(picos_distancia)):
             vetor_erro_comprimento_de_meio_passo.append(
-                abs(comprimento_medio_real_de_meio_passo-picos_distancia[i]))
+                abs(comprimento_medio_real_de_meio_passo - picos_distancia[i]))
 
         for j in range(len(comprimento_stance)):
             vetor_erro_comprimento_stance.append(
-                abs(Stance_real-comprimento_stance[j]))
+                abs(Stance_real - comprimento_stance[j]))
 
         for j in range(len(comprimento_swing)):
             vetor_erro_comprimento_swing.append(
-                abs(Swing_real-comprimento_swing[j]))
+                abs(Swing_real - comprimento_swing[j]))
 
         for j in range(len(dist)):
             vetor_erro_distancia_dos_pes_inicial.append(
-                abs(dist_dos_pes_inicial-dist[j]))
+                abs(dist_dos_pes_inicial - dist[j]))
 
-        erro_swing = Swing_real-statistics.mean(comprimento_swing)
-        erro_stance = Stance_real-statistics.mean(comprimento_stance)
+        erro_swing = Swing_real - statistics.mean(comprimento_swing)
+        erro_stance = Stance_real - statistics.mean(comprimento_stance)
         erro_medio_meio_comprimento_de_passo = (
-            comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
-        #erro_dist_inicial=dist_dos_pes_inicial - distance_feet[0]
+                comprimento_medio_real_de_meio_passo - statistics.mean(picos_distancia))
+        # erro_dist_inicial=dist_dos_pes_inicial - distance_feet[0]
         b = c = altura_quadril
         a = Stance_real
         # print(c)
-        aux = (pow(c, 2)+pow(b, 2))-pow(a, 2)
-        aux2 = aux/(2*b*c)
+        aux = (pow(c, 2) + pow(b, 2)) - pow(a, 2)
+        aux2 = aux / (2 * b * c)
         data = time.strftime("%Y%m%d")
         # erro_medio_angulo=math.degrees(math.acos(aux2))-statistics.mean(aux_angulo)
         # k=0
 
         # Deveria ter uma variável path
-        with open('/home/julian/docker/Pablo/CICLOS_v4/{}/{}/Parâmetros_de_todos_para_validacao_{}_ciclos_{}.csv'.format(CAPTURA, quant_de_ciclos_desejado, quant_de_ciclos_desejado, CAPTURA), 'a') as csvfile:
+        with open(
+                '/home/julian/docker/Pablo/CICLOS_v4/{}/{}/Parâmetros_de_todos_para_validacao_{}_ciclos_{}.csv'.format(
+                    CAPTURA, quant_de_ciclos_desejado, quant_de_ciclos_desejado, CAPTURA), 'a') as csvfile:
             filewriter = csv.writer(csvfile, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            #filewriter.writerow(["Altura (m)","Idade","Sexo","Velocidade média (m/s)", "Cadência","Comprimento médio passada", "Erro absoluto médio do comprimento de passo em metros","Desvio padrão comprimento passo medido em metros","Desvio padrão do erro de comprimento de passo em metros","Largura da passada","Erro largura da passada","Desvio padrão largura da passada","Comprimento médio de meio passo em metros","Erro absoluto médio do meio comprimento de passo em metros","Desvio padrão do comprimento médio de meio passo em metros","Desvio padrão do erro de comprimento de meio passo em metros","Comprimento do Swing em metros","Erro absoluto médio do swing em metros","Desvio padrão do swing em metros","Desvio padrão do erro de swing em metros","Comprimento do Stance em metros","Erro absoluto médio do stance em metros","Desvio padrão do stance em metros","Desvio padrão do erro de stance em metros","Distância inicial do pé em metros","Desvio padrão da distância inicial entre os pés","Ângulo médio de abertura das pernas durante a caminhada (°)","Desvio padrão do ângulo médio dos passos em graus","Número de amostras do ângulo","Ângulo médio da coxa do joelho esquerdo","Desvio padrão do ângulo  médio da coxa do joelho esquerdo","Ângulo médio de flexão do joelho esquerdo","Desvio padrão do ângulo de flexão do joelho esquerdo","Ângulo médio de flexão do joelho direito","Desvio padrão do ângulo de flexão do joelho direito","Ângulo extensão do quadril esquerdo (°)","Desvio padrão do ângulo de extensão do quadril esquerdo(°)","Ângulo extensão do quadril direito (°)","Desvio padrão do ângulo de extensão do quadril direito (°)","Simetria do comprimento de passo","Desvio padrão da simetria do comprimento de passo","Movimento"])
-            filewriter.writerow(["%.4f" % float(altura_real), "%.2f" % float(idade), "%i" % sexo, "%.4f" % velocidade_media, "%.4f" % cadencia, "%.4f" % statistics.mean(comprimento_passo_medido), "%.4f" % abs(erro_medio_comprimento_de_passo), "%.4f" % abs(statistics.pstdev(comprimento_passo_medido)), " %.2f" % abs(statistics.pstdev(vetor_erro_comprimento_de_passo)), "%.4f" % statistics.mean(largura_da_passada), "%.4f" % (dist_dos_pes_inicial - statistics.mean(largura_da_passada)), "%.4f" % statistics.pstdev(largura_da_passada), "%.4f" % statistics.mean(picos_distancia), "%.4f" % abs(erro_medio_meio_comprimento_de_passo), "%.4f" % abs(statistics.pstdev(picos_distancia)), "%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_de_meio_passo)), " %.4f" % statistics.mean(comprimento_swing), "%.4f" % abs(erro_swing), "%.4f" % abs(statistics.pstdev(comprimento_swing)), "%.4f" % abs(statistics.pstdev(
-                vetor_erro_comprimento_swing)), "%.4f" % statistics.mean(comprimento_stance), "%.4f" % abs(erro_stance), "%.4f " % abs(statistics.pstdev(comprimento_stance)), "%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_stance)), "%.4f" % abs(dist_dos_pes_inicial), " %.4f" % abs(statistics.pstdev(dist)), "%.4f" % statistics.mean(aux_angulo), "%5.4f" % abs(statistics.pstdev(aux_angulo)), "%i" % len(aux_angulo), statistics.mean(left_knee_angle), statistics.pstdev(left_knee_angle), statistics.mean(flexion_left_knee), statistics.pstdev(flexion_left_knee), statistics.mean(flexion_right_knee), statistics.pstdev(flexion_right_knee), statistics.mean(left_extension_hip_angle), statistics.pstdev(left_extension_hip_angle), statistics.mean(right_extension_hip_angle), statistics.pstdev(right_extension_hip_angle), statistics.mean(simetria_comprimento_passo), statistics.pstdev(simetria_comprimento_passo), movimento])
+            # filewriter.writerow(["Altura (m)","Idade","Sexo","Velocidade média (m/s)", "Cadência","Comprimento médio passada", "Erro absoluto médio do comprimento de passo em metros","Desvio padrão comprimento passo medido em metros","Desvio padrão do erro de comprimento de passo em metros","Largura da passada","Erro largura da passada","Desvio padrão largura da passada","Comprimento médio de meio passo em metros","Erro absoluto médio do meio comprimento de passo em metros","Desvio padrão do comprimento médio de meio passo em metros","Desvio padrão do erro de comprimento de meio passo em metros","Comprimento do Swing em metros","Erro absoluto médio do swing em metros","Desvio padrão do swing em metros","Desvio padrão do erro de swing em metros","Comprimento do Stance em metros","Erro absoluto médio do stance em metros","Desvio padrão do stance em metros","Desvio padrão do erro de stance em metros","Distância inicial do pé em metros","Desvio padrão da distância inicial entre os pés","Ângulo médio de abertura das pernas durante a caminhada (°)","Desvio padrão do ângulo médio dos passos em graus","Número de amostras do ângulo","Ângulo médio da coxa do joelho esquerdo","Desvio padrão do ângulo  médio da coxa do joelho esquerdo","Ângulo médio de flexão do joelho esquerdo","Desvio padrão do ângulo de flexão do joelho esquerdo","Ângulo médio de flexão do joelho direito","Desvio padrão do ângulo de flexão do joelho direito","Ângulo extensão do quadril esquerdo (°)","Desvio padrão do ângulo de extensão do quadril esquerdo(°)","Ângulo extensão do quadril direito (°)","Desvio padrão do ângulo de extensão do quadril direito (°)","Simetria do comprimento de passo","Desvio padrão da simetria do comprimento de passo","Movimento"])
+            filewriter.writerow(
+                ["%.4f" % float(altura_real), "%.2f" % float(idade), "%i" % sexo, "%.4f" % velocidade_media,
+                 "%.4f" % cadencia, "%.4f" % statistics.mean(comprimento_passo_medido),
+                 "%.4f" % abs(erro_medio_comprimento_de_passo),
+                 "%.4f" % abs(statistics.pstdev(comprimento_passo_medido)),
+                 " %.2f" % abs(statistics.pstdev(vetor_erro_comprimento_de_passo)),
+                 "%.4f" % statistics.mean(largura_da_passada),
+                 "%.4f" % (dist_dos_pes_inicial - statistics.mean(largura_da_passada)),
+                 "%.4f" % statistics.pstdev(largura_da_passada), "%.4f" % statistics.mean(picos_distancia),
+                 "%.4f" % abs(erro_medio_meio_comprimento_de_passo), "%.4f" % abs(statistics.pstdev(picos_distancia)),
+                 "%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_de_meio_passo)),
+                 " %.4f" % statistics.mean(comprimento_swing), "%.4f" % abs(erro_swing),
+                 "%.4f" % abs(statistics.pstdev(comprimento_swing)), "%.4f" % abs(statistics.pstdev(
+                    vetor_erro_comprimento_swing)), "%.4f" % statistics.mean(comprimento_stance),
+                 "%.4f" % abs(erro_stance), "%.4f " % abs(statistics.pstdev(comprimento_stance)),
+                 "%.4f" % abs(statistics.pstdev(vetor_erro_comprimento_stance)), "%.4f" % abs(dist_dos_pes_inicial),
+                 " %.4f" % abs(statistics.pstdev(dist)), "%.4f" % statistics.mean(aux_angulo),
+                 "%5.4f" % abs(statistics.pstdev(aux_angulo)), "%i" % len(aux_angulo), statistics.mean(left_knee_angle),
+                 statistics.pstdev(left_knee_angle), statistics.mean(flexion_left_knee),
+                 statistics.pstdev(flexion_left_knee), statistics.mean(flexion_right_knee),
+                 statistics.pstdev(flexion_right_knee), statistics.mean(left_extension_hip_angle),
+                 statistics.pstdev(left_extension_hip_angle), statistics.mean(right_extension_hip_angle),
+                 statistics.pstdev(right_extension_hip_angle), statistics.mean(simetria_comprimento_passo),
+                 statistics.pstdev(simetria_comprimento_passo), movimento])
             # k=k+1
             # print(len(angulo_caminhada))
 
@@ -1658,11 +1879,11 @@ class Parameters:
                         part.id), "y_{}".format(part.id), "z_{}".format(part.id))), axis=None)
                     aux_array_coordenadas = np.concatenate(
                         (aux_array_coordenadas, (part.position.x, part.position.y, part.position.z)), axis=None)
-                    if (len(aux_array_coordenadas) >= 45):
+                    if len(aux_array_coordenadas) >= 45:
                         aux_array_coordenadas = aux_array_coordenadas[:45]
                         nome_das_coordenadas = nome_das_coordenadas[:45]
-                if (len(aux_array_coordenadas) < 45):
-                    while (len(aux_array_coordenadas) < 45):
+                if len(aux_array_coordenadas) < 45:
+                    while len(aux_array_coordenadas) < 45:
                         aux_array_coordenadas = np.concatenate(
                             (aux_array_coordenadas, [0]), axis=None)
 
@@ -1678,14 +1899,15 @@ class Parameters:
             to_unicode = str
         # with open(options.folder+'/data.json', 'w') as outfile:
         #    json.dump(data, ouqtfile)
-        with io.open(options.folder+'/data.json', 'w', encoding='utf8') as outfile:
+        with io.open(options.folder + '/data.json', 'w', encoding='utf8') as outfile:
             str_ = json.dumps(data,
                               indent=4, sort_keys=False,
                               separators=(',', ': '), ensure_ascii=True)
             outfile.write(to_unicode(str_))
 
     @staticmethod
-    def rede_neural(velocidade_media, comprimento_passo_medido, largura_da_passada, simetria_comprimento_passo, cadencia):
+    def rede_neural(velocidade_media, comprimento_passo_medido, largura_da_passada, simetria_comprimento_passo,
+                    cadencia):
         """_summary_
 
         Args:
@@ -1725,22 +1947,19 @@ class Parameters:
         resultado = CATEGORIAS[np.argmax(prediction)]
         return resultado
 
-    # def rede_neural_imagens():
-        # CATEGORIES=["Certo","Errado"]
-        # filepath='0'
-        #img_array = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-        # print(img_array)
-        #new_array = (cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)))/255
-        #print(new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1))
-        #modelo_final = tf.keras.models.load_model("/home/julian/docker/ifes-2019-09-09/Modelo_para_treinamento/Modelo_classificador_imagens/Modelo_movimento_certo_e_errado_3")
+    # def rede_neural_imagens(): CATEGORIES=["Certo","Errado"] filepath='0' img_array = cv2.imread(filepath,
+    # cv2.IMREAD_GRAYSCALE) print(img_array) new_array = (cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)))/255 print(
+    # new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)) modelo_final = tf.keras.models.load_model(
+    # "/home/julian/docker/ifes-2019-09-09/Modelo_para_treinamento/Modelo_classificador_imagens
+    # /Modelo_movimento_certo_e_errado_3")
 
-        #prediction = model.predict([prepare('0')])
-        # print(prediction)  # will be a list in a list.
-        # print(CATEGORIES[int(prediction[0][0])])
-        # if((CATEGORIES[int(prediction[0][0])])==0):
-        #    return "Certo"
+    # prediction = model.predict([prepare('0')])
+    # print(prediction)  # will be a list in a list.
+    # print(CATEGORIES[int(prediction[0][0])])
+    # if((CATEGORIES[int(prediction[0][0])])==0):
+    #    return "Certo"
 
-        # return "Errado"
+    # return "Errado"
 
     @staticmethod
     def prepare(filepath):
@@ -1784,10 +2003,10 @@ class Parameters:
         Returns:
             _type_: _description_
         """
-        div = int(len(array)/quant_de_ciclos)
+        div = int(len(array) / quant_de_ciclos)
         # print(div)
-        ref_tamanho = quant_de_ciclos*div
-        while (len(array) != ref_tamanho):
+        ref_tamanho = quant_de_ciclos * div
+        while len(array) != ref_tamanho:
             array = array[:-1]
             # print(len(aux_angulo),ref_tamanho)
         return array
@@ -1803,11 +2022,11 @@ class Parameters:
             pico_do_sinal (_type_): _description_
         """
 
-        ## Essas referências podem mudar conforme os ciclos em interesse para análise !!!##
-        div = int(len(y)//quant_de_ciclos)  # Prepara para a quebra do array
+        # Essas referências podem mudar conforme os ciclos em interesse para análise !!!##
+        div = int(len(y) // quant_de_ciclos)  # Prepara para a quebra do array
         # print(div)
         # Garante que haja somente múltiplos da quantidade de ciclos  para a normalização
-        ref_tamanho = quant_de_ciclos*div
+        ref_tamanho = quant_de_ciclos * div
 
         # ???
         while len(y) != ref_tamanho:
@@ -1818,30 +2037,29 @@ class Parameters:
 
         y_refencia = y[-1]  # última medida por ciclo é pega como referência
 
-       # for i in range (0,len(y_refencia)+1):
-       # k_referencia.append((100*i)/len(y_refencia))
+        # for i in range (0,len(y_refencia)+1):
+        # k_referencia.append((100*i)/len(y_refencia))
 
-        for i in range(quant_de_ciclos_desejado-1):
-            a = np.array(y[i+1])
+        for i in range(quant_de_ciclos_desejado - 1):
+            a = np.array(y[i + 1])
             ultimo_elemento = a[-1]
             B = np.array([ultimo_elemento])
             y[i] = np.append(np.array(y[i]), B)
 
-        if quant_de_ciclos_desejado == 1:  # S for de 1 ciclo a análise final fica com menor quantidade de dados pra tirar a média
+        if quant_de_ciclos_desejado == 1:  # S for de 1 ciclo a análise final fica com menor quantidade de dados pra
+            # tirar a média
             y = [y[0]]
         else:
-            y = y[:(quant_de_ciclos_desejado-1)]
+            y = y[:(quant_de_ciclos_desejado - 1)]
 
         # Alinhando as curvas
-        index_array_deslocado = 0
-        aux_array = []
         aux_array = np.array(y[-1])
         # int(len(aux_array)*0.6) #np.argmax(aux_array) #
         indice_maior_valor = np.argmax(aux_array)
 
-        for i in range(0, (len(y)-1)):
+        for i in range(0, (len(y) - 1)):
             index_array_deslocado = np.argmax(y[i])
-            while ((indice_maior_valor) != (index_array_deslocado+1)):
+            while indice_maior_valor != (index_array_deslocado + 1):
                 index_array_deslocado = np.argmax(y[i])
                 y[i] = np.roll(y[i], 1)
                 if not indice_maior_valor and not index_array_deslocado:
@@ -1852,7 +2070,7 @@ class Parameters:
         # k_referencia))
         # Limpa aux_array!
         aux_array = []
-        indice_maior_valor = int(len(y_refencia)*(pico_do_sinal/100.0))
+        indice_maior_valor = int(len(y_refencia) * (pico_do_sinal / 100.0))
         index_array_deslocado = np.argmax(aux)
 
         #### Alinhamento final!!!!!#####
@@ -1862,7 +2080,7 @@ class Parameters:
             else:
                 aux_array.append(0)
 
-        while (indice_maior_valor) != (index_array_deslocado):
+        while indice_maior_valor != index_array_deslocado:
             index_array_deslocado = np.argmax(aux)
             aux = np.roll(aux, 1)
 
@@ -1879,9 +2097,9 @@ class Parameters:
 
         BLUE = (255, 0, 0)
         RED = (0, 0, 255)
-        if (contador_numero_de_passos != 0):
+        if contador_numero_de_passos != 0:
             try:
-                if (contador_numero_de_passos % 2):
+                if contador_numero_de_passos % 2:
                     constant = cv2.copyMakeBorder(
                         frame, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=BLUE)
                 else:
