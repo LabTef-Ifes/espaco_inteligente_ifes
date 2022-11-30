@@ -132,7 +132,7 @@ if os.path.exists(sequence_folder):
     log.warn(
         'Path to PERSON_ID={} GESTURE_ID={} already exists.\nWould you like to proceed? All data will be deleted![y/n]',
         person_id, gesture_id)
-    key = raw_input()
+    key = input()
     if key == 'y':
         # Recursively delete a directory tree.
         shutil.rmtree(sequence_folder)
