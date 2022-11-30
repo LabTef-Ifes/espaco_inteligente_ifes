@@ -2,8 +2,6 @@ import math
 import statistics
 import numpy as np
 import cv2
-import statistics
-import pandas as pd
 from sklearn import preprocessing
 
 import skfuzzy as fuzz
@@ -1243,7 +1241,7 @@ class Parameters:
             skeletons (_type_): _description_
 
         Returns:
-            _type_: _description_
+            float: _description_
         """
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         altura_da_pessoa = 0

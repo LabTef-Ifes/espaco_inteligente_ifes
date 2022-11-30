@@ -4,7 +4,8 @@ from subprocess import Popen, PIPE, STDOUT
 from utils import load_options
 from is_wire.core import Logger
 
-
+"""summary
+"""
 def get_person_gesture(folder):
     """_summary_
 

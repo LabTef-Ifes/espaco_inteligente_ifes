@@ -1,10 +1,7 @@
 import numpy as np
 import cv2
 import tensorflow as tf
-from keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential, load_model
-from keras.layers import Dense, Dropout, Activation, Flatten
-from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.models import load_model
 from keras.callbacks import TensorBoard
 import time
 
@@ -62,7 +59,6 @@ while cap.isOpened():
 
                 prediction = modelo_final.predict(
                     new_array)  # [prepare(filepath)])
-                # prediction=(np.around(prediction).reshape([1,1]))
                 print(prediction)
                 prediction = (np.around(prediction).reshape([1, 3]))
                 print(prediction)
@@ -71,7 +67,6 @@ while cap.isOpened():
                 # cv2.putText(frame, text, (35, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0),1, 5)
                 cv2.putText(aux_soma_frame, text, (35, 50),
                             cv2.FONT_HERSHEY_SIMPLEX, 1.5, (100, 00, 10), 1, cv2.LINE_AA)
-                # cv2.imshow('', aux_soma_frame)
                 cv2.imshow('Frame', aux_soma_frame)
                 aux_soma_frame = 0
 

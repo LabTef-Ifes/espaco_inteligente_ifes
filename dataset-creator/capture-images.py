@@ -29,25 +29,24 @@ def get_id(topic):
     match = match_id.search(msg.topic)
     if not match:
         return None
-    else:
-        return int(match.group(1))
+    return int(match.group(1))
 
 
-def place_images(output_image, images):
+def place_images(output_image, images_):
     """_summary_
 
     Args:
         output_image (_type_): _description_
-        images (_type_): _description_
+        images_ (_type_): _description_
     """
-    h, w = images[0].shape[0:2]
+    h, w = images_[0].shape[0:2]
 
-    output_image[0:h, 0:w, :] = images[0]
-    output_image[0:h, w:2 * w, :] = images[1]
-    output_image[h:2 * h, 0:w, :] = images[2]
-    output_image[h:2 * h, w:2 * w, :] = images[3]
+    output_image[0:h, 0:w, :] = images_[0]
+    output_image[0:h, w:2 * w, :] = images_[1]
+    output_image[h:2 * h, 0:w, :] = images_[2]
+    output_image[h:2 * h, w:2 * w, :] = images_[3]
 
-
+# image não usado???
 def draw_info_bar(image, text, x, y,
                   background_color=(0, 0, 0),
                   text_color=(255, 255, 255),
@@ -94,7 +93,7 @@ def draw_info_bar(image, text, x, y,
         thickness=thickness)
 
 
-log = Logger(name='Capture')
+log = Logger(name='capture-images')
 
 with open('gestures.json') as f:
     gestures = json.load(f)
@@ -158,8 +157,8 @@ full_image = np.zeros(size, dtype=np.uint8)
 contador = 0
 images_data = {}
 current_timestamps = {}
-timestamps = defaultdict(list)
 images = {}
+timestamps = defaultdict(list)
 n_sample = 0
 display_rate = 2
 start_save = False
@@ -229,10 +228,11 @@ while True:
                 start_save = False
 
             if key == ord('q'):
+                # Not both or ((not start_save) or sequence_saved) ?
                 if not start_save or sequence_saved:
                     break
         # clear images dict
-        images_data = {}
-        current_timestamps = {}
+        images_data.clear()
+        current_timestamps.clear()
 
 log.info("Exiting")

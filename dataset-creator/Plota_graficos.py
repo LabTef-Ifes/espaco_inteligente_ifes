@@ -3,12 +3,11 @@ import cv2
 import argparse
 import numpy as np
 import math, statistics
-# matplotlib inline
 from scipy import interpolate
 from sympy import S, symbols, printing
 import matplotlib.pyplot as plt
 from is_wire.core import Logger
-from utils import to_labels_array, to_labels_dict, load_options, get_np_image
+from utils import load_options
 from video_loader import MultipleVideoLoader
 
 from collections import OrderedDict
@@ -38,63 +37,58 @@ class Plota_graficos:
 
     @staticmethod
     def plota_grafico(y, title):
-        fig, AX = plt.subplots()
+        fig, ax = plt.subplots()
         # y=y[1:]
-        X = []
         X = np.linspace(0, 100, num=len(y))
 
-        AX.plot(X, y)
-        AX.set(xlabel='N° de amostras', ylabel=title, title=title)
-        AX.grid()
+        ax.plot(X, y)
+        ax.set(xlabel='N° de amostras', ylabel=title, title=title)
+        ax.grid()
         plt.savefig(options.folder + '/' + title + '.png')
         plt.show()
 
     @staticmethod
     def plota_grafico_distance_feet(x, y):
-        fig, AX = plt.subplots()
+        fig, ax = plt.subplots()
         y = y[2:]
-        AX.plot(x, y)
-        AX.set(xlabel='Tempo (s) ', ylabel='Distância (m) ', title='Medida das distâncias (m) em função do tempo (s)')
-        AX.grid()
+        ax.plot(x, y)
+        ax.set(xlabel='Tempo (s) ', ylabel='Distância (m) ', title='Medida das distâncias (m) em função do tempo (s)')
+        ax.grid()
         plt.savefig(options.folder + '/Medidas_das_distancias_pelo_tempo.png')
         plt.show()
 
     @staticmethod
     def plota_grafico_tempo_de_passo(x, y, x_label='Tempo(s)', y_label='Comprimento(m)', titulo='Titulo'):
-        fig, AX = plt.subplots()
+        fig, ax = plt.subplots()
         # y=y[1:]
-        AX.plot(x, y)
-        AX.set(xlabel=x_label, ylabel=y_label, title=titulo)
-        AX.grid()
+        ax.plot(x, y)
+        ax.set(xlabel=x_label, ylabel=y_label, title=titulo)
+        ax.grid()
         plt.savefig(options.folder + '/Tempo_por_passo.png')
         plt.show()
 
     @staticmethod
     def plota_angulo_medido(y, titulo):
-        x = len(y)
-        # print(x)
-        k = []
-        for i in range(0, x):
-            k.append(i)
+        #k = []
+        #for i in range(len(y)):
+        #    k.append(i)
+        k = list(range(len(y)))
 
-        fig, AX = plt.subplots()
-        AX.plot(k, y)
-        AX.set(xlabel='N° de amostras', ylabel='Ângulo (°)', title=titulo)
-        AX.grid()
+        fig, ax = plt.subplots()
+        ax.plot(k, y)
+        ax.set(xlabel='N° de amostras', ylabel='Ângulo (°)', title=titulo)
+        ax.grid()
         plt.savefig(options.folder + '/' + titulo + '.png')
         plt.show()
 
     @staticmethod
     def plota_simetria(y, titulo):
-        x = len(y)
-        k = []
-        for i in range(0, x):
-            k.append(i)
+        k = list(range(len(y)))
 
-        fig, AX = plt.subplots()
-        AX.plot(k, y)
-        AX.set(xlabel='N° de amostras', ylabel='Simetria', title=titulo)
-        AX.grid()
+        fig, ax = plt.subplots()
+        ax.plot(k, y)
+        ax.set(xlabel='N° de amostras', ylabel='Simetria', title=titulo)
+        ax.grid()
         plt.savefig(options.folder + '/' + titulo + '.png')
         plt.show()
 
@@ -159,43 +153,31 @@ class Plota_graficos:
             fieldnames = ["Gait Cycle (%)", "Angle (°)"]
             csvWriter = csv.DictWriter(myCsv, fieldnames=fieldnames)
             csvWriter.writeheader()
-            for i in range(0, len(k_referencia)):
+            for i in range(len(y)):
                 csvWriter.writerow({'Gait Cycle (%)': '%.5f' % k_referencia[i], 'Angle (°)': '%.5f' % y[i]})
-        fig, AX = plt.subplots()
-        AX.plot(k_referencia, y, label="Valor médio: {:3f} +- {:3f}".format(statistics.mean(y), statistics.pstdev(y)),
+        fig, ax = plt.subplots()
+        ax.plot(k_referencia, y, label="Valor médio: {:3f} +- {:3f}".format(statistics.mean(y), statistics.pstdev(y)),
                 color="gray", linewidth=5.0, linestyle="--")
-        x = k_referencia
-        Y = y
 
-        ##interpolação da curva
-        # s = interpolate.InterpolatedUnivariateSpline(x, Y)
-        # xnew = np.arange(0,100)
-        # ynew = s(xnew)
-        # print(len(xnew),len(ynew))
-
-        p = np.polyfit(x, Y, len(Y) - 1)
+        # p & f ???
+        p = np.polyfit(k_referencia, y, len(y) - 1)
         f = np.poly1d(p)
         xnew = k_referencia  # np.arange(0,len(y_refencia)+1)
         ynew = f(xnew)
-        # calculate new x's and y's
-        ##x_new = np.linspace(x[0], x[-1], 50)
-        ##y_new = f(x_new)
 
         x = symbols("x")
         poly = sum(S("{:6.2f}".format(v)) * x ** i for i, v in enumerate(p[::-1]))
         eq_latex = printing.latex(poly)
         plt.plot(xnew, ynew, label="${}$".format(eq_latex))
         desvio_padrao_curva_media = np.std(y)
-        # AX.plot(x,Y, 'x', xnew, ynew, 'b')
-        ##AX.errorbar(k_5,aux,desvio_padrao_curva_media)
         Sigma_new_vec = desvio_padrao_curva_media  # ynew-aux
         lower_bound = y - Sigma_new_vec
         upper_bound = y + Sigma_new_vec
         # xnew = np.arange(0,100)
         plt.fill_between(xnew, lower_bound, upper_bound, color='green', alpha=.3)
 
-        AX.set(xlabel='Gait Cycle %', ylabel='Angle (°)', title=titulo)
-        AX.grid()
+        ax.set(xlabel='Gait Cycle %', ylabel='Angle (°)', title=titulo)
+        ax.grid()
         plt.legend()
         plt.savefig(options.folder + '/' + titulo + '.png')
         plt.show()
@@ -222,9 +204,7 @@ class Plota_graficos:
             X.append(vetor[i][0])
             Y.append(vetor[i][1])
             Z.append(vetor[i][2])
-        # print(vetor[0],vetor[1],vetor[2])
         ax.scatter(X, Y, Z, c='r', marker='o')
-        # ax.plot3D(X,Y,Z)
         ax.grid()
         plt.savefig(options.folder + '/' + title + '.png')
         plt.show()
