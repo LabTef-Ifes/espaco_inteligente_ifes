@@ -47,7 +47,7 @@ while cap.isOpened():
     if ret:
         if k != 0:
             # frame=cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-            frame = (frame / 255)
+            frame = frame / 255
             aux_diferenca_frame = (frame - frame_anterior)
             # print(aux_diferenca_frame)
             # cv2.imshow('Frame', aux_diferenca_frame)
@@ -60,9 +60,7 @@ while cap.isOpened():
                 new_array = (new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1) / 255)
                 # print(new_array,(new_array).shape)
 
-                prediction = modelo_final.predict(
-                    new_array)  # [prepare(filepath)])
-                # prediction=(np.around(prediction).reshape([1,1]))
+                prediction = modelo_final.predict(new_array)
                 print(prediction)
                 prediction = (np.around(prediction).reshape([1, 3]))
                 print(prediction)

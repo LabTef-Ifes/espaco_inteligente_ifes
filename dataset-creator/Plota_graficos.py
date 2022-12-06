@@ -1,19 +1,14 @@
 import os, re, sys, json, time, csv
-import cv2
 import argparse
 import numpy as np
 import math, statistics
 # matplotlib inline
-from scipy import interpolate
 from sympy import S, symbols, printing
 import matplotlib.pyplot as plt
 from is_wire.core import Logger
 from utils import to_labels_array, to_labels_dict, load_options, get_np_image
-from video_loader import MultipleVideoLoader
 
 from collections import OrderedDict
-from is_msgs.image_pb2 import ObjectAnnotations
-
 log = Logger(name='WatchVideos')
 
 with open('keymap.json') as f:
@@ -24,6 +19,11 @@ options = load_options(print_options=False)
 class Plota_graficos:
     @staticmethod
     def plota_grafico_perdas(y):
+        """_summary_
+
+        Args:
+            y (_type_): _description_
+        """        
         fig, AX = plt.subplots()
         # y=y[1:]
         X = []
@@ -61,35 +61,49 @@ class Plota_graficos:
 
     @staticmethod
     def plota_grafico_tempo_de_passo(x, y, x_label='Tempo(s)', y_label='Comprimento(m)', titulo='Titulo'):
-        fig, AX = plt.subplots()
+        """_summary_
+
+        Args:
+            x (_type_): _description_
+            y (_type_): _description_
+            x_label (str, optional): _description_. Defaults to 'Tempo(s)'.
+            y_label (str, optional): _description_. Defaults to 'Comprimento(m)'.
+            titulo (str, optional): _description_. Defaults to 'Titulo'.
+        """        
+        fig, ax = plt.subplots()
         # y=y[1:]
-        AX.plot(x, y)
-        AX.set(xlabel=x_label, ylabel=y_label, title=titulo)
-        AX.grid()
+        ax.plot(x, y)
+        ax.set(xlabel=x_label, ylabel=y_label, title=titulo)
+        ax.grid()
         plt.savefig(options.folder + '/Tempo_por_passo.png')
         plt.show()
 
     @staticmethod
     def plota_angulo_medido(y, titulo):
-        x = len(y)
-        # print(x)
-        k = []
-        for i in range(0, x):
-            k.append(i)
+        """_summary_
 
-        fig, AX = plt.subplots()
-        AX.plot(k, y)
-        AX.set(xlabel='N° de amostras', ylabel='Ângulo (°)', title=titulo)
-        AX.grid()
+        Args:
+            y (_type_): _description_
+            titulo (_type_): _description_
+        """        
+        k = list(range(len(y)))
+
+        fig, ax = plt.subplots()
+        ax.plot(k, y)
+        ax.set(xlabel='N° de amostras', ylabel='Ângulo (°)', title=titulo)
+        ax.grid()
         plt.savefig(options.folder + '/' + titulo + '.png')
         plt.show()
 
     @staticmethod
     def plota_simetria(y, titulo):
-        x = len(y)
-        k = []
-        for i in range(0, x):
-            k.append(i)
+        """_summary_
+
+        Args:
+            y (_type_): _description_
+            titulo (_type_): _description_
+        """        
+        k = list(range(len(y)))
 
         fig, AX = plt.subplots()
         AX.plot(k, y)
@@ -100,6 +114,12 @@ class Plota_graficos:
 
     @staticmethod
     def plota_angulo_medido_normalizado(y, titulo):
+        """_summary_
+
+        Args:
+            y (_type_): _description_
+            titulo (_type_): _description_
+        """        
         #     k_referencia=[]
 
         # ## Essas referências podem mudar conforme os ciclos em interesse para análise !!!##
@@ -202,6 +222,11 @@ class Plota_graficos:
 
     @staticmethod
     def trajetoria_vetor(vetor):
+        """_summary_
+
+        Args:
+            vetor (_type_): _description_
+        """        
         X, Y, Z = [0], [0], [0]
 
         title = 'Trajetória vetor normal ao tórax'
