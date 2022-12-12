@@ -10,15 +10,12 @@ import numpy as np
 import math
 import statistics
 import pika
-from utils import load_options
+from utils import load_options, get_np_image
 from utils import to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
-from utils import get_np_image
-#from PIL import ImageGrab
-from is_msgs.image_pb2 import ObjectAnnotations
-from is_msgs.image_pb2 import HumanKeypoints as HKP
+from collections import OrderedDict
+from is_msgs.image_pb2 import ObjectAnnotations,HumanKeypoints as HKP
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
 import pandas as pd

@@ -6,19 +6,13 @@ import json
 import time
 import argparse
 import numpy as np
-from utils import load_options
-from utils import to_labels_array, to_labels_dict
+from utils import load_options, get_np_image
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
-from utils import get_np_image
-#from PIL import ImageGrab
-
-from is_msgs.image_pb2 import ObjectAnnotations
-from is_msgs.image_pb2 import HumanKeypoints as HKP
+from collections import OrderedDict
+from is_msgs.image_pb2 import ObjectAnnotations, HumanKeypoints as HKP
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
-
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -26,7 +20,8 @@ import pyscreenshot as ImageGrab
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('CHEST')),
-         (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')), (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('CHEST'), HKP.Value('RIGHT_HIP')
+          ), (HKP.Value('CHEST'), HKP.Value('LEFT_HIP')),
          (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
          (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
          (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
@@ -36,7 +31,7 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
          (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
          (HKP.Value('RIGHT_ELBOW'), HKP.Value('RIGHT_WRIST')),
-         (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),   
+         (HKP.Value('NECK'), HKP.Value('RIGHT_HIP')),
          (HKP.Value('RIGHT_HIP'), HKP.Value('RIGHT_KNEE')),
          (HKP.Value('RIGHT_KNEE'), HKP.Value('RIGHT_ANKLE')),
          (HKP.Value('NOSE'), HKP.Value('LEFT_EYE')), (HKP.Value('LEFT_EYE'),
@@ -46,8 +41,20 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
 
 
 def render_skeletons(images, annotations, it, links, colors):
+    """_summary_
+
+    Args:
+        images (_type_): _description_
+        annotations (_type_): _description_
+        it (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     for cam_id, image in images.items():
-        deteccoes = 0 # Detections in each frame
+        deteccoes = 0  # Detections in each frame
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
             parts = {}
@@ -58,29 +65,44 @@ def render_skeletons(images, annotations, it, links, colors):
             for link_parts, color in zip(links, colors):
                 begin, end = link_parts
                 if begin in parts and end in parts:
-                    cv2.line(image, parts[begin], parts[end], color=color, thickness=4)
+                    cv2.line(image, parts[begin],
+                             parts[end], color=color, thickness=4)
             for _, center in parts.items():
-                cv2.circle(image, center=center, radius=4, color=(255, 255, 255), thickness=-1)
+                cv2.circle(image, center=center, radius=4,
+                           color=(255, 255, 255), thickness=-1)
 
         if deteccoes < 10:
-            juntas[cam_id] -= deteccoes    
+            juntas[cam_id] -= deteccoes
             # perdidas[cam_id] = 0
         else:
             perdidas[cam_id] += 15 - deteccoes
-    
+
     return juntas, perdidas
-        
 
 
 def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
+    """_summary_
+
+    Args:
+        ax (_type_): _description_
+        skeletons (_type_): _description_
+        links (_type_): _description_
+        colors (_type_): _description_
+        juntas_3d (_type_): _description_
+        perdidas_3d (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     deteccoes_3d = 0
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
         for part in skeleton.keypoints:
             deteccoes_3d += 1
-            juntas_3d += 1 
-            parts[part.id] = (part.position.x, part.position.y, part.position.z)
+            juntas_3d += 1
+            parts[part.id] = (
+                part.position.x, part.position.y, part.position.z)
         for link_parts, color in zip(links, colors):
             begin, end = link_parts
             if begin in parts and end in parts:
@@ -93,7 +115,7 @@ def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
                     zs=z_pair,
                     linewidth=3,
                     color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
-    
+
     if deteccoes_3d < 10:
         juntas_3d -= deteccoes_3d
     else:
@@ -106,31 +128,54 @@ def perdas_3d(ax, skeletons, links, colors):
     for skeleton in skeletons_pb.objects:
         parts = {}
         for part in skeleton.keypoints:
-            parts[part.id] = (part.position.x, part.position.y, part.position.z)
+            parts[part.id] = (
+                part.position.x, part.position.y, part.position.z)
         for link_parts, color in zip(links, colors):
             begin, end = link_parts
             if begin in parts and end in parts:
                 x_pair = [parts[begin][0], parts[end][0]]
                 y_pair = [parts[begin][1], parts[end][1]]
                 z_pair = [parts[begin][2], parts[end][2]]
-                perdas=(15-len(parts))/15.0
-                perdas=perdas*100.0
+                perdas = (15-len(parts))/15.0
+                perdas = perdas*100.0
                 #print("Perdas na detecção: " +   str(perdas) + "%")
                 return perdas
 
-def place_images(output_image, images, x_offset=0, y_offset=0):
-    w, h = images[0].shape[1], images[0].shape[0]
-    output_image[0 + y_offset:h + y_offset, 0 + x_offset:w + x_offset, :] = images[0]
-    output_image[0 + y_offset:h + y_offset, w + x_offset:2 * w + x_offset, :] = images[1]
-    output_image[h + y_offset:2 * h + y_offset, 0 + x_offset:w + x_offset, :] = images[2]
-    output_image[h + y_offset:2 * h + y_offset, w + x_offset:2 * w + x_offset, :] = images[3]
 
-def plota_grafico_perdas(x,y):
-    fig2,AX=plt.subplots()
-    AX.plot(x,y)
-    AX.set(xlabel='Medição',ylabel='Perda percentual (%)',title='Perdas na reconstrução 3D em função da amostragem')
+def place_images(output_image, images, x_offset=0, y_offset=0):
+    """_summary_
+
+    Args:
+        output_image (_type_): _description_
+        images (_type_): _description_
+        x_offset (int, optional): _description_. Defaults to 0.
+        y_offset (int, optional): _description_. Defaults to 0.
+    """    
+    w, h = images[0].shape[1], images[0].shape[0]
+    output_image[0 + y_offset:h + y_offset, 0 +
+                 x_offset:w + x_offset, :] = images[0]
+    output_image[0 + y_offset:h + y_offset, w +
+                 x_offset:2 * w + x_offset, :] = images[1]
+    output_image[h + y_offset:2 * h + y_offset,
+                 0 + x_offset:w + x_offset, :] = images[2]
+    output_image[h + y_offset:2 * h + y_offset, w +
+                 x_offset:2 * w + x_offset, :] = images[3]
+
+
+def plota_grafico_perdas(x, y):
+    """_summary_
+
+    Args:
+        x (_type_): _description_
+        y (_type_): _description_
+    """    
+    fig2, AX = plt.subplots()
+    AX.plot(x, y)
+    AX.set(xlabel='Medição', ylabel='Perda percentual (%)',
+           title='Perdas na reconstrução 3D em função da amostragem')
     AX.grid()
     plt.show()
+
 
 log = Logger(name='WatchVideos')
 with open('keymap.json', 'r') as f:
@@ -146,8 +191,10 @@ with open('gestures.json', 'r') as f:
 
 parser = argparse.ArgumentParser(
     description='Utility to capture a sequence of images from multiples cameras')
-parser.add_argument('--person', '-p', type=int, required=True, help='ID to identity person')
-parser.add_argument('--gesture', '-g', type=int, required=True, help='ID to identity gesture')
+parser.add_argument('--person', '-p', type=int,
+                    required=True, help='ID to identity person')
+parser.add_argument('--gesture', '-g', type=int,
+                    required=True, help='ID to identity gesture')
 args = parser.parse_args()
 
 person_id = args.person
@@ -157,7 +204,8 @@ if str(gesture_id) not in gestures:
                  json.dumps(gestures, indent=2))
 
 if person_id < 1 or person_id > 999:
-    log.critical("Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
+    log.critical(
+        "Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
 
 log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
 
@@ -191,7 +239,7 @@ annotations = {}
 for cam_id, filename in json_files.items():
     with open(filename, 'r') as f:
         annotations[cam_id] = json.load(f)['annotations']
-#load localizations
+# load localizations
 with open(json_locaizations_file, 'r') as f:
     localizations = json.load(f)['localizations']
 
@@ -203,7 +251,7 @@ update_image = True
 output_file = 'p{:03d}g{:02d}_output.mp4'.format(person_id, gesture_id)
 
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-vid = cv2.VideoWriter('record_screen.avi', fourcc, 60.0, (1288,728))
+vid = cv2.VideoWriter('record_screen.avi', fourcc, 60.0, (1288, 728))
 # video_writer = cv2.VideoWriter()
 
 juntas = [0, 0, 0, 0]           # Lista de juntas detectadas em cada câmera
@@ -213,40 +261,42 @@ perdidas_3d = 0
 it_frames = 0
 y = []
 x = []
-i=0
-tempo_inicial=time.time()
+i = 0
+tempo_inicial = time.time()
 for it_frames in range(video_loader.n_frames()):
     video_loader.load_next()
 
     frames = video_loader[it_frames]
     if frames is not None:
 
-        juntas, perdidas = render_skeletons(frames, annotations, it_frames, links, colors)
+        juntas, perdidas = render_skeletons(
+            frames, annotations, it_frames, links, colors)
         frames_list = [frames[cam] for cam in sorted(frames.keys())]
         place_images(full_image, frames_list)
 
     ax.clear()
     ax.view_init(azim=28, elev=32)
     ax.set_xlim(-1.5, 0)
-    ax.set_xticks(np.arange(-1.5, 0.5, 0.5))
     ax.set_ylim(-3.0, 3.0)
-    ax.set_yticks(np.arange(-5.0, 2.0, 0.5))
     ax.set_zlim(-0.25, 1.5)
+    ax.set_xticks(np.arange(-1.5, 0.5, 0.5))
+    ax.set_yticks(np.arange(-5.0, 2.0, 0.5))
     ax.set_zticks(np.arange(0, 1.75, 0.5))
     ax.set_xlabel('X', labelpad=20)
     ax.set_ylabel('Y', labelpad=10)
     ax.set_zlabel('Z', labelpad=5)
-    juntas_3d, perdidas_3d = render_skeletons_3d(ax, localizations[it_frames], links, colors, juntas_3d, perdidas_3d)
-    i=1+i
-    perdas_no_3d=perdas_3d(ax, localizations[it_frames], links, colors)
-        
+    juntas_3d, perdidas_3d = render_skeletons_3d(
+        ax, localizations[it_frames], links, colors, juntas_3d, perdidas_3d)
+    i = 1+i
+    perdas_no_3d = perdas_3d(ax, localizations[it_frames], links, colors)
+
     if perdas_no_3d is None:
-        perdas_no_3d=100
+        perdas_no_3d = 100
 
     y.append(perdas_no_3d)
-    x.append(i) 
-        
-    print("Perdas no 3D: %5.2f"  % perdas_no_3d + "%")
+    x.append(i)
+
+    print("Perdas no 3D: %5.2f" % perdas_no_3d + "%")
     fig.canvas.draw()
     data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
     view_3d = data.reshape(fig.canvas.get_width_height()[::-1] + (3, ))
@@ -255,7 +305,8 @@ for it_frames in range(video_loader.n_frames()):
     hd, wd, _ = display_image.shape
     hv, wv, _ = view_3d.shape
 
-    display_image = np.hstack([display_image, 255 * np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
+    display_image = np.hstack(
+        [display_image, 255 * np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
     display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
 
     # if it_frames == 0:
@@ -278,21 +329,23 @@ for it_frames in range(video_loader.n_frames()):
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-for cam_id in range(0, 4):
+for cam_id in range(4):
     porcentagem = (perdidas[cam_id]/juntas[cam_id]) * 100
-    log.info("cam{}: Juntas detectadas: {} | Perdidas: {} |  {:.2f} %".format(cam_id, juntas[cam_id], perdidas[cam_id], porcentagem))
+    log.info("cam{}: Juntas detectadas: {} | Perdidas: {} |  {:.2f} %".format(
+        cam_id, juntas[cam_id], perdidas[cam_id], porcentagem))
 
 porcentagem_3d = (perdidas_3d/juntas_3d) * 100
-log.info("Juntas detectadas [Serviço 3d]: {} | Perdidas: {} |  {:.2f} %".format(juntas_3d, perdidas_3d, porcentagem_3d))
+log.info("Juntas detectadas [Serviço 3d]: {} | Perdidas: {} |  {:.2f} %".format(
+    juntas_3d, perdidas_3d, porcentagem_3d))
 
 log.info('Exiting')
-soma_perdas=sum(y)
-tempo_final=time.time()
-tempo_total=(tempo_final-tempo_inicial)
+soma_perdas = sum(y)
+tempo_final = time.time()
+tempo_total = (tempo_final-tempo_inicial)
 print("Tempo total: %5.4f" % tempo_total)
-perda_media=soma_perdas/len(x)
+perda_media = soma_perdas/len(x)
 print("Perda média: %5.2f" % perda_media + " %")
-plota_grafico_perdas(x,y) 
+plota_grafico_perdas(x, y)
 
 vid.release()
 cv2.destroyAllWindows()

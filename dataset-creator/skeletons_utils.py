@@ -10,29 +10,33 @@ from itertools import permutations
 
 from time import time
 
+
 def load_options():
     """_summary_
 
     Returns:
         _type_: _description_
-    """    
+    """
     log = Logger(name='LoadingOptions')
     op_file = sys.argv[1] if len(sys.argv) > 1 else 'options.json'
     try:
         with open(op_file, 'r') as f:
             try:
                 op = Parse(f.read(), Options())
-                mem_frac = op.per_process_gpu_memory_fraction 
+                mem_frac = op.per_process_gpu_memory_fraction
                 if mem_frac < 0.0 or mem_frac > 1.0:
-                    log.critical("Invalid value for 'per_process_gpu_memory_fraction': {}. Must be in [0.0, 1.0]", mem_frac)
+                    log.critical(
+                        "Invalid value for 'per_process_gpu_memory_fraction': {}. Must be in [0.0, 1.0]", mem_frac)
                 log.info('Options: \n{}', op)
                 return op
             except Exception as ex:
-                log.critical('Unable to load options from \'{}\'. \n{}', op_file, ex)
+                log.critical(
+                    'Unable to load options from \'{}\'. \n{}', op_file, ex)
             except:
                 log.critical('Unable to load options from \'{}\'', op_file)
     except Exception:
         log.critical('Unable to open file \'{}\'', op_file)
+
 
 def get_links(model='COCO'):
     """_summary_
@@ -42,7 +46,7 @@ def get_links(model='COCO'):
 
     Returns:
         _type_: _description_
-    """    
+    """
     if model == 'COCO':
         return [
             (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
@@ -68,6 +72,7 @@ def get_links(model='COCO'):
     else:
         return []
 
+
 def get_face_parts(model='COCO'):
     """_summary_
 
@@ -76,7 +81,7 @@ def get_face_parts(model='COCO'):
 
     Returns:
         _type_: _description_
-    """    
+    """
     if model == 'COCO':
         return [
             HKP.Value('NOSE'),
@@ -91,13 +96,15 @@ def get_face_parts(model='COCO'):
     else:
         return []
 
+
 def get_links_colors():
     """_summary_
 
     Returns:
         _type_: _description_
-    """    
+    """
     return list(permutations([0, 255, 85, 170], 3))
+
 
 def get_np_image(input_image):
     """_summary_
@@ -107,7 +114,7 @@ def get_np_image(input_image):
 
     Returns:
         _type_: _description_
-    """    
+    """
     if isinstance(input_image, np.ndarray):
         output_image = input_image
     elif isinstance(input_image, Image):
@@ -128,20 +135,24 @@ def get_pb_image(input_image, encode_format='.jpeg', compression_level=0.8):
 
     Returns:
         _type_: _description_
-    """    
+    """
     if isinstance(input_image, np.ndarray):
         if encode_format == '.jpeg':
-            params = [cv2.IMWRITE_JPEG_QUALITY, int(compression_level * (100 - 0) + 0)]
+            params = [cv2.IMWRITE_JPEG_QUALITY, int(
+                compression_level * (100 - 0) + 0)]
         elif encode_format == '.png':
-            params = [cv2.IMWRITE_PNG_COMPRESSION, int(compression_level * (9 - 0) + 0)]
+            params = [cv2.IMWRITE_PNG_COMPRESSION,
+                      int(compression_level * (9 - 0) + 0)]
         else:
-            return Image()        
-        cimage = cv2.imencode(ext=encode_format, img=input_image, params=params)
+            return Image()
+        cimage = cv2.imencode(
+            ext=encode_format, img=input_image, params=params)
         return Image(data=cimage[1].tobytes())
     elif isinstance(input_image, Image):
         return input_image
     else:
         return Image()
+
 
 def draw_skeletons(input_image, skeletons):
     """_summary_
@@ -152,7 +163,7 @@ def draw_skeletons(input_image, skeletons):
 
     Returns:
         _type_: _description_
-    """    
+    """
     image = get_np_image(input_image)
     links = get_links()
     face_parts = get_face_parts()
@@ -164,10 +175,12 @@ def draw_skeletons(input_image, skeletons):
         for link_parts, color in zip(links, colors):
             begin, end = link_parts
             if begin in parts and end in parts:
-                cv2.line(image, parts[begin], parts[end], color=color, thickness=4)
+                cv2.line(image, parts[begin], parts[end],
+                         color=color, thickness=4)
         for ptype, center in parts.items():
             radius = 2 if ptype in face_parts else 4
-            cv2.circle(image, center=center, radius=radius, color=(255, 255, 255), thickness=-1)
+            cv2.circle(image, center=center, radius=radius,
+                       color=(255, 255, 255), thickness=-1)
     return image
 
 # ???

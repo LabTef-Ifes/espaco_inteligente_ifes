@@ -1,6 +1,10 @@
 from is_wire.core import Channel, Subscription, Message, Logger
 from utils import load_options
 
+"""
+__summary__
+"""
+
 log = Logger(name='ConfigureCameras')
 
 options = load_options()

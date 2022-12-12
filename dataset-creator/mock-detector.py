@@ -6,7 +6,7 @@ import time
 from random import randint
 
 mean_time = 100  # milliseconds
-var_time = 20
+var_time = 20  # ???
 
 # parametros não usados???
 def detect(image, ctx):

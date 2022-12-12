@@ -64,7 +64,7 @@ for video_file in video_files:
 
     pending_videos.append(video_file)
     n_annotations[base_name] = n_frames
-if len(pending_videos) == 0:
+if not pending_videos:
     log.info("Exiting...")
     sys.exit(-1)
 
