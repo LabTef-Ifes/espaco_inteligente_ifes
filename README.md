@@ -61,7 +61,8 @@ O EI atual do Ifes roda em uma máquina Ubuntu 18.04.5 LTS, processador Intel® 
 - [Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
 ## Calibração das câmeras
 
-- Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration)
+- Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration) **Deprecated**
+- Acesse o repositório [Camera Calibration New](https://github.com/LabTef-Ifes/camera-calibration-new)
 
 ## Reiniciando o PC 16 do Labtef
 Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir os passos abaixo .
