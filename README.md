@@ -54,6 +54,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 # Configurações do Labtef
 
 O EI atual do Ifes roda em uma máquina Ubuntu 18.04.5 LTS, processador Intel® Core™ i5-8400 CPU @ 2.80GHz × 6, 16Gb de memória, placa de vídeo NVIDIA GeForce GTX 1070/PCIe/SSE2, uma placa de rede fibra ótica 10Gb, Python 2 versão 2.7.17 e Python 3 versão 3.6.9. O switch é o 3Com Switch 4800G PWR 24-Port. As portas do switch que estão com o PoE ativado são 19, 21, 22, 23 e 24.
+
 # Referências
 
 - Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
@@ -62,5 +63,11 @@ O EI atual do Ifes roda em uma máquina Ubuntu 18.04.5 LTS, processador Intel® 
 
 - Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration)
 
+## Reiniciando o PC 16 do Labtef
+Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir os passos abaixo .
+- Selecione Ubuntu no menu de fundo roxo
+- digite `fsck /dev/sda1` na tela preta de inicialização
+- aperte `y` para aceitar todas as alterações
+- digite reboot
 
 
