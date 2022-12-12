@@ -13,12 +13,12 @@ from collections import OrderedDict
 """_summary_
 """
 log = Logger(name='WatchVideos')
+FPS = 21
 
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
 
-FPS = 21
 
 # Why do VideoCapture in this py file?
 for i in range(4):

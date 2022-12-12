@@ -2,12 +2,14 @@ import shutil
 import json
 
 
-def valid(default, var):
+def valid(default, var) -> int:
     """valida uma variável int
 
     Args:
         default (Any): Valor padrão caso o usuário deseje pular essa alteração
         var (Any): Nome da variável para o input
+    Returns:
+        novo (int)
     """
     novo = input(
         f"Insira o novo valor de {var} ou enter para manter:") or default

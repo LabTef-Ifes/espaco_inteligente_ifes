@@ -1,20 +1,20 @@
 {
   "broker_uri": "amqp://guest:guest@localhost:5672",
-  "folder": "/home/rafael/desenvolvimento/espaco_inteligente_ifes/dataset-creator/videos",
+  "folder": "/home/desenvolvimento/espaco_inteligente_ifes/dataset-creator/videos",
   "cameras": [
     {
       "id": 0,
       "config": {
         "sampling": {
-          "frequency": 15
+          "frequency": 30
         },
         "image": {
           "resolution": {
-            "width": 600,
-            "height": 400
+            "width": 1288,
+            "height": 728
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",
@@ -33,15 +33,15 @@
       "id": 1,
       "config": {
         "sampling": {
-          "frequency": 15
+          "frequency": 30
         },
         "image": {
           "resolution": {
-            "width": 600,
-            "height": 400
+            "width": 1288,
+            "height": 728
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",
@@ -60,15 +60,15 @@
       "id": 2,
       "config": {
         "sampling": {
-          "frequency": 15
+          "frequency": 30
         },
         "image": {
           "resolution": {
-            "width": 600,
-            "height": 400
+            "width": 1288,
+            "height": 728
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",
@@ -87,15 +87,15 @@
       "id": 3,
       "config": {
         "sampling": {
-          "frequency": 15
+          "frequency": 30
         },
         "image": {
           "resolution": {
-            "width": 600,
-            "height": 400
+            "width": 1288,
+            "height": 728
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",

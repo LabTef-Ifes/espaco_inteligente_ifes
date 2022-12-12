@@ -7,7 +7,6 @@ import cv2
 import argparse
 import numpy as np
 from utils import load_options
-from utils import to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
 from collections import OrderedDict
@@ -40,25 +39,25 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')),
          (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
 
 
-def render_skeletons(images, annotations, it, colors, links):
+def render_skeletons(images, annotations_, it, colors_, links_):
     """_summary_
 
     Args:
         images (_type_): _description_
-        annotations (_type_): _description_
+        annotations_ (_type_): _description_
         it (_type_): _description_
-        colors (_type_): _description_
-        links (_type_): _description_
+        colors_ (_type_): _description_
+        links_ (_type_): _description_
     """
 
     # O que esse loop faz
     for cam_id, image in images.items():
-        skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
+        skeletons = ParseDict(annotations_[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
             parts = {}
             for part in ob.keypoints:
                 parts[part.id] = (int(part.position.x), int(part.position.y))
-            for link_parts, color in zip(links, colors):
+            for link_parts, color in zip(links_, colors_):
                 begin, end = link_parts
                 if begin in parts and end in parts:
                     cv2.line(
@@ -101,7 +100,6 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
 
 log = Logger(name='WatchVideos')
 
-# ??
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
@@ -179,11 +177,6 @@ fps = 7.0
 resolution = (1288, 728)
 outlist = [cv2.VideoWriter(
     f'cam{i}.avi', fourcc, fps, resolution) for i in range(4)]
-'''out0 = 
-out1 = cv2.VideoWriter('cam1.avi', fourcc, fps, resolution)
-out2 = cv2.VideoWriter('cam2.avi', fourcc, fps, resolution)
-out3 = cv2.VideoWriter('cam3.avi', fourcc, fps, resolution)'''
-
 update_image = True
 it_frames = 0
 while True:
