@@ -17,19 +17,20 @@
 1. Ajuste os diretórios dos arquivos `is-basic.sh`, `is-cameras.sh`, `is-frame-transformation.sh` e `is-skeletons-grouper.sh` de acordo com a sua máquina.
 1. Suba os containeres necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containeres.py](iniciar_principais_containeres.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containeres.py](iniciar_principais_containeres.py) novamente.
 1. Em outro terminal, digite `sudo docker stats` para verificar se os containeres estão rodando (*Ctrl+C para fechar*). Os containeres em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
-    Containeres ativos
-    :---
-    rabbitmq
-    zipkin
-    cam0
-    cam1
-    cam2
-    cam3
-    sk1
-    sk2
-    is-frame_transformation
-    grouper
-1. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**.
+   
+    | Containeres ativos      |
+    | :---------------------- |
+    | rabbitmq                |
+    | zipkin                  |
+    | cam0                    |
+    | cam1                    |
+    | cam2                    |
+    | cam3                    |
+    | sk1                     |
+    | sk2                     |
+    | is-frame_transformation |
+    | grouper                 |
+2. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**.
 ---
 # Descrição de alguns arquivos do espaço inteligente.
 
