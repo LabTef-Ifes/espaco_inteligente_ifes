@@ -65,23 +65,23 @@ Para rodar a quatro câmeras de uma só vez, execute o comando `sudo docker comp
 
 # Configurações do Labtef
 
-Item | Detalhamento
-:--- | ---:
-S.O | Ubuntu 18.04.5 LTS 
-Processador | Intel® Core™ i5-8400 CPU @ 2.80GHz × 6
-RAM | 16GB
-Placa de vídeo | NVIDIA GeForce GTX 1070/PCIe/SSE2
-Placa de rede | fibra ótica 10Gb
-Versão do Python | 2.7.17 e 3.6.9
-Switch | 3Com Switch 4800G PWR 24-Port
-Portas com PoE ativado | 19, 21, 22, 23 e 24
+| Item                   |                           Detalhamento |
+| :--------------------- | -------------------------------------: |
+| S.O                    |                     Ubuntu 18.04.5 LTS |
+| Processador            | Intel® Core™ i5-8400 CPU @ 2.80GHz × 6 |
+| RAM                    |                                   16GB |
+| Placa de vídeo         |      NVIDIA GeForce GTX 1070/PCIe/SSE2 |
+| Placa de rede          |                       fibra ótica 10Gb |
+| Versão do Python       |                         2.7.17 e 3.6.9 |
+| Switch                 |          3Com Switch 4800G PWR 24-Port |
+| Portas com PoE ativado |                    19, 21, 22, 23 e 24 |
 # Referências
 
 - Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
 - [Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
 ## Calibração das câmeras
 
-- Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration)
+- Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration-new)
 
 
 
