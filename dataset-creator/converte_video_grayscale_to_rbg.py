@@ -8,12 +8,11 @@ from is_wire.core import Logger
 from utils import load_options
 
 from is_wire.core import Logger
-from collections import OrderedDict
 
 """_summary_
 """
-log = Logger(name='WatchVideos')
 FPS = 21
+log = Logger(name='WatchVideos')
 
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
