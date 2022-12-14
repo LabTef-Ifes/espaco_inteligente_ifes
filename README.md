@@ -39,8 +39,8 @@
 - [dataset-creator/capture-images.py](dataset-creator/capture-images.py) - realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em '/dataset-creator/options.json'. Comandos válidos: `s` inicia a gravação (salvar imagens), `p` pausa a gravação, `q` fecha o programa.
 - [dataset-creator/make-videos.py](/dataset-creator/make-videos.py) - A partir dos frames capturados pelo arquivo `capture-images.py`, monta os vídeos e os salva em formato .mp4.
 - [dataset-creator/export-video-3d-medicoes-e-erros.py](dataset-creator/export-video-3d-medicoes-e-erros.py) - programa principal que realiza a leitura dos pontos gerados, calcula os parâmetros frame a frame, classifica o movimento executado e exibe o vídeo.
-- [dataset-creator/parameters.py](dataset-creator/parameters.py) - programa que possui funções usadas no arquivo `export-video-3d-medicoes-e-erros.py`.
-- [dataset-creator/captura-monta-e-analisa-video.py](dataset-creator/captura-monta-e-analisa-video.py) - programa para executar todo o sistema em sequência, desde a captura até a análise final.
+- [dataset-creator/Parameters.py](dataset-creator/Parameters.py) - programa que possui funções usadas no arquivo `export-video-3d-medicoes-e-erros.py`.
+- [dataset-creator/captura_monta_e_analisa_video.py](dataset-creator/captura_monta_e_analisa_video.py) - programa para executar todo o sistema em sequência, desde a captura até a análise final.
 - [visualizar_camera.py](visualizar_camera.py) - arquivo teste para visualizar a imagem de somente uma câmera.
 
 # Informações importantes
@@ -97,7 +97,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 - Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration) **Deprecated**
 - Acesse o repositório [Camera Calibration New](https://github.com/LabTef-Ifes/camera-calibration-new)
 
-## Reiniciando o PC 16 do Labtef
+## Reiniciando o PC 20 do Labtef
 Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir os passos abaixo .
 - Selecione Ubuntu no menu de fundo roxo
 - digite `fsck /dev/sda1` na tela preta de inicialização
