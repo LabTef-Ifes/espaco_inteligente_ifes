@@ -3,13 +3,19 @@ from Parameters import Parameters
 from analysis import SkeletonsCoord
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import os, re, csv, sys, json, time
+import os
+import re
+import csv
+import sys
+import json
+import time
 import cv2
 import argparse
 import numpy as np
-import math, statistics
+import math
+import statistics
 import pika
-from utils import load_options, to_labels_array, to_labels_dict, get_np_image
+from utils import load_options, get_np_image
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
 from collections import OrderedDict
@@ -19,8 +25,8 @@ from is_msgs.image_pb2 import HumanKeypoints as HKP
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
 import pandas as pd
-import matplotlib
 
+import matplotlib
 matplotlib.use('tkagg')
 
 # import pyscreenshot as ImageGrab
@@ -180,16 +186,16 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
     """
     h, w = images[0].shape[0:2]
     output_image[0 + y_offset:h + y_offset, 0 +
-                                            x_offset:w + x_offset, :] = images[0]
+                 x_offset:w + x_offset, :] = images[0]
 
     output_image[0 + y_offset:h + y_offset, w +
-                                            x_offset:2 * w + x_offset, :] = images[1]
+                 x_offset:2 * w + x_offset, :] = images[1]
 
     output_image[h + y_offset:2 * h + y_offset,
-    0 + x_offset:w + x_offset, :] = images[2]
+                 0 + x_offset:w + x_offset, :] = images[2]
 
     output_image[h + y_offset:2 * h + y_offset, w +
-                                                x_offset:2 * w + x_offset, :] = images[3]
+                 x_offset:2 * w + x_offset, :] = images[3]
 
 
 log = Logger(name='WatchVideos')
@@ -313,7 +319,7 @@ else:
     angulo_real_joelho_esquerdo = 0
 
 angulo_real_joelho_esquerdo = (
-        180 - angulo_real_joelho_esquerdo)  # Está como no livro!!!!#
+    180 - angulo_real_joelho_esquerdo)  # Está como no livro!!!!#
 
 # print(angulo_real_joelho_esquerdo) #
 # print(angulo_real_joelho_esquerdo)
@@ -487,7 +493,7 @@ for it_frames in range(video_loader.n_frames()):
         right_foot = SkeletonsCoord.joint_coord(localizations[it_frames], 12)
         left_foot = SkeletonsCoord.joint_coord(localizations[it_frames], 15)
         distance_feet.append(np.sqrt((right_foot[0] - left_foot[0]) ** 2 + (
-                right_foot[1] - left_foot[1]) ** 2 + (right_foot[2] - left_foot[2]) ** 2))
+            right_foot[1] - left_foot[1]) ** 2 + (right_foot[2] - left_foot[2]) ** 2))
         # Diferença entre as alturas dos pés
         distance_feet_2.append(right_foot[1] - left_foot[1])
         distance_feet_3.append(
@@ -509,7 +515,7 @@ for it_frames in range(video_loader.n_frames()):
                 if distance_feet[len(distance_feet) - 2] > distance_feet[len(distance_feet) - 3]:
                     if distance_feet[len(distance_feet) - 2] >= (Swing_real or Stance_real):
                         contador_numero_de_passos = contador_numero_de_passos + \
-                                                    1  # Conta quantos passos foram dados
+                            1  # Conta quantos passos foram dados
                         picos_distancia.append(
                             distance_feet[len(distance_feet) - 2])
                         instante_pico.append(instante[len(instante) - 1])
@@ -624,7 +630,7 @@ for it_frames in range(video_loader.n_frames()):
                 cv2.LINE_AA)
     cv2.imshow('', display_image)
     Velocidade_no_instante = (
-            abs(distance_feet_2[len(distance_feet_2) - 1]) / (time.time() - aux_tempo))
+        abs(distance_feet_2[len(distance_feet_2) - 1]) / (time.time() - aux_tempo))
     cv2.putText(display_image,
                 "Velocidade da caminhada: %.3f m/s " % Velocidade_no_instante + " +- %.3f" % (statistics.mean(
                     aux_velocidade_instante) - Velocidade_no_instante), (1300, 45), cv2.FONT_HERSHEY_SIMPLEX, .4,
