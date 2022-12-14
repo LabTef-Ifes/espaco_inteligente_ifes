@@ -97,7 +97,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 - Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration) **Deprecated**
 - Acesse o repositório [Camera Calibration New](https://github.com/LabTef-Ifes/camera-calibration-new)
 
-## Reiniciando o PC 16 do Labtef
+## Reiniciando o PC 20 do Labtef
 Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir os passos abaixo .
 - Selecione Ubuntu no menu de fundo roxo
 - digite `fsck /dev/sda1` na tela preta de inicialização
