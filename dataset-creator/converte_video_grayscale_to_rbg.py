@@ -18,14 +18,12 @@ with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
 
-
 # Why do VideoCapture in this py file?
 for i in range(4):
     cap = cv2.VideoCapture(
         options.folder + 'TESTE_GRAYSCALE/TESTE_GRAYSCALE_6/p001g01c{:02d}.mp4'.format(i))
     # cap.set(cv2.CAP_PROP_FORMAT, CV_32F)
     ret, frame = cap.read()
-    # print('ret =', ret, 'W =', frame.shape[1], 'H =', frame.shape[0], 'channel =', frame.shape[2])
 
     FrameSize = (frame.shape[1], frame.shape[0])
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
@@ -35,17 +33,11 @@ for i in range(4):
 
     while cap.isOpened():
         ret, frame = cap.read()
-        # print(frame.shape)
         # check for successfulness of cap.read()
         if not ret:
             break
 
-        # frame=cv2.merge([frame])
-        # frame = cv2.cvtColor(frame,  cv2.COLOR_GRAY2BGR)
-        # frame=cv2.merge([frame])
-        # frame = gray
-
-        # Save the video
+        # Save the frame
         out.write(frame)
 
         cv2.imshow('frame', frame)
