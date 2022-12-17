@@ -88,6 +88,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 | Versão do Python       |                         2.7.17 e 3.6.9 |
 | Switch                 |          3Com Switch 4800G PWR 24-Port |
 | Portas com PoE ativado |                    19, 21, 22, 23 e 24 |
+
 # Referências
 
 - Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
@@ -105,4 +106,7 @@ Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir
 - aperte `y` para aceitar cada alteração
 - digite `reboot`
 
+---
+# Recomendações de estudo
 
+- [Github by The Coding Train](https://www.youtube.com/playlist?list=PLRqwX-V7Uu6ZF9C0YMKuns9sLDzK6zoiV)
