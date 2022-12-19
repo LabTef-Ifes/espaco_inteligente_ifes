@@ -110,5 +110,6 @@ Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir
 ---
 # Recomendações de estudo
 
+- [CursoEI](https://github.com/LabTef-Ifes/CursoEI)
 - [Github by The Coding Train](https://www.youtube.com/playlist?list=PLRqwX-V7Uu6ZF9C0YMKuns9sLDzK6zoiV)
 - [Curso de Git e GitHub do CursoEmVideo](https://www.cursoemvideo.com/curso/curso-de-git-e-github/)
