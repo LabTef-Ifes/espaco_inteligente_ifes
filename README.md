@@ -53,7 +53,7 @@
   1. Informações adicionais podem ser encontradas nas [referências técnicas](./referencias-tecnicas/) das câmeras.
 - As alterações realizadas nos arquivos `options/X.json` (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers. 
   Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
-- Para parar todos os conteiners de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
+- Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O Flycapture SDK é o software do fabricante das câmeras e é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C. Há problemas de conflito ao se utilizar o Flycapture enquanto os containeres do EI estão ativos.
 
 ## Câmeras novas do switch e o novo serviço de gateway
@@ -110,5 +110,6 @@ Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir
 ---
 # Recomendações de estudo
 
+- [CursoEI](https://github.com/LabTef-Ifes/CursoEI)
 - [Github by The Coding Train](https://www.youtube.com/playlist?list=PLRqwX-V7Uu6ZF9C0YMKuns9sLDzK6zoiV)
 - [Curso de Git e GitHub do CursoEmVideo](https://www.cursoemvideo.com/curso/curso-de-git-e-github/)
