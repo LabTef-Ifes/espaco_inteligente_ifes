@@ -15,10 +15,10 @@
 	- Para criar um venv, digite `python3 -m venv nomedovenv` no diretório reservado ao projeto.
 1. Com o venv ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivos [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
 1. Ajuste os diretórios dos arquivos `is-basic.sh`, `is-cameras.sh`, `is-frame-transformation.sh` e `is-skeletons-grouper.sh` de acordo com a sua máquina.
-1. Suba os containeres necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containeres.py](iniciar_principais_containeres.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containeres.py](iniciar_principais_containeres.py) novamente.
-1. Em outro terminal, digite `sudo docker stats` para verificar se os containeres estão rodando (*Ctrl+C para fechar*). Os containeres em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
+1. Suba os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py) novamente.
+1. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
-  | Containeres ativos      |
+  | containers ativos      |
   | :---------------------- |
   | rabbitmq                |
   | zipkin                  |
@@ -54,13 +54,13 @@
 - As alterações realizadas nos arquivos `options/X.json` (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers. 
   Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
 - Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
-- O Flycapture SDK é o software do fabricante das câmeras e é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C. Há problemas de conflito ao se utilizar o Flycapture enquanto os containeres do EI estão ativos.
+- O Flycapture SDK é o software do fabricante das câmeras e é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C. Há problemas de conflito ao se utilizar o Flycapture enquanto os containers do EI estão ativos.
 
 ## Câmeras novas do switch e o novo serviço de gateway
 
 As câmeras **Blackfly S GigE BFS-PGE-16S2C-CS** adquiridas recentemente para o EI não funcionam com o serviço de gateway já disponível. Desta forma, um novo serviço de gateway foi desenvolvido e pode ser encontrado [aqui](https://github.com/LabTef-Ifes/is-cameras-py). Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualizar a imagem de uma câmera. 
 
-Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta `deploy/multi-camera`. As configurações das câmeras podem ser alterados nos arquivos `settings-camera-X.yaml` (sendo X = 0, 1, 2 ou 3) também contidos na pasta `deploy/multi-camera`. Caso só exista o arquivo correspondeste a uma câmera, crie os demais. Os parâmetros disponíveis para alteração são `fps` e `formato de cores`. Com os containeres ativos, os arquivo do EI (Ex: capture-images.py) podem ser utilizados normalmente. Os containeres que estarão ativos serão (_NAME_):
+Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta `deploy/multi-camera`. As configurações das câmeras podem ser alterados nos arquivos `settings-camera-X.yaml` (sendo X = 0, 1, 2 ou 3) também contidos na pasta `deploy/multi-camera`. Caso só exista o arquivo correspondeste a uma câmera, crie os demais. Os parâmetros disponíveis para alteração são `fps` e `formato de cores`. Com os containers ativos, os arquivo do EI (Ex: capture-images.py) podem ser utilizados normalmente. Os containers que estarão ativos serão (_NAME_):
 
 | Name                           |
 | :----------------------------- |
@@ -74,8 +74,8 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 - Ao conectar as câmeras no switch, o endereço de IP **não estará configurado corretamente** para corresponder ao adaptador host ao qual a câmera está conectada. Para que o endereço de IP esteja corretamente configurado, abra o SpinView e force o endereço de IP automaticamente clicando com o botão direito em cima da câmera detectada pelo software e em seguida clique em `Auto Force IP`.
 - O Readme contido dentro do arquivo `spinnaker-2.7.0.128-Ubuntu18.04-amd64-pkg.tar.gz` possui informações -_sobre alteração de buffer, por exemplo_- que podem ajudar caso esteja ocorrendo algum problema de captura de imagem.
 - O `Spinnaker SDK` é o software do fabricante das câmeras compatível com o modelo Blackfly S GigE BFS-PGE-16S2C-CS e com o Blackfly GigE BFLY-PGE-09S2C.
-  ❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containeres do EI estão ativos.
-- Os containeres inicializados com o `docker compose` estão com a opção **restart** setada em **always**. Ou seja, eles estarão ativos ao iniciar/reiniciar a máquina. Isso poderá acarretar conflitos ao inicializar o EI com o gateway antigo. **Atente-se a isso.**
+  ❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containers do EI estão ativos.
+- Os containers inicializados com o `docker compose` estão com a opção **restart** setada em **always**. Ou seja, eles estarão ativos ao iniciar/reiniciar a máquina. Isso poderá acarretar conflitos ao inicializar o EI com o gateway antigo. **Atente-se a isso.**
 
 # Configurações do Labtef
 
