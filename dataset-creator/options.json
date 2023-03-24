@@ -14,7 +14,7 @@
             "height": 728
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -41,7 +41,7 @@
             "height": 728
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -68,7 +68,7 @@
             "height": 728
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -95,7 +95,7 @@
             "height": 728
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
