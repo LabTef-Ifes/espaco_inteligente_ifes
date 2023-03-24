@@ -66,21 +66,23 @@ def atualiza_json(path, novo_fps, width, height, color):
         json.dump(config, f, indent=2)
 
 
-novo_fps, width, height, color = user_input()
+if __name__=='__main__':
 
-for c in range(0, 4):
-    path = f'options/{c}.json'
-    atualiza_json(path, novo_fps, width, height, color)
+    novo_fps, width, height, color = user_input()
 
-# Atualiza o options.json na outra pasta
-with open(options_path) as f:
-    options = json.load(f)
-for i, _ in enumerate(options["cameras"]):
-    options["cameras"][i]['config']["sampling"]['frequency'] = novo_fps
-    options["cameras"][i]['config']['image']['resolution']['width'] = width
-    options["cameras"][i]['config']['image']['resolution']['height'] = height
-    options["cameras"][i]['config']['image']['color_space']['value'] = color
-with open(options_path, 'w+') as f:
-    json.dump(options, f, indent=2)
+    for c in range(0, 4):
+        path = f'options/{c}.json'
+        atualiza_json(path, novo_fps, width, height, color)
 
-print(novo_fps, width, height, color)
+    # Atualiza o options.json na outra pasta
+    with open(options_path) as f:
+        options = json.load(f)
+    for i, _ in enumerate(options["cameras"]):
+        options["cameras"][i]['config']["sampling"]['frequency'] = novo_fps
+        options["cameras"][i]['config']['image']['resolution']['width'] = width
+        options["cameras"][i]['config']['image']['resolution']['height'] = height
+        options["cameras"][i]['config']['image']['color_space']['value'] = color
+    with open(options_path, 'w+') as f:
+        json.dump(options, f, indent=2)
+
+    print(novo_fps, width, height, color)
