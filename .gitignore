@@ -15,6 +15,5 @@ guia-markdown.pdf
 .idea/misc.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/espaco_inteligente_ifes-deivid.iml
-
-env
+env/*
 ei_ifes
