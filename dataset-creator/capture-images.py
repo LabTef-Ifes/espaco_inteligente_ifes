@@ -1,4 +1,7 @@
-import re, os, sys, json
+import re
+import os
+import sys
+import json
 import shutil
 import argparse
 from datetime import datetime as dt
@@ -25,8 +28,9 @@ def get_id(topic):
     Returns:
         _type_: _description_
     """
-    match_id = re.compile(r'CameraGateway.(\d+).Frame')
-    match = match_id.search(msg.topic)
+    match_id = re.compile(
+        r'CameraGateway.(\d+).Frame')  # d significa digitos 0-9
+    match = match_id.search(topic)
     if not match:
         return None
     return int(match.group(1))
@@ -47,6 +51,8 @@ def place_images(output_image, images_):
     output_image[h:2 * h, w:2 * w, :] = images_[3]
 
 # image não usado???
+
+
 def draw_info_bar(image, text, x, y,
                   background_color=(0, 0, 0),
                   text_color=(255, 255, 255),
@@ -93,12 +99,16 @@ def draw_info_bar(image, text, x, y,
         thickness=thickness)
 
 
+# Iniciando o logger
 log = Logger(name='capture-images')
 
+# Carregando o arquivo gestures.json com informações sobre gestos
 with open('gestures.json') as f:
+    # Salvando os gestos em um dicionário ordenado pelos ids
     gestures = json.load(f)
     gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
 
+# Configurando argumentos para a linha de comando
 parser = argparse.ArgumentParser(
     description='Utility to capture a sequence of images from multiples cameras'
 )
@@ -115,19 +125,27 @@ if str(gesture_id) not in gestures:
                  gesture_id, json.dumps(gestures, indent=2))
     sys.exit(-1)
 
+
+# Verificando se o id de pessoa informado é válido
 if person_id < 1 or person_id > 999:
-    log.critical("Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
+    log.critical(
+        "Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
     sys.exit(-1)
 
+# Exibindo os ids de pessoa e gesto informados
 log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
 
+# Carregando as opções de configuração
 options = load_options(print_options=False)
 
+# Verificando se a pasta para armazenamento das imagens existe e, se não existe, criando-a
 if not os.path.exists(options.folder):
     os.makedirs(options.folder)
 
 sequence = 'p{:03d}g{:02d}'.format(person_id, gesture_id)
 sequence_folder = os.path.join(options.folder, sequence)
+# Verificando se já existe uma pasta com o mesmo nome da sequência a ser salva, e perguntando ao usuário se deseja
+# sobrescrevê-la, caso ela exista
 if os.path.exists(sequence_folder):
     log.warn(
         'Path to PERSON_ID={} GESTURE_ID={} already exists.\nWould you like to proceed? All data will be deleted![y/n]',
@@ -142,59 +160,90 @@ if os.path.exists(sequence_folder):
         log.critical('Invalid command \'{}\', exiting.', key)
         sys.exit(-1)
 
+# Criando a pasta para armazenamento das imagens da sequência
 os.makedirs(sequence_folder)
 
+# cria um objeto do tipo Channel passando o URI do broker como parâmetro
 channel = Channel(options.broker_uri)
+
+# cria um objeto do tipo Subscription passando o objeto channel como parâmetro
 subscription = Subscription(channel)
+
+# itera sobre as câmeras presentes nas opções do programa e se inscreve no tópico de cada uma
 for camera in options.cameras:
     subscription.subscribe('CameraGateway.{}.Frame'.format(camera.id))
 
-size = (2 * options.cameras[0].config.image.resolution.height,
-        2 * options.cameras[0].config.image.resolution.width,
-        3)
+# cria um array de zeros que será utilizado para armazenar a imagem completa
+size = (2 * options.cameras[0].config.image.resolution.height, 2 * options.cameras[0].config.image.resolution.width, 3)
 full_image = np.zeros(size, dtype=np.uint8)
 
-contador = 0
+# cria um dicionário vazio para armazenar as imagens das câmeras
 images_data = {}
+
+# cria um dicionário vazio para armazenar os timestamps de cada imagem
 current_timestamps = {}
+
+# cria um dicionário vazio para armazenar as imagens de cada câmera
 images = {}
+
+# cria um defaultdict vazio para armazenar os timestamps de cada câmera
 timestamps = defaultdict(list)
+
+# inicializa o contador e o número de amostras
+contador = 0
 n_sample = 0
+
+# inicializa a taxa de exibição e a variável de controle para salvar a sequência
 display_rate = 2
 start_save = False
-sequence_saved = False
-info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(
-    person_id, gesture_id, gestures[str(gesture_id)])
 
+# inicializa a variável que indica se a sequência foi salva
+sequence_saved = False
+
+# inicializa a barra de informações que será exibida na imagem
+info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(person_id, gesture_id, gestures[str(gesture_id)])
+
+# loop principal do programa
 while True:
+    # consome uma mensagem do canal
     msg = channel.consume()
+    
+    # obtém o id da câmera a partir do tópico da mensagem
     camera = get_id(msg.topic)
 
+    # verifica se o id da câmera é válido, senão pula para a próxima iteração do loop
     if camera is None:
         continue
+
+    # desempacota a mensagem em um objeto do tipo Image
     pb_image = msg.unpack(Image)
+
+    # verifica se o objeto é válido, senão pula para a próxima iteração do loop
     if pb_image is None:
         continue
-    data = np.fromstring(pb_image.data, dtype=np.uint8)
-    images_data[camera] = data
-    current_timestamps[camera] = dt.utcfromtimestamp(
-        msg.created_at).isoformat()
 
+    # converte o array de bytes da mensagem em um array numpy
+    data = np.fromstring(pb_image.data, dtype=np.uint8)
+
+    # armazena a imagem e o timestamp no dicionário correspondente
+    images_data[camera] = data
+    current_timestamps[camera] = dt.utcfromtimestamp(msg.created_at).isoformat()
+
+    # verifica se todas as imagens foram recebidas
     if len(images_data) == len(options.cameras):
-        # save images
+        # salva as imagens
         if start_save and not sequence_saved:
             for camera in options.cameras:
-                filename = os.path.join(
-                    sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(
-                        camera.id, n_sample))
+                filename = os.path.join(sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera.id, n_sample))
                 with open(filename, 'wb') as f:
                     f.write(images_data[camera.id])
                 timestamps[camera.id].append(current_timestamps[camera.id])
             n_sample += 1
             log.info('Sample {} saved', n_sample)
 
-        # display images
+        # exibe as imagens
         if n_sample % display_rate == 0:
+            # decodifica as imagens para o formato BGR
             images = [
                 cv2.imdecode(data, cv2.IMREAD_COLOR)
                 for _, data in images_data.items()
@@ -218,7 +267,8 @@ while True:
                     contador = 1
 
                 elif not sequence_saved:
-                    timestamps_filename = os.path.join(options.folder, '{}_timestamps.json'.format(sequence))
+                    timestamps_filename = os.path.join(
+                        options.folder, '{}_timestamps.json'.format(sequence))
                     with open(timestamps_filename, 'w') as f:
                         json.dump(timestamps, f, indent=2, sort_keys=True)
                     sequence_saved = True
@@ -228,7 +278,7 @@ while True:
                 start_save = False
 
             if key == ord('q'):
-                # Not both or ((not start_save) or sequence_saved) ?
+                # ?? Not both or ((not start_save) or sequence_saved) ?
                 if not start_save or sequence_saved:
                     break
         # clear images dict
