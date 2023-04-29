@@ -15,8 +15,8 @@ with open('keymap.json') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
 
-# Classe sem self???
-class Plota_graficos:
+# Classe sem self??? Acredito que eram todos staticmethod's, porém não declarados corretamente
+class Plot:
     @staticmethod
     def plota_grafico_perdas(y):
         """_summary_
