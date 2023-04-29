@@ -1,32 +1,33 @@
-from Plota_graficos import Plota_graficos
-from Parameters import Parameters
-from analysis import SkeletonsCoord
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+import argparse
+import csv
+import json
+import math
 import os
 import re
-import csv
-import sys
-import json
-import time
-import cv2
-import argparse
-import numpy as np
-import math
 import statistics
-import pika
-from utils import load_options, get_np_image
-from video_loader import MultipleVideoLoader
-from is_wire.core import Logger
+import sys
+import time
 from collections import OrderedDict
-# from PIL import ImageGrab
-from is_msgs.image_pb2 import ObjectAnnotations
-from is_msgs.image_pb2 import HumanKeypoints as HKP
-from google.protobuf.json_format import ParseDict
 from itertools import permutations
-import pandas as pd
 
+import cv2
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import pika
+from analysis import SkeletonsCoord
+from google.protobuf.json_format import ParseDict
+# from PIL import ImageGrab
+from is_msgs.image_pb2 import HumanKeypoints as HKP
+from is_msgs.image_pb2 import ObjectAnnotations
+from is_wire.core import Logger
+from mpl_toolkits.mplot3d import Axes3D
+from Parameters import Parameter
+from Plota_graficos import Plot
+from utils import get_np_image, load_options
+from video_loader import MultipleVideoLoader
+
 matplotlib.use('tkagg')
 
 # import pyscreenshot as ImageGrab
