@@ -1,29 +1,30 @@
 import os
-import sys
+import cv2
 import json
 import time
-import cv2
 import socket
 import datetime
 from collections import defaultdict
 from enum import Enum
-from is_wire.core import Channel, Subscription, Message, Logger
-from is_msgs.image_pb2 import ObjectAnnotations
-from utils import load_options, make_pb_image, FrameVideoFetcher
 from google.protobuf.json_format import MessageToDict
 
-"""_summary_
-"""
+from logger import Logger
+from options import load_options
+from skeleton_pb2 import ObjectAnnotations
+from message import Channel, Message, Subscription
+from video import FrameVideoFetcher
+from protobuf import make_pb_image
 
+# Comentários explicativos gerados pelo chatGPT 29/04/2023. Não havia qualquer comentário no código original.
+
+# Definição de constantes
 MIN_REQUESTS = 5
 MAX_REQUESTS = 10
 DEADLINE_SEC = 15.0
 
 
+# Definição de estados para a máquina de estados
 class State(Enum):
-    """_summary_
-
-    """
     MAKE_REQUESTS = 1
     RECV_REPLIES = 2
     CHECK_END_OF_VIDEO_AND_SAVE = 3
@@ -31,16 +32,20 @@ class State(Enum):
     EXIT = 5
 
 
+# Configuração de logging e carregamento de opções
 log = Logger(name='Request2dSkeletons')
 options = load_options(print_options=False)
 
+# Verificação da existência da pasta especificada nas opções
 if not os.path.exists(options.folder):
     log.critical("Folder '{}' doesn't exist", options.folder)
     sys.exit(-1)
 
+# Carregamento da lista de arquivos de vídeo na pasta
 files = next(os.walk(options.folder))[2]  # only files from first folder level
 video_files = list(filter(lambda x: x.endswith('.mp4'), files))
 
+# Criação de lista de vídeos a serem processados e do número de frames em cada um
 pending_videos = []
 n_annotations = {}
 for video_file in video_files:
@@ -51,7 +56,6 @@ for video_file in video_files:
     cap = cv2.VideoCapture(video_path)
     n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     if os.path.exists(annotation_path):
-        # check if all annotations were done
         with open(annotation_path, 'r') as f:
             annotations_data = json.load(f)
         n_annotations_on_file = len(annotations_data['annotations'])
@@ -68,62 +72,62 @@ if not pending_videos:
     log.info("Exiting...")
     sys.exit(-1)
 
+# Inicialização de variáveis e objetos
 channel = Channel(options.broker_uri)
 subscription = Subscription(channel)
-
 requests = {}
 annotations_received = defaultdict(dict)
 state = State.MAKE_REQUESTS
 frame_fetcher = FrameVideoFetcher(
     video_files=pending_videos, base_folder=options.folder)
 
+# Máquina de estados para processamento dos frames
 while True:
-    if state == State.MAKE_REQUESTS:
-        state = State.RECV_REPLIES
-        if len(requests) < MIN_REQUESTS:
-            while len(requests) <= MAX_REQUESTS:
-                base_name, frame_id, frame = frame_fetcher.next()
-                if frame is None:
-                    if len(requests) == 0:
-                        state = State.EXIT
+    if state == State.MAKE_REQUESTS:  # se o estado atual é fazer pedidos
+        state = State.RECV_REPLIES  # muda o estado para receber respostas
+        if len(requests) < MIN_REQUESTS:  # se a quantidade de pedidos for menor que o minimo exigido
+            while len(requests) <= MAX_REQUESTS:  # enquanto a quantidade de pedidos for menor ou igual ao máximo permitido
+                base_name, frame_id, frame = frame_fetcher.next()  # obtém informações do próximo frame do vídeo
+                if frame is None:  # se o frame não for encontrado
+                    if len(requests) == 0:  # se não houver pedidos
+                        state = State.EXIT  # muda o estado para sair
                     break
-                pb_image = make_pb_image(frame)
-                msg = Message(content=pb_image, reply_to=subscription)
-                msg.timeout = DEADLINE_SEC
-                channel.publish(msg, topic='SkeletonsDetector.Detect')
-                requests[msg.correlation_id] = {
+                pb_image = make_pb_image(frame)  # converte o frame em um objeto de imagem protobuf
+                msg = Message(content=pb_image, reply_to=subscription)  # cria uma mensagem com a imagem e uma assinatura
+                msg.timeout = DEADLINE_SEC  # define um tempo limite para receber uma resposta
+                channel.publish(msg, topic='SkeletonsDetector.Detect')  # publica a mensagem no canal
+                requests[msg.correlation_id] = {  # armazena o pedido para rastreamento
                     'content': pb_image,
                     'base_name': base_name,
                     'frame_id': frame_id,
                     'requested_at': time.time()
                 }
 
-    elif state == State.RECV_REPLIES:
-
+    elif state == State.RECV_REPLIES:  # se o estado atual é receber respostas
         try:
-            msg = channel.consume(timeout=1.0)
-            if msg.status.ok():
-                annotations = msg.unpack(ObjectAnnotations)
-                cid = msg.correlation_id
-                if cid in requests:
-                    base_name = requests[cid]['base_name']
-                    frame_id = requests[cid]['frame_id']
-                    annotations_received[base_name][frame_id] = MessageToDict(
+            msg = channel.consume(timeout=1.0)  # obtém uma mensagem do canal com um tempo limite de 1 segundo
+            if msg.status.ok():  # se a mensagem estiver ok
+                annotations = msg.unpack(ObjectAnnotations)  # desempacota as anotações de objetos
+                cid = msg.correlation_id  # obtém a assinatura da mensagem
+                if cid in requests:  # se a assinatura estiver nos pedidos
+                    base_name = requests[cid]['base_name']  # obtém o nome base do arquivo
+                    frame_id = requests[cid]['frame_id']  # obtém o ID do frame
+                    annotations_received[base_name][frame_id] = MessageToDict(  # armazena as anotações recebidas
                         annotations,
                         preserving_proto_field_name=True,
                         including_default_value_fields=True)
-                    del requests[cid]
+                    del requests[cid]  # remove o pedido da lista de pedidos ativos
 
-            state = State.CHECK_END_OF_VIDEO_AND_SAVE
-        except socket.timeout:
-            state = State.CHECK_FOR_TIMEOUTED_REQUESTS
+            state = State.CHECK_END_OF_VIDEO_AND_SAVE  # muda o estado para verificar o fim do vídeo e salvar
 
-    elif state == State.CHECK_END_OF_VIDEO_AND_SAVE:
+        except socket.timeout:  # se houver uma exceção de tempo limite de soquete
+            state = State.CHECK_FOR_TIMEOUTED_REQUESTS  # muda o estado para verificar pedidos com tempo limite excedido
 
-        for base_name in list(annotations_received.keys()):
-            annotations_dict = annotations_received[base_name]
-            if len(annotations_dict) == n_annotations[base_name]:
-                output_annotations = {
+    elif state == State.CHECK_END_OF_VIDEO_AND_SAVE:  # se o estado atual é verificar o fim do vídeo e salvar
+        for base_name in list(annotations_received.keys()):  # para cada nome base de arquivo nas anotações recebidas
+            annotations_dict = annotations_received[base_name]  # obtém o dicionário de anotações
+            if len(annotations_dict) == n_annotations[base_name]:  # se todas as anotações estiverem presentes
+                output_annotations = {  # cria um objeto de saída de anotações
                     'annotations': [x[1] for x in sorted(annotations_dict.items())],
                     'created_at': datetime.datetime.now().isoformat()
                 }
@@ -135,34 +139,43 @@ while True:
                 log.info('{} has been saved.', filename)
 
         state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-
+    # Caso o estado seja State.CHECK_FOR_TIMEOUTED_REQUESTS:
     elif state == State.CHECK_FOR_TIMEOUTED_REQUESTS:
 
+        # cria um novo dicionário vazio para as novas requisições
         new_requests = {}
-        for cid in list(requests.keys()):
+
+        # percorre todas as chaves do dicionário requests
+        for cid in requests.keys():
+            # recupera a requisição com a chave cid
             request = requests[cid]
+            
+            # verifica se a requisição ainda não passou do DEADLINE_SEC
             if (request['requested_at'] + DEADLINE_SEC) > time.time():
                 continue
+                
+            # se passou do prazo, cria uma nova mensagem com a requisição e publica no tópico 'SkeletonsDetector.Detect'
             msg = Message(content=request['content'], reply_to=subscription)
             msg.timeout = DEADLINE_SEC
             channel.publish(msg, topic='SkeletonsDetector.Detect')
+            
+            # adiciona uma nova entrada ao dicionário new_requests com o correlation_id como chave
             new_requests[msg.correlation_id] = {
                 'content': request['content'],
                 'base_name': request['base_name'],
                 'frame_id': request['frame_id'],
                 'requested_at': time.time()
             }
+            
+            # remove a requisição do dicionário requests
             del requests[cid]
+            
+            # exibe uma mensagem de log informando que a mensagem expirou
             log.warn("Message '{}' timeouted. Sending another request.", cid)
 
+        # atualiza o dicionário requests com as novas requisições
         requests.update(new_requests)
+
+        # muda o estado para State.MAKE_REQUESTS
         state = State.MAKE_REQUESTS
 
-    elif state == State.EXIT:
-
-        log.info("Exiting...")
-        sys.exit(-1)
-
-    else:
-
-        state = State.MAKE_REQUESTS
