@@ -66,7 +66,7 @@ def atualiza_json(path, novo_fps, width, height, color):
         json.dump(config, f, indent=2)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
 
     novo_fps, width, height, color = user_input()
 
