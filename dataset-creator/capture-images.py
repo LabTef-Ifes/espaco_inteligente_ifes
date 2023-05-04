@@ -174,15 +174,14 @@ for camera in options.cameras:
     subscription.subscribe('CameraGateway.{}.Frame'.format(camera.id))
 
 # cria um array de zeros que será utilizado para armazenar a imagem completa
-size = (2 * options.cameras[0].config.image.resolution.height, 2 * options.cameras[0].config.image.resolution.width, 3)
+size = (2 * options.cameras[0].config.image.resolution.height,
+        2 * options.cameras[0].config.image.resolution.width, 3)
 full_image = np.zeros(size, dtype=np.uint8)
 
 # cria um dicionário vazio para armazenar as imagens das câmeras
 images_data = {}
-
 # cria um dicionário vazio para armazenar os timestamps de cada imagem
 current_timestamps = {}
-
 # cria um dicionário vazio para armazenar as imagens de cada câmera
 images = {}
 
@@ -196,18 +195,18 @@ n_sample = 0
 # inicializa a taxa de exibição e a variável de controle para salvar a sequência
 display_rate = 2
 start_save = False
-
 # inicializa a variável que indica se a sequência foi salva
 sequence_saved = False
 
 # inicializa a barra de informações que será exibida na imagem
-info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(person_id, gesture_id, gestures[str(gesture_id)])
+info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(
+    person_id, gesture_id, gestures[str(gesture_id)])
 
 # loop principal do programa
 while True:
     # consome uma mensagem do canal
     msg = channel.consume()
-    
+
     # obtém o id da câmera a partir do tópico da mensagem
     camera = get_id(msg.topic)
 
@@ -217,7 +216,6 @@ while True:
 
     # desempacota a mensagem em um objeto do tipo Image
     pb_image = msg.unpack(Image)
-
     # verifica se o objeto é válido, senão pula para a próxima iteração do loop
     if pb_image is None:
         continue
@@ -227,14 +225,16 @@ while True:
 
     # armazena a imagem e o timestamp no dicionário correspondente
     images_data[camera] = data
-    current_timestamps[camera] = dt.utcfromtimestamp(msg.created_at).isoformat()
+    current_timestamps[camera] = dt.utcfromtimestamp(
+        msg.created_at).isoformat()
 
     # verifica se todas as imagens foram recebidas
     if len(images_data) == len(options.cameras):
         # salva as imagens
         if start_save and not sequence_saved:
             for camera in options.cameras:
-                filename = os.path.join(sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera.id, n_sample))
+                filename = os.path.join(
+                    sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera.id, n_sample))
                 with open(filename, 'wb') as f:
                     f.write(images_data[camera.id])
                 timestamps[camera.id].append(current_timestamps[camera.id])
@@ -259,7 +259,6 @@ while True:
                 draw_circle=start_save and not sequence_saved)
 
             cv2.imshow('', display_image)
-
             key = cv2.waitKey(1)
             if key == ord('s'):  # and contador==0:
                 if not start_save:
