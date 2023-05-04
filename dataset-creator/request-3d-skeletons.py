@@ -1,20 +1,20 @@
+import datetime
+import json
 import os
 import re
-import sys
-import cv2
-import json
-import time
 import socket
-import datetime
-import numpy as np
+import sys
+import time
 from collections import defaultdict
 from enum import Enum
-from is_wire.core import Channel, Subscription, Message, Logger, ContentType
-from is_msgs.image_pb2 import ObjectAnnotations
-from utils import load_options, AnnotationsFetcher
-from google.protobuf.json_format import MessageToDict
-
 from pprint import pprint
+
+import cv2
+import numpy as np
+from google.protobuf.json_format import MessageToDict
+from is_msgs.image_pb2 import ObjectAnnotations
+from is_wire.core import Channel, ContentType, Logger, Message, Subscription
+from utils import AnnotationsFetcher, load_options
 
 MIN_REQUESTS = 0
 MAX_REQUESTS = 644
@@ -45,7 +45,8 @@ entries = defaultdict(lambda: defaultdict(list))
 n_annotations = defaultdict(lambda: defaultdict(dict))
 for annotation_file, n in zip(annotation_files, range(len(annotation_files))):
 
-    matches = re.search("p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json", annotation_file)
+    matches = re.search(
+        "p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json", annotation_file)
     if matches is None:
         continue
     person_id = int(matches.group(1))
@@ -75,7 +76,8 @@ for person_id, gestures in entries.items():
                      person_id, gesture_id)
             continue
 
-        file = os.path.join(options.folder, LOCALIZATION_FILE.format(person_id, gesture_id))
+        file = os.path.join(
+            options.folder, LOCALIZATION_FILE.format(person_id, gesture_id))
         if os.path.exists(file):
             with open(file, 'r') as f:
                 n_loc = len(json.load(f)['localizations'])
@@ -106,7 +108,6 @@ annotations_fetcher = AnnotationsFetcher(
 
 while True:
     if state == State.MAKE_REQUESTS:
-
         state = State.RECV_REPLIES
         if len(requests) >= MIN_REQUESTS:
             while len(requests) <= n:
@@ -116,7 +117,8 @@ while True:
                         state = State.EXIT
                     break
 
-                msg = Message(reply_to=subscription, content_type=ContentType.JSON)
+                msg = Message(reply_to=subscription,
+                              content_type=ContentType.JSON)
                 body = json.dumps({'list': annotations}).encode('utf-8')
                 msg.body = body
                 msg.timeout = DEADLINE_SEC
@@ -131,7 +133,6 @@ while True:
         continue
 
     elif state == State.RECV_REPLIES:
-
         try:
             msg = channel.consume(timeout=1.0)
             if msg.status.ok():
@@ -153,7 +154,6 @@ while True:
         continue
 
     elif state == State.CHECK_END_OF_SEQUENCE_AND_SAVE:
-
         done_sequences = []
         for person_id, gestures in localizations_received.items():
             for gesture_id, localizations_dict in gestures.items():
@@ -164,7 +164,8 @@ while True:
                     'localizations': [x[1] for x in sorted(localizations_dict.items())],
                     'created_at': datetime.datetime.now().isoformat()
                 }
-                filename = 'p{:03d}g{:02d}_3d.json'.format(person_id, gesture_id)
+                filename = 'p{:03d}g{:02d}_3d.json'.format(
+                    person_id, gesture_id)
                 filepath = os.path.join(options.folder, filename)
                 with open(filepath, 'w') as f:
                     json.dump(output_localizations, f, indent=2)
@@ -176,7 +177,8 @@ while True:
                 ]
                 count_dict = map(lambda x: list(map(str, x)),
                                  np.unique(localizations_count, return_counts=True))
-                count_info = json.dumps(dict(zip(*count_dict))).replace('"', '')
+                count_info = json.dumps(
+                    dict(zip(*count_dict))).replace('"', '')
                 log.info('PERSON_ID: {:03d} GESTURE_ID: {:02d} Done! {}', person_id, gesture_id,
                          count_info)
 
@@ -187,7 +189,6 @@ while True:
         continue
 
     elif state == State.CHECK_FOR_TIMEOUTED_REQUESTS:
-
         new_requests = {}
         for cid in list(requests.keys()):
             request = requests[cid]
@@ -212,11 +213,9 @@ while True:
         continue
 
     elif state == State.EXIT:
-
         log.info("Exiting...")
         sys.exit(-1)
 
     else:
-
         state = State.MAKE_REQUESTS
         continue
