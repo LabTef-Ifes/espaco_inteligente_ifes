@@ -4,6 +4,9 @@ import json
 # Path para o arquivo options.json
 options_path = 'dataset-creator/options.json'
 
+# Path para o arquivo options.json
+options_path = 'dataset-creator/options.json'
+
 
 def valid(default, var) -> int:
     """valida uma variável int
@@ -48,6 +51,21 @@ def user_input():
         color = input("Color(RGB ou GRAY):").upper(
         ) or config['initial_config']['image']['color_space']['value']
 
+    return novo_fps, width, height, color
+
+
+def atualiza_json(path, novo_fps, width, height, color):
+    with open(path) as f:
+        config = json.load(f)
+
+    # Atualiza o dicionario
+    config['initial_config']['sampling']['frequency'] = novo_fps
+    config['initial_config']['image']['resolution']['width'] = width
+    config['initial_config']['image']['resolution']['height'] = height
+    config['initial_config']['image']['color_space']['value'] = color
+
+    # Sobreescreve os valores atualizados
+    with open(path, 'w+') as f:
     return novo_fps, width, height, color
 
 
