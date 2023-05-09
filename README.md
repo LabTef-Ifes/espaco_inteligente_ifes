@@ -56,7 +56,7 @@
 - Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O Flycapture SDK é o software do fabricante das câmeras e é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C. Há problemas de conflito ao se utilizar o Flycapture enquanto os containers do EI estão ativos.
 
-## Câmeras novas do switch e o novo serviço de gateway
+# Câmeras novas do switch e o novo serviço de gateway
 
 As câmeras **Blackfly S GigE BFS-PGE-16S2C-CS** adquiridas recentemente para o EI não funcionam com o serviço de gateway já disponível. Desta forma, [um novo serviço de gateway](https://github.com/LabTef-Ifes/is-cameras-py) foi desenvolvido. Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualizar a imagem de uma câmera. 
 
@@ -77,7 +77,11 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 
 ❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containers do EI estão ativos.
 
-### Repositório do gateway das novas câmeras
+## Como iniciar as câmeras
+
+1. Conecte a câmera no Switch físico
+2. Abra o software **SpinView**
+## Repositório do gateway das novas câmeras
 [Spinnaker Gateway do Felippe Mendonça](https://github.com/LabTef-Ifes/is-cameras-py)
 # Configurações do Labtef
 
