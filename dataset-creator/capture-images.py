@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import re
 import os
 import sys
@@ -6,8 +8,7 @@ import shutil
 import argparse
 from datetime import datetime as dt
 from collections import defaultdict, OrderedDict
-from subprocess import Popen, PIPE, STDOUT
-import time
+from subprocess import PIPE, STDOUT
 import cv2
 import numpy as np
 from utils import load_options

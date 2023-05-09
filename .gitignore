@@ -17,3 +17,7 @@ guia-markdown.pdf
 .idea/espaco_inteligente_ifes-deivid.iml
 env/
 ei_ifes/
+venv/
+dataset-creator/__pycache__/
+dataset-creator/videos/
+dataset-creator/record_screen.avi

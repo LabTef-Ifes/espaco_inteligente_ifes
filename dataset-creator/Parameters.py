@@ -11,7 +11,6 @@ import numpy as np
 import skfuzzy as fuzz
 import tensorflow as tf
 from google.protobuf.json_format import ParseDict
-from is_msgs.image_pb2 import HumanKeypoints as HKP
 from is_msgs.image_pb2 import ObjectAnnotations
 from skfuzzy import control as ctrl
 from sklearn import preprocessing
@@ -286,7 +285,7 @@ class Parameter:
                     v0 = ((neck[1] - left_hip[1]), (neck[2] - left_hip[2]))
                     v1 = ((left_knee[1] - left_hip[1]),
                           (left_knee[2] - left_hip[2]))
-                    ang = degrees(np.math.atan2(
+                    ang = math.degrees(np.math.atan2(
                         np.linalg.det([v0, v1]), np.dot(v0, v1)))
                     # print(v0,v1)
                     '''if ang < 0:
@@ -298,7 +297,7 @@ class Parameter:
                     delta_z = left_knee[2] - left_hip[2]
                     razao = delta_y / delta_z
                     # CALCULADO COM A LUÍZA DIA 08/01/2021 - extansão do quadril esquerdo
-                    angle_test = -1 * degrees(np.math.atan(razao))
+                    angle_test = -1 * math.degrees(np.math.atan(razao))
                     quadril_ang = angle_test
                     # B=pow(c,2)-(pow(a,2)+pow(b,2))
                     # A=-2*b*c
@@ -383,13 +382,13 @@ class Parameter:
                     v0 = ((neck[1] - right_hip[1]), (neck[2] - right_hip[2]))
                     v1 = ((right_knee[1] - right_hip[1]),
                           (right_knee[2] - right_hip[2]))
-                    ang = degrees(np.math.atan2(
+                    ang = math.degrees(np.math.atan2(
                         np.linalg.det([v0, v1]), np.dot(v0, v1)))
                     delta_y = right_knee[1] - right_hip[1]
                     delta_z = right_knee[2] - right_hip[2]
                     razao = delta_y / delta_z
                     # CALCULADO COM A LUÍZA DIA 08/01/2021 - extensão do quadril direito
-                    angle_test = -1 * degrees(np.math.atan(razao))
+                    angle_test = -1 * math.degrees(np.math.atan(razao))
 
                     '''if ang < 0:
                         angle_right = -(180 + ang)
@@ -2129,4 +2128,4 @@ class Parameter:
             # cv2.rectangle(display_image,(0,0),(510,128),(0,255,0),3)
         cv2.putText(frame, "Detecta passo", (1300, 15),
                     cv2.FONT_HERSHEY_SIMPLEX, .4, (100, 00, 10), 1, cv2.LINE_AA)
-        cv2.imshow('Detector de passo', constant)
+        #cv2.imshow('Detector de passo', constant)

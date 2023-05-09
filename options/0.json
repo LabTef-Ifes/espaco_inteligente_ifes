@@ -11,7 +11,7 @@
   "parallelism": -1,
   "initial_config": {
     "sampling": {
-      "frequency": 30
+      "frequency": 20
     },
     "camera": {
       "shutter": {
