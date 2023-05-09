@@ -19,5 +19,7 @@ env/
 ei_ifes/
 venv/
 dataset-creator/__pycache__/
-dataset-creator/videos/
+dataset-creator/videos/*.avi
+dataset-creator/videos/*.mp4
 dataset-creator/record_screen.avi
+dataset-creator/*.pyc
