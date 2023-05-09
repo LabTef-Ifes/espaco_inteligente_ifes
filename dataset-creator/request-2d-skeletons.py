@@ -7,13 +7,10 @@ import datetime
 from collections import defaultdict
 from enum import Enum
 from google.protobuf.json_format import MessageToDict
-
-from logger import Logger
-from options import load_options
-from skeleton_pb2 import ObjectAnnotations
-from message import Channel, Message, Subscription
-from video import FrameVideoFetcher
-from protobuf import make_pb_image
+import sys
+from is_wire.core import Channel, Subscription, Message, Logger
+from is_msgs.image_pb2 import ObjectAnnotations
+from utils import load_options, make_pb_image, FrameVideoFetcher
 
 # Comentários explicativos gerados pelo chatGPT 29/04/2023. Não havia qualquer comentário no código original.
 
@@ -146,7 +143,7 @@ while True:
         new_requests = {}
 
         # percorre todas as chaves do dicionário requests
-        for cid in requests.keys():
+        for cid in list(requests.keys())[::-1]:
             # recupera a requisição com a chave cid
             request = requests[cid]
             
