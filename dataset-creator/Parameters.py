@@ -11,7 +11,6 @@ import numpy as np
 import skfuzzy as fuzz
 import tensorflow as tf
 from google.protobuf.json_format import ParseDict
-from is_msgs.image_pb2 import HumanKeypoints as HKP
 from is_msgs.image_pb2 import ObjectAnnotations
 from skfuzzy import control as ctrl
 from sklearn import preprocessing
