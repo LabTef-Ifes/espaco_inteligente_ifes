@@ -55,7 +55,7 @@
   Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
 - Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O Flycapture SDK é o software do fabricante das câmeras e é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C. Há problemas de conflito ao se utilizar o Flycapture enquanto os containers do EI estão ativos.
-
+- É necessário instalar o tkinter no Ubunt através do comando `sudo apt install python3-tk` no terminal.
 # Câmeras novas do switch e o novo serviço de gateway
 
 As câmeras **Blackfly S GigE BFS-PGE-16S2C-CS** adquiridas recentemente para o EI não funcionam com o serviço de gateway já disponível. Desta forma, [um novo serviço de gateway](https://github.com/LabTef-Ifes/is-cameras-py) foi desenvolvido. Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualizar a imagem de uma câmera. 
@@ -81,6 +81,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 
 1. Conecte a câmera no Switch físico
 2. Abra o software **SpinView**
+<!-- Necessário completar -->
 ## Repositório do gateway das novas câmeras
 [Spinnaker Gateway do Felippe Mendonça](https://github.com/LabTef-Ifes/is-cameras-py)
 # Configurações do Labtef
@@ -98,6 +99,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 
 # Referências
 
+## Espaço Inteligente
 - Em caso de dúvidas sobre os serviços ou outras questões, acesse o projeto original: [LabViros](https://github.com/labviros)
 - [Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
 ## Calibração das câmeras
@@ -106,6 +108,8 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 - Acesse o repositório [Camera Calibration New](https://github.com/LabTef-Ifes/camera-calibration-new)
 - Acesse o repositório [Camera Calibration](https://github.com/LabTef-Ifes/camera-calibration) **Deprecated**
 
+## Skeleton Detector
+- [Skeleton Detector do Felippe Mendonça](https://github.com/labviros/is-skeletons-detector)
 # Reiniciando o PC 20 do Labtef
 Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir os passos abaixo .
 1. Selecione Ubuntu no menu de fundo roxo
