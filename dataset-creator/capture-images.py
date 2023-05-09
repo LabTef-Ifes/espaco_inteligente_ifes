@@ -20,6 +20,7 @@ from is_wire.core import Channel, Subscription, Message, Logger
 
 
 # topic não usado ???
+# corrigido por Deivid com base na interpretação pessoal do codigo
 def get_id(topic):
     """_summary_
 
@@ -52,6 +53,7 @@ def place_images(output_image, images_):
     output_image[h:2 * h, w:2 * w, :] = images_[3]
 
 # image não usado???
+# corrigido por Deivid com base na interpretação pessoal do codigo
 
 
 def draw_info_bar(image, text, x, y,
@@ -76,7 +78,7 @@ def draw_info_bar(image, text, x, y,
         text=text, fontFace=fontFace, fontScale=fontScale, thickness=thickness)
 
     cv2.rectangle(
-        display_image,
+        image,
         pt1=(0, y - text_height),
         pt2=(x + text_width, y),
         color=background_color,
@@ -190,7 +192,7 @@ images = {}
 timestamps = defaultdict(list)
 
 # inicializa o contador e o número de amostras
-contador = 0
+contador = 0 #Não usado ???
 n_sample = 0
 
 # inicializa a taxa de exibição e a variável de controle para salvar a sequência
@@ -278,10 +280,9 @@ while True:
                 start_save = False
 
             if key == ord('q'):
-                # ?? Not both or ((not start_save) or sequence_saved) ?
-                if not start_save or sequence_saved:
+                if (not start_save) or sequence_saved:
                     break
-        # clear images dict
+        # clear dicts
         images_data.clear()
         current_timestamps.clear()
 

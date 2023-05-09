@@ -4,7 +4,6 @@ import cv2
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-from is_wire.core import Logger
 from utils import load_options
 
 from is_wire.core import Logger
