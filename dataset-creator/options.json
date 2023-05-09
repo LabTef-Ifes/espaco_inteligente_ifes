@@ -1,12 +1,12 @@
 {
   "broker_uri": "amqp://guest:guest@localhost:5672",
-  "folder": "/home/desenvolvimento/espaco_inteligente_ifes/dataset-creator/videos",
+  "folder": "videos",
   "cameras": [
     {
       "id": 0,
       "config": {
         "sampling": {
-          "frequency": 30
+          "frequency": 20
         },
         "image": {
           "resolution": {
@@ -33,7 +33,7 @@
       "id": 1,
       "config": {
         "sampling": {
-          "frequency": 30
+          "frequency": 20
         },
         "image": {
           "resolution": {
@@ -60,7 +60,7 @@
       "id": 2,
       "config": {
         "sampling": {
-          "frequency": 30
+          "frequency": 20
         },
         "image": {
           "resolution": {
@@ -87,7 +87,7 @@
       "id": 3,
       "config": {
         "sampling": {
-          "frequency": 30
+          "frequency": 20
         },
         "image": {
           "resolution": {
