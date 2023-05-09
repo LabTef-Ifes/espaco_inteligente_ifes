@@ -293,6 +293,7 @@ Swing_real = float(dados_da_medicao_real[6])
 dist_dos_pes_inicial = float(dados_da_medicao_real[7])
 altura_quadril = float(dados_da_medicao_real[8])'''
 
+# Digitado por Deivid para teste em 09/05/2023. É necessario um arquivo desconhecido.
 altura_real = 1.87
 idade = 22
 massa = 84
@@ -303,10 +304,7 @@ Swing_real = .5
 dist_dos_pes_inicial = 0
 altura_quadril = 1
 
-# comprimento_passo_real=math.sqrt(pow(Swing_real,2) + pow(dist_dos_pes_inicial,2))
-
-
-b = a = (altura_quadril / 2)
+b = a = altura_quadril / 2
 #pow??? 
 B = pow(altura_quadril, 2) - (pow(a, 2) + pow(b, 2))
 A = -2 * b * altura_quadril
@@ -393,6 +391,8 @@ slide_result = Parameter.slide_gait_cycle(slide)
 array_coordenadas = []  # Array de coordenadas do esqueleto
 matrix_coordenadas = []
 aux_movimento = [movimento]
+
+# RGB fixado???
 CAPTURA = 'RGB'
 
 angulo_nathan = [0]
@@ -402,6 +402,7 @@ angulo_nathan = [0]
 for it_frames in range(video_loader.n_frames()):
     video_loader.load_next()
 
+    # dois time.time???
     tempo_anterior = time.time()
     aux_tempo = time.time()  # atualiza o instante de tempo entre os frames
 
@@ -456,10 +457,6 @@ for it_frames in range(video_loader.n_frames()):
         flexion_left_knee_angle.append(aux_left_knee_angle)
         ang_ext_quadril_direito.append(aux_ang_ext_quadril)
         ang_ext_quadril_esquerdo.append(aux_flex_quadril_ang)
-
-    # if(distance_feet_3[-1] > (Swing_real or Stance_real)):
-    # k=k+1
-    # print(k,distance_feet_3[-1])
 
     largura_da_passada.append(float(aux_largura_da_passada))
 
@@ -539,6 +536,8 @@ for it_frames in range(video_loader.n_frames()):
                 # print(quant_de_ciclos,quant_de_ciclos_desejado)
                 # Verfica a mudança da quantidade de ciclos
                 if aux_quantidade_de_ciclos[-1] != aux_quantidade_de_ciclos[-2]:
+                    # ???
+                    # absolute path desconhecido
                     with open(
                             '/home/julian/docker/Pablo/CICLOS_v4/{}/{}/Coordenadas_das_juntas_de_todos_para_validacao_{}_ciclos_{}.csv'.format(
                                 CAPTURA, quant_de_ciclos_desejado, quant_de_ciclos_desejado, CAPTURA),
@@ -679,13 +678,14 @@ for it_frames in range(video_loader.n_frames()):
     if cv2.waitKey(57) & 0xFF == ord('q'):
         break
 
+# Nathan ???
 title = 'Ângulo do Joelho (Nathan)'
 Plota_graficos.Plot.plota_angulo_medido(angulo_nathan, title)
 
 title = 'Ângulo do Joelho Normalizado (Nathan)'
 normalizado_nathan = Parameter.normaliza_vetor(
     angulo_nathan, quant_de_ciclos, quant_de_ciclos_desejado, 70)
-Plota_graficos.Plot.Plot.plota_angulo_medido_normalizado(normalizado_nathan, title)
+Plota_graficos.Plot.plota_angulo_medido_normalizado(normalizado_nathan, title)
 
 Parameter.write_json(data_json)
 
@@ -696,7 +696,7 @@ flexion_right_knee_angle = flexion_right_knee_angle[1:]
 # comprimento_stance=comprimento_stance[1:]
 # comprimento_swing=comprimento_swing[1:]
 
-
+# ???
 # for j in range(0,len(distance_feet)-2):
 #    if distance_feet[j] > dist_dos_pes_inicial:# distance_feet[0]:
 # tempo_inicial_vetor.append(time.time())
@@ -751,35 +751,29 @@ largura_da_passada = largura_da_passada[1:]
 distance_feet = distance_feet[1:]
 distance_feet_2 = distance_feet_2[1:]
 instante = instante[1:]
-tempo_passo = tempo_passo[1:]
-tempo_passo = tempo_passo[1:]
+tempo_passo = tempo_passo[2:]
 
-if np.mod(len(picos_distancia), 2) == 0:
-    for j in range(0, len(picos_distancia) - 1):
+if len(picos_distancia)% 2 == 0:
+    for j in range(len(picos_distancia) - 1):
         tempo_passo.append(instante_pico[j + 1] - instante_pico[j])
-    for j in range(0, len(picos_distancia) - 2, 2):
+    for j in range(len(picos_distancia) - 2, 2):
         tempo_suporte_duplo.append(instante_pico[j + 2] - instante_pico[j])
 else:
-    for j in range(0, len(picos_distancia) - 1):
+    for j in range(len(picos_distancia) - 1):
         tempo_passo.append(instante_pico[j + 1] - instante_pico[j])
-    for j in range(0, len(picos_distancia) - 2, 2):
+    for j in range(len(picos_distancia) - 2, 2):
         tempo_suporte_duplo.append(instante_pico[j + 2] - instante_pico[j])
 
-for i in range(0, len(flexion_left_knee_angle)):
+for i in range(len(flexion_left_knee_angle)):
     if flexion_left_knee_angle[i] == 180:
         flexion_left_knee_angle[i] = flexion_left_knee_angle[i - 1]
-    # print(left_knee_angle[i])
 
-# print(tempo_passo)
-# print(tempo_suporte_duplo)
 for i in range(0, len(tempo_passo)):
     aceleracao.append((picos_distancia[i] / (pow(tempo_passo[i], 2))))
 
 # print(len(aceleracao),"aqui")
 
-h = []
-for j in range(1, len(tempo_passo) + 1):
-    h.append(j)
+h = list(range(1, len(tempo_passo) + 1))
 
 print("Meio comprimento de passo médio: %.3f m" %
       statistics.mean(picos_distancia))
@@ -792,7 +786,7 @@ print("Meio comprimento de passo médio: %.3f m" %
 maior_passo_medido = picos_distancia[0] + picos_distancia[1]
 print("Maior comprimento de passo: %.3f m" % maior_passo_medido)
 
-for cam_id in range(0, 4):
+for cam_id in range(4):
     porcentagem = (perdidas[cam_id] / juntas[cam_id]) * 100
     log.info("cam{}: Juntas detectadas: {} | Perdidas: {} |  {:.2f} %".format(
         cam_id, juntas[cam_id], perdidas[cam_id], porcentagem))
@@ -826,17 +820,8 @@ Plota_graficos.Plot.plota_grafico_tempo_de_passo(
     h, tempo_passo, 'Passo', 'Tempo de passo(s)', 'Tempo de Passos')
 angulo = Parameter.angulo_caminhada(
     perna_direita, perna_esquerda, picos_distancia, altura_quadril)
-# print(statistics.mean(average_height))
-# print(statistics.mean(picos_distancia))
-# print(angulo)
-# print(statistics.mean(angulo))
+
 largura_media = statistics.mean(largura_da_passada)
-# print(largura_media)
-# aux_angulo=Parameter.retira_primeiro_elemento(aux_angulo)
-# print(len(np.array(aux_angulo)))
-
-# print(statistics.mean(flexion_right_knee_angle),statistics.mean(flexion_left_knee_angle))
-
 
 title = 'Ângulo de abertura entre as pernas por número de amostras'
 Plota_graficos.Plot.plota_angulo_medido(aux_angulo, title)
@@ -950,7 +935,8 @@ if classifier >= 5:
 else:
     print("O movimento foi realizado de forma errada")
     movimento = 1
-print(movimento)
+
+# ???
 # Parameter.file_maker_csv(comprimento_passo_real_medido, cadencia,Stance_real, Swing_real,distance_feet,
 # dist_dos_pes_inicial,picos_distancia,comprimento_passo_medido,comprimento_swing,comprimento_stance,aux_angulo,
 # altura_quadril,idade,velocidade_media,perna_direita,altura_real,coxa_perna_esquerda,angulo_real_joelho_esquerdo,
