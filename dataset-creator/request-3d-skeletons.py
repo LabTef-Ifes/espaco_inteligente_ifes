@@ -9,9 +9,7 @@ import sys
 import time
 from collections import defaultdict
 from enum import Enum
-from pprint import pprint
 
-import cv2
 import numpy as np
 from google.protobuf.json_format import MessageToDict
 from is_msgs.image_pb2 import ObjectAnnotations
@@ -19,8 +17,8 @@ from is_wire.core import Channel, ContentType, Logger, Message, Subscription
 from utils import AnnotationsFetcher, load_options
 
 MIN_REQUESTS = 0
-MAX_REQUESTS = 644
-DEADLINE_SEC = 5.0
+MAX_REQUESTS = 644 #PQ???
+DEADLINE_SEC = 5.0 #PQ???
 
 
 class State(Enum):
