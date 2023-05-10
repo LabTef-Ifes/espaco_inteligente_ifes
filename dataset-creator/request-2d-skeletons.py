@@ -137,9 +137,9 @@ while True:
                 log.info('{} has been saved.', filename)
 
         state = State.CHECK_FOR_TIMEOUTED_REQUESTS
+        
     # Caso o estado seja State.CHECK_FOR_TIMEOUTED_REQUESTS:
     elif state == State.CHECK_FOR_TIMEOUTED_REQUESTS:
-
         # cria um novo dicionário vazio para as novas requisições
         new_requests = {}
 
@@ -177,3 +177,9 @@ while True:
         # muda o estado para State.MAKE_REQUESTS
         state = State.MAKE_REQUESTS
 
+    elif state == State.EXIT:
+        log.info("Exiting...")
+        sys.exit(-1)
+
+    else:
+        state = State.MAKE_REQUESTS

@@ -130,7 +130,6 @@ while True:
                     'pos': pos,
                     'requested_at': time.time()
                 }
-        continue
 
     elif state == State.RECV_REPLIES:
         try:
@@ -151,7 +150,6 @@ while True:
             state = State.CHECK_END_OF_SEQUENCE_AND_SAVE
         except socket.timeout:
             state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-        continue
 
     elif state == State.CHECK_END_OF_SEQUENCE_AND_SAVE:
         done_sequences = []
@@ -186,7 +184,6 @@ while True:
             del localizations_received[person_id][gesture_id]
 
         state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-        continue
 
     elif state == State.CHECK_FOR_TIMEOUTED_REQUESTS:
         new_requests = {}
@@ -210,7 +207,6 @@ while True:
 
         requests.update(new_requests)
         state = State.MAKE_REQUESTS
-        continue
 
     elif state == State.EXIT:
         log.info("Exiting...")
@@ -218,4 +214,3 @@ while True:
 
     else:
         state = State.MAKE_REQUESTS
-        continue

@@ -150,8 +150,8 @@ class AnnotationsFetcher:
         self._localizations_it = iter(self._pending_localizations)
         self._annotation_pos = 0
         self._n_annotations = 0
-        self._fwd_annotations = True
         self._current_annotations = {}
+        self._fwd_annotations = True
         self._current_person_id = None
         self._current_gesture_id = None
 
