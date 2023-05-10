@@ -23,8 +23,8 @@ import Plota_graficos
 from utils import load_options
 from video_loader import MultipleVideoLoader
 
-
-# import pyscreenshot as ImageGrab
+# RGB fixado???
+CAPTURA = 'RGB'
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('CHEST')),
@@ -196,6 +196,7 @@ with open('gestures.json', 'r') as f:
     # Sus ordered
     gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
 
+#parser
 parser = argparse.ArgumentParser(
     description='Utility to capture a sequence of images from multiples cameras')
 parser.add_argument('--person', '-p', type=int,
@@ -206,6 +207,7 @@ args = parser.parse_args()
 
 person_id = args.person
 gesture_id = args.gesture
+
 if str(gesture_id) not in gestures:
     log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}", gesture_id,
                  json.dumps(gestures, indent=2))
@@ -245,6 +247,7 @@ full_image = np.zeros(size, dtype=np.uint8)
 
 video_loader = MultipleVideoLoader(video_files)
 
+
 # load annotations
 annotations = {}
 for cam_id, filename in json_files.items():
@@ -259,7 +262,6 @@ plt.ioff()
 fig = plt.figure(figsize=(5, 5))
 ax = Axes3D(fig)
 
-update_image = True
 output_file = 'p{:03d}g{:02d}_output.mp4'.format(person_id, gesture_id)
 
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -305,8 +307,8 @@ dist_dos_pes_inicial = 0
 altura_quadril = 1
 
 b = a = altura_quadril / 2
-#pow??? 
-B = pow(altura_quadril, 2) - (pow(a, 2) + pow(b, 2))
+#pow??? mudado para **
+B = altura_quadril**2 - (a**2 + b**2)
 A = -2 * b * altura_quadril
 if (B / A) < 1:
     angulo_real_joelho_esquerdo = math.degrees(math.acos(B / A))
@@ -315,6 +317,9 @@ else:
 
 angulo_real_joelho_esquerdo = (
     180 - angulo_real_joelho_esquerdo)  # Está como no livro!!!!#
+
+# ???
+# Muitas variaveis soltas. Codigo extremamente sujo. Necessario refatorar.
 
 # [0, 0, 0, 0]           # Lista de juntas detectadas em cada câmera
 juntas = [0] * 4
@@ -382,7 +387,7 @@ data_json = {'dados': [0]}
 movimento = 0  # Time up:0, Em círculos:1, Em linha reta:2, Elevação excessiva:3, Assimétrica:4 e Circundação do pé:5
 altura_pe_esquerdo = 0
 altura_pe_direito = 0
-altura_calcanhar = 0.135
+altura_calcanhar = 0.135 #??? PQ 0.135???
 ponto_tornozelo_direito = []
 ponto_tornozelo_esquerdo = []
 k = 0
@@ -392,8 +397,7 @@ array_coordenadas = []  # Array de coordenadas do esqueleto
 matrix_coordenadas = []
 aux_movimento = [movimento]
 
-# RGB fixado???
-CAPTURA = 'RGB'
+
 
 
 # Aqui começa a análise dos vídeos para cada frame
@@ -415,11 +419,13 @@ for it_frames in range(video_loader.n_frames()):
     ax.clear()
     ax.view_init(azim=28, elev=32)
     ax.set_xlim(-1.5, 0)
-    ax.set_xticks(np.arange(-1.5, 0.5, 0.5))
     ax.set_ylim(-3.0, 3.0)
-    ax.set_yticks(np.arange(-5.0, 2.0, 0.5))
     ax.set_zlim(-0.25, 1.5)
+
+    ax.set_xticks(np.arange(-1.5, 0.5, 0.5))
+    ax.set_yticks(np.arange(-5.0, 2.0, 0.5))
     ax.set_zticks(np.arange(0, 1.75, 0.5))
+
     ax.set_xlabel('X', labelpad=20)
     ax.set_ylabel('Y', labelpad=10)
     ax.set_zlabel('Z', labelpad=5)
@@ -660,11 +666,6 @@ for it_frames in range(video_loader.n_frames()):
         'velocidade no instante (m/s)': '%.3f' % Velocidade_no_instante
     })
 
-    # image = np.array(ImageGrab.grab())
-    # image = get_np_image(image)
-    # image = np.array(cv2.grab())
-    # image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-    # cv2.imshow('', image)
     vid.write(display_image)
 
     ##MANDA OS DADOS PELA REDE LOCAL!###
