@@ -395,7 +395,6 @@ aux_movimento = [movimento]
 # RGB fixado???
 CAPTURA = 'RGB'
 
-angulo_nathan = [0]
 
 # Aqui começa a análise dos vídeos para cada frame
 
@@ -435,10 +434,6 @@ for it_frames in range(video_loader.n_frames()):
     y.append(perdas_no_3d)
     x.append(i)
     aux_localizations = []
-
-    aux_nathan = Parameter.angulo_joelho_esquerdo_nathan(
-        skeletons=localizations[it_frames])
-    angulo_nathan.append(aux_nathan)
 
     average_height.append(
         Parameter.altura_da_pessoa(localizations[it_frames]))
@@ -677,15 +672,6 @@ for it_frames in range(video_loader.n_frames()):
     # key = cv2.waitKey(1)
     if cv2.waitKey(57) & 0xFF == ord('q'):
         break
-
-# Nathan ???
-title = 'Ângulo do Joelho (Nathan)'
-Plota_graficos.Plot.plota_angulo_medido(angulo_nathan, title)
-
-title = 'Ângulo do Joelho Normalizado (Nathan)'
-normalizado_nathan = Parameter.normaliza_vetor(
-    angulo_nathan, quant_de_ciclos, quant_de_ciclos_desejado, 70)
-Plota_graficos.Plot.plota_angulo_medido_normalizado(normalizado_nathan, title)
 
 Parameter.write_json(data_json)
 

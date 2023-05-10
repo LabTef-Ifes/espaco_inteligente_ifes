@@ -436,67 +436,6 @@ class Parameter:
         return ang_flex_left_knee
 
     @staticmethod
-    def angulo_joelho_esquerdo_nathan(skeletons):
-        """_summary_
-
-        Args:
-            skeletons (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
-        junta_joelho_esquerdo = None
-        junta_tornozelo_esquerdo = None
-        junta_quadril_esquerdo = None
-        # Não usados???
-        '''distancia_quadril_joelho = None
-        distancia_quadril_tornozelo = None
-        distancia_joelho_tornozelo = None
-        cosseno_ang = None'''
-
-        for skeletons in skeletons_pb.objects:
-            parts = {}
-            for part in skeletons.keypoints:
-                parts[part.id] = (
-                    part.position.x, part.position.y, part.position.z)
-                if part.id == 13:
-                    junta_quadril_esquerdo = parts[13]
-                elif part.id == 14:
-                    junta_joelho_esquerdo = parts[14]
-                elif part.id == 15:
-                    junta_tornozelo_esquerdo = parts[15]
-
-        if junta_joelho_esquerdo and junta_quadril_esquerdo and junta_tornozelo_esquerdo:
-            distancia_quadril_joelho = math.sqrt(((junta_joelho_esquerdo[2] - junta_quadril_esquerdo[2]) ** 2) + (
-                (junta_joelho_esquerdo[1] - junta_quadril_esquerdo[1]) ** 2) + ((junta_joelho_esquerdo[0] -
-                                                                                 junta_quadril_esquerdo[0]) ** 2))
-            # print("Distancia Quadril Joelho= ", distancia_quadril_joelho)
-            distancia_quadril_tornozelo = math.sqrt(((junta_tornozelo_esquerdo[2] - junta_quadril_esquerdo[2]) ** 2) + (
-                (junta_tornozelo_esquerdo[1] - junta_quadril_esquerdo[1]) ** 2) + ((junta_tornozelo_esquerdo[0] -
-                                                                                    junta_quadril_esquerdo[
-                    0]) ** 2))
-            # print("Distancia Quadril Tornozelo= ", distancia_quadril_tornozelo)
-            distancia_joelho_tornozelo = math.sqrt(((junta_joelho_esquerdo[2] - junta_tornozelo_esquerdo[2]) ** 2) + (
-                (junta_joelho_esquerdo[1] - junta_tornozelo_esquerdo[1]) ** 2) + ((junta_joelho_esquerdo[0] -
-                                                                                   junta_tornozelo_esquerdo[
-                    0]) ** 2))
-            # print("Distancia Joelho Tornozelo= ", distancia_joelho_tornozelo)
-
-            cosseno_ang = (-1) * ((distancia_quadril_tornozelo ** 2) - (distancia_quadril_joelho ** 2) - (
-                distancia_joelho_tornozelo ** 2)) / (2 * distancia_joelho_tornozelo * distancia_quadril_joelho)
-
-            angulo_joelho_esquerdo = math.acos(cosseno_ang)
-
-            angulo_joelho_esquerdo = 180 - math.degrees(angulo_joelho_esquerdo)
-
-            # print(angulo_joelho_esquerdo)
-            return angulo_joelho_esquerdo
-
-        else:
-            return 0
-
-    @staticmethod
     def right_leg(skeletons):
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
         right_hip = None
