@@ -191,8 +191,7 @@ images = {}
 # cria um defaultdict vazio para armazenar os timestamps de cada câmera
 timestamps = defaultdict(list)
 
-# inicializa o contador e o número de amostras
-contador = 0 #Não usado ???
+# inicializa o número de amostras
 n_sample = 0
 
 # inicializa a taxa de exibição e a variável de controle para salvar a sequência
@@ -263,10 +262,9 @@ while True:
 
             cv2.imshow('', display_image)
             key = cv2.waitKey(1)
-            if key == ord('s'):  # and contador==0:
+            if key == ord('s'):
                 if not start_save:
                     start_save = True
-                    contador = 1
 
                 elif not sequence_saved:
                     timestamps_filename = os.path.join(
@@ -274,7 +272,6 @@ while True:
                     with open(timestamps_filename, 'w') as f:
                         json.dump(timestamps, f, indent=2, sort_keys=True)
                     sequence_saved = True
-                    contador = 0
 
             if key == ord('p'):
                 start_save = False
