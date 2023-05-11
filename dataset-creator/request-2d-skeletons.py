@@ -84,16 +84,21 @@ while True:
     if state == State.MAKE_REQUESTS:  # se o estado atual é fazer pedidos
         state = State.RECV_REPLIES  # muda o estado para receber respostas
         if len(requests) < MIN_REQUESTS:  # se a quantidade de pedidos for menor que o minimo exigido
-            while len(requests) <= MAX_REQUESTS:  # enquanto a quantidade de pedidos for menor ou igual ao máximo permitido
-                base_name, frame_id, frame = frame_fetcher.next()  # obtém informações do próximo frame do vídeo
+            # enquanto a quantidade de pedidos for menor ou igual ao máximo permitido
+            while len(requests) <= MAX_REQUESTS:
+                # obtém informações do próximo frame do vídeo
+                base_name, frame_id, frame = frame_fetcher.next()
                 if frame is None:  # se o frame não for encontrado
                     if len(requests) == 0:  # se não houver pedidos
                         state = State.EXIT  # muda o estado para sair
                     break
-                pb_image = make_pb_image(frame)  # converte o frame em um objeto de imagem protobuf
-                msg = Message(content=pb_image, reply_to=subscription)  # cria uma mensagem com a imagem e uma assinatura
+                # converte o frame em um objeto de imagem protobuf
+                pb_image = make_pb_image(frame)
+                # cria uma mensagem com a imagem e uma assinatura
+                msg = Message(content=pb_image, reply_to=subscription)
                 msg.timeout = DEADLINE_SEC  # define um tempo limite para receber uma resposta
-                channel.publish(msg, topic='SkeletonsDetector.Detect')  # publica a mensagem no canal
+                # publica a mensagem no canal
+                channel.publish(msg, topic='SkeletonsDetector.Detect')
                 requests[msg.correlation_id] = {  # armazena o pedido para rastreamento
                     'content': pb_image,
                     'base_name': base_name,
@@ -103,28 +108,37 @@ while True:
 
     elif state == State.RECV_REPLIES:  # se o estado atual é receber respostas
         try:
-            msg = channel.consume(timeout=1.0)  # obtém uma mensagem do canal com um tempo limite de 1 segundo
+            # obtém uma mensagem do canal com um tempo limite de 1 segundo
+            msg = channel.consume(timeout=1.0)
             if msg.status.ok():  # se a mensagem estiver ok
-                annotations = msg.unpack(ObjectAnnotations)  # desempacota as anotações de objetos
+                # desempacota as anotações de objetos
+                annotations = msg.unpack(ObjectAnnotations)
                 cid = msg.correlation_id  # obtém a assinatura da mensagem
                 if cid in requests:  # se a assinatura estiver nos pedidos
-                    base_name = requests[cid]['base_name']  # obtém o nome base do arquivo
+                    # obtém o nome base do arquivo
+                    base_name = requests[cid]['base_name']
                     frame_id = requests[cid]['frame_id']  # obtém o ID do frame
                     annotations_received[base_name][frame_id] = MessageToDict(  # armazena as anotações recebidas
                         annotations,
                         preserving_proto_field_name=True,
                         including_default_value_fields=True)
-                    del requests[cid]  # remove o pedido da lista de pedidos ativos
+                    # remove o pedido da lista de pedidos ativos
+                    del requests[cid]
 
-            state = State.CHECK_END_OF_VIDEO_AND_SAVE  # muda o estado para verificar o fim do vídeo e salvar
+            # muda o estado para verificar o fim do vídeo e salvar
+            state = State.CHECK_END_OF_VIDEO_AND_SAVE
 
         except socket.timeout:  # se houver uma exceção de tempo limite de soquete
-            state = State.CHECK_FOR_TIMEOUTED_REQUESTS  # muda o estado para verificar pedidos com tempo limite excedido
+            # muda o estado para verificar pedidos com tempo limite excedido
+            state = State.CHECK_FOR_TIMEOUTED_REQUESTS
 
     elif state == State.CHECK_END_OF_VIDEO_AND_SAVE:  # se o estado atual é verificar o fim do vídeo e salvar
-        for base_name in list(annotations_received.keys()):  # para cada nome base de arquivo nas anotações recebidas
-            annotations_dict = annotations_received[base_name]  # obtém o dicionário de anotações
-            if len(annotations_dict) == n_annotations[base_name]:  # se todas as anotações estiverem presentes
+        # para cada nome base de arquivo nas anotações recebidas
+        for base_name in list(annotations_received.keys()):
+            # obtém o dicionário de anotações
+            annotations_dict = annotations_received[base_name]
+            # se todas as anotações estiverem presentes
+            if len(annotations_dict) == n_annotations[base_name]:
                 output_annotations = {  # cria um objeto de saída de anotações
                     'annotations': [x[1] for x in sorted(annotations_dict.items())],
                     'created_at': datetime.datetime.now().isoformat()
@@ -137,7 +151,7 @@ while True:
                 log.info('{} has been saved.', filename)
 
         state = State.CHECK_FOR_TIMEOUTED_REQUESTS
-        
+
     # Caso o estado seja State.CHECK_FOR_TIMEOUTED_REQUESTS:
     elif state == State.CHECK_FOR_TIMEOUTED_REQUESTS:
         # cria um novo dicionário vazio para as novas requisições
@@ -147,16 +161,16 @@ while True:
         for cid in list(requests.keys())[::-1]:
             # recupera a requisição com a chave cid
             request = requests[cid]
-            
+
             # verifica se a requisição ainda não passou do DEADLINE_SEC
             if (request['requested_at'] + DEADLINE_SEC) > time.time():
                 continue
-                
+
             # se passou do prazo, cria uma nova mensagem com a requisição e publica no tópico 'SkeletonsDetector.Detect'
             msg = Message(content=request['content'], reply_to=subscription)
             msg.timeout = DEADLINE_SEC
             channel.publish(msg, topic='SkeletonsDetector.Detect')
-            
+
             # adiciona uma nova entrada ao dicionário new_requests com o correlation_id como chave
             new_requests[msg.correlation_id] = {
                 'content': request['content'],
@@ -164,10 +178,10 @@ while True:
                 'frame_id': request['frame_id'],
                 'requested_at': time.time()
             }
-            
+
             # remove a requisição do dicionário requests
             del requests[cid]
-            
+
             # exibe uma mensagem de log informando que a mensagem expirou
             log.warn("Message '{}' timeouted. Sending another request.", cid)
 
