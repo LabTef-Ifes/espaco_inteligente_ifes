@@ -396,9 +396,6 @@ array_coordenadas = []  # Array de coordenadas do esqueleto
 matrix_coordenadas = []
 aux_movimento = [movimento]
 
-
-
-
 # Aqui começa a análise dos vídeos para cada frame
 
 for it_frames in range(video_loader.n_frames()):
@@ -533,7 +530,6 @@ for it_frames in range(video_loader.n_frames()):
 
             aux_quantidade_de_ciclos.append(quant_de_ciclos)
             if (quant_de_ciclos % quant_de_ciclos_desejado) == 0 and quant_de_ciclos != 0:
-                # print(quant_de_ciclos,quant_de_ciclos_desejado)
                 # Verfica a mudança da quantidade de ciclos
                 if aux_quantidade_de_ciclos[-1] != aux_quantidade_de_ciclos[-2]:
                     # ???
@@ -566,10 +562,6 @@ for it_frames in range(video_loader.n_frames()):
     ax.quiver(aux_ponto_peito[0], aux_ponto_peito[1],
               aux_ponto_peito[2], u, v, w, length=1, color='r', normalize=True)
 
-    # output_neural_network=Parameter.rede_neural(velocidade_media,statistics.mean(comprimento_passo_medido),
-    # statistics.mean(largura_da_passada),statistics.mean(simetria_comprimento_passo), cadencia) print("%s" %
-    # output_neural_network)
-
     fig.canvas.draw()
     data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
     view_3d = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
@@ -582,22 +574,10 @@ for it_frames in range(video_loader.n_frames()):
         [display_image, 255 * np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
     display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
 
-    # if ((altura_pe_esquerdo>=0.10 and altura_pe_direito<=0.10) or (altura_pe_esquerdo<=0.10 and altura_pe_direito>=0.10)):
-    # flexion_left_knee_angle.append(aux_left_knee_angle) #Armazena os valores dos angulos do joelho esquerdo
-
     aux_flexion_left_knee = Parameter.flexion_left_knee(
         localizations[it_frames])
     # Ângulo da coxa do joelho esquerdo !!!!!
     coxa_perna_esquerda.append(aux_flexion_left_knee)
-
-    # if it_frames == 0:
-    #     video_writer.open(
-    #         filename=output_file,
-    #         fourcc=0x00000021,
-    #         fps=10.0,
-    #         frameSize=(display_image.shape[1], display_image.shape[0]))
-
-    # video_writer.write(display_image)
 
     aux_velocidade_instante.append(Velocidade_no_instante)
     cv2.putText(display_image,
@@ -729,7 +709,8 @@ tempo_total_em_min = tempo_total / 60
 cadencia = contador_numero_de_passos / tempo_total_em_min
 print("Cadência (passos/min): %.3f " % cadencia)
 print("Tempo total: %.3f s " % tempo_total)
-# print(statistics.mean(dist_do_chao))
+
+# Muitos plots???
 Plota_graficos.Plot.plota_grafico_perdas(y)
 Plota_graficos.Plot.plota_grafico_distance_feet(instante, distance_feet)
 Plota_graficos.Plot.plota_grafico_tempo_de_passo(
@@ -739,7 +720,6 @@ angulo = Parameter.angulo_caminhada(
 
 largura_media = statistics.mean(largura_da_passada)
 
-# Muitos plots???
 title = 'Ângulo de abertura entre as pernas por número de amostras'
 Plota_graficos.Plot.plota_angulo_medido(aux_angulo, title)
 coxa_perna_esquerda = Parameter.retira_primeiro_elemento(coxa_perna_esquerda)
