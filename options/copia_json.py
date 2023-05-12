@@ -66,7 +66,7 @@ def atualiza_json(path, novo_fps, width, height, color):
 
     # Sobreescreve os valores atualizados
     with open(path, 'w+') as f:
-    return novo_fps, width, height, color
+    	return novo_fps, width, height, color
 
 
 def atualiza_json(path, novo_fps, width, height, color):
