@@ -72,4 +72,4 @@ zipp==1.2.0
 amqp==2.4.2
 sympy==1.9
 statistics==1.0.3.5
-tk=0.1.0
+tk==0.1.0
