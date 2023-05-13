@@ -1,12 +1,16 @@
 import shutil
 import json
+import os
+# Obter o caminho absoluto do arquivo atual
+caminho_absoluto = os.path.abspath(__file__)
 
+# Obter o diretório atual
+diretorio_atual = os.getcwd()
+
+if caminho_absoluto == diretorio_atual:
+    raise Exception("Esse arquivo deve ser executado a partir da pasta raiz do repositório")
 # Path para o arquivo options.json
 options_path = 'dataset-creator/options.json'
-
-# Path para o arquivo options.json
-options_path = 'dataset-creator/options.json'
-
 
 def valid(default, var) -> int:
     """valida uma variável int
