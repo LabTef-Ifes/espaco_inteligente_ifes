@@ -1,0 +1,96 @@
+version: '0.0.1' # Teste do Deivid em 13/5/23
+services:
+  rabbitmq:
+    image: rabbitmq:3.7.6-management
+    volumes:
+      - ./is-k8s-deployments/ifes:/etc/rabbitmq/
+    ports:
+      - 5672:5672
+      - 15672:15672
+    network_mode: host
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+    network_mode: host
+
+  cam0:
+    image: viros/is-cameras:1.5
+    command: ./service.bin
+    volumes:
+      - ./options/0.json:/options.json
+    mem_limit: 60M
+    network_mode: host
+
+  cam1:
+    image: viros/is-cameras:1.5
+    command: ./service.bin
+    volumes:
+      - ./options/1.json:/options.json
+    mem_limit: 60M
+    network_mode: host
+
+  cam2:
+    image: viros/is-cameras:1.5
+    command: ./service.bin
+    volumes:
+      - ./options/2.json:/options.json
+    mem_limit: 60M
+    network_mode: host
+
+  cam3:
+    image: viros/is-cameras:1.5
+    command: ./service.bin
+    volumes:
+      - ./options/3.json:/options.json
+    mem_limit: 60M
+    network_mode: host
+
+  is-frame_transformation:
+    image: labviros/is-frame-transformation:0.0.4
+    command: ./service.bin /etc/conf/options.json
+    volumes:
+      - ./calibrations/ifes:/opt/ifes_calibration/
+      - ./etc/conf/options.json:/etc/conf/options.json
+    network_mode: host
+
+  mjpeg-server:
+    image: viros/is-mjpeg-server:1
+    ports:
+      - 3000:3000
+    environment:
+      - IS_URI=amqp://127.0.0.1:5672
+    mem_limit: 60M
+    network_mode: host
+
+  sk1:
+    image: labviros/is-skeletons-detector:0.0.2-openpose
+    command: ./rpc.bin
+    mem_limit: 3g
+    devices: # Conferir path disso
+      - "/dev/nvidiactl"
+      - "/dev/nvidia-uvm"
+      - "/dev/nvidia0"
+    runtime: nvidia
+    network_mode: host
+
+  sk2:
+    image: labviros/is-skeletons-detector:0.0.2-openpose
+    command: ./rpc.bin
+    mem_limit: 3g
+    devices:
+      - "/dev/nvidiactl"
+      - "/dev/nvidia-uvm"
+      - "/dev/nvidia0"
+    runtime: nvidia
+    network_mode: host
+
+  grouper:
+    image: mendonca/is-skeletons-grouper:0.0.4-debug
+    command: ./rpc.bin /options.json
+    volumes:
+      - ./is-skeletons-grouper/options.json:/opt/is/options.json
+    mem_limit: 2g
+    cpus: 1
+    network_mode: host
