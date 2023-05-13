@@ -18,30 +18,30 @@
 1. Suba os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py) novamente.
 1. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
-  | containers ativos       |
-  | :---------------------- |
-  | rabbitmq                |
-  | zipkin                  |
-  | cam0                    |
-  | cam1                    |
-  | cam2                    |
-  | cam3                    |
-  | sk1                     |
-  | sk2                     |
-  | is-frame_transformation |
-  | grouper                 |
+  | containers ativos       |                                                      descrição |
+  | :---------------------- | -------------------------------------------------------------: |
+  | rabbitmq                |                               Canal de comunicação dos tópicos |
+  | zipkin                  |                  Exibe e organiza os tópicos para visualização |
+  | cam0                    |                                                Conexão da cam0 |
+  | cam1                    |                                                Conexão da cam1 |
+  | cam2                    |                                                Conexão da cam2 |
+  | cam3                    |                                                Conexão da cam3 |
+  | sk1                     |                                                          #TODO |
+  | sk2                     |                                                          #TODO |
+  | is-frame_transformation | Serviço de transformar esqueletos 2d em 3d usando a calibração |
+  | grouper                 |                          Algo sobre juntar os pontos 2d. #TODO |
 2. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**.
 
 ## Comentários sobre o uso dos containers
-O sistema de containeres foi criado pelo Felippe e utilizado em seu mestrado.
+O sistema de containeres foi criado pelo Felippe e a galera da Ufes e utilizado em seu mestrado.
 
 Há diversos topicos de comunicação relacionados a captura de imagem, envio de imagem e construção do esqueleto
 
 O rabbit e o zipkin são essenciais para a utilização da comunicação do EI.
 
-A ultima versao desenvolvida na Ufes do Skeleton(?) é a 0.0.4
+A ultima versao desenvolvida na Ufes do frame-transformation é a 0.0.4
 
-Para calibrar as cameras, é necessario adicionar os arquivos com o schema correto no diretorio definido no docker is-frame_transformation
+Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _schema_ correto no diretorio definido no docker is-frame_transformation
 ---
 # Descrição de alguns arquivos do espaço inteligente.
 
@@ -67,8 +67,8 @@ Para calibrar as cameras, é necessario adicionar os arquivos com o schema corre
 - As alterações realizadas nos arquivos `options/X.json` (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers. 
   Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
 - Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
-- O Flycapture SDK é o software do fabricante das câmeras e é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C.
-- É necessário instalar o tkinter no Ubunt através do comando `sudo apt install python3-tk` no terminal.
+- O Flycapture SDK, software do fabricante das câmeras, é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C.
+- É necessário instalar o `tkinter` no Ubuntu através do comando `sudo apt install python3-tk` no terminal.
 # Câmeras novas do switch e o novo serviço de gateway
 **❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containers do EI estão ativos.**
 
@@ -87,6 +87,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 
 - O Readme contido dentro do arquivo `spinnaker-2.7.0.128-Ubuntu18.04-amd64-pkg.tar.gz` possui informações -_sobre alteração de buffer, por exemplo_- que podem ajudar caso esteja ocorrendo algum problema de captura de imagem.
 - O `Spinnaker SDK` é o software do fabricante das câmeras compatível com o modelo Blackfly S GigE BFS-PGE-16S2C-CS e com o Blackfly GigE BFLY-PGE-09S2C.
+<!-- Aqui está Spinnaker SDK e mais acima está Flycapture SDK. Qual é o certo? -->
 
 
 ## Como iniciar as câmeras
