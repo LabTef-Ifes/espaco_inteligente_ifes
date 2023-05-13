@@ -1,4 +1,4 @@
-docker container run -d --rm \
+docker container run -ti --rm \
 	-v (pwd)/calibrations/ifes:/opt/ifes_calibration/ \
 	-v (pwd)/etc/conf/options.json:/etc/conf/options.json \
 	--network=host \
