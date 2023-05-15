@@ -1,5 +1,5 @@
 docker container run -d --rm \
-	-v (pwd)/is-skeletons-grouper/options.json:/opt/is/options.json \
+	-v $PWD/is-skeletons-grouper/options.json:/opt/is/options.json \
 	--memory=2g \
 	--cpus=1 \
 	--network=host \
