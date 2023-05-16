@@ -37,7 +37,8 @@ def get_id(topic):
         return None
     return int(match.group(1))
 
-
+# Sem return
+# O que faz???
 def place_images(output_image, images_):
     """_summary_
 
@@ -127,7 +128,6 @@ if str(gesture_id) not in gestures:
     log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}",
                  gesture_id, json.dumps(gestures, indent=2))
     sys.exit(-1)
-
 
 # Verificando se o id de pessoa informado é válido
 if person_id < 1 or person_id > 999:
