@@ -23,3 +23,4 @@ dataset-creator/videos/*.avi
 dataset-creator/videos/*.mp4
 dataset-creator/record_screen.avi
 dataset-creator/*.pyc
+dataset-creator/videos/*/*.jpeg

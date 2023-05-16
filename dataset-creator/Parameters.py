@@ -16,10 +16,6 @@ from skfuzzy import control as ctrl
 from sklearn import preprocessing
 from utils import load_options
 
-# from keras import *
-# from tensorflow.keras import *
-
-
 with open('keymap.json') as f:
     keymap = json.load(f)
 
@@ -50,13 +46,9 @@ class Parameter:
             for link_parts, color in zip(links, colors):
                 begin, end = link_parts
                 if begin in parts and end in parts:
-                    # Não usado???
-                    '''x_pair = [parts[begin][0], parts[end][0]]
-                    y_pair = [parts[begin][1], parts[end][1]]
-                    z_pair = [parts[begin][2], parts[end][2]]'''
+
                     perdas = (15 - len(parts)) / 15.0
                     perdas = perdas * 100.0
-                    # print("Perdas na detecção: " +   str(perdas) + "%")
                     return perdas
 
     # perna direita e angulo_real_joelho_esquerdo não usados
@@ -101,10 +93,8 @@ class Parameter:
         dist = [dist_dos_pes_inicial, distance_feet[0]]
 
         comprimento_medio_real_de_meio_passo = (Stance_real + Swing_real) / 2
-        # print(comprimento_passo_real_medido,statistics.mean(comprimento_passo_medido))
         erro_medio_comprimento_de_passo = comprimento_passo_real_medido - \
             statistics.mean(comprimento_passo_medido)
-        # print(erro_medio_comprimento_de_passo)
 
         # Poderia ser generator
         for j in range(len(comprimento_passo_medido)):
@@ -235,22 +225,20 @@ class Parameter:
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
 
         if skeletons_pb.objects:
+            # overwrites skeletons???
             for skeletons in skeletons_pb.objects:
                 parts = {}
                 for part in skeletons.keypoints:
                     parts[part.id] = (
                         part.position.x, part.position.y, part.position.z)
-                    if part.id == 15:
-                        left_ankle = parts[15]
-                    if part.id == 13:
-                        left_hip = parts[13]
-                    if part.id == 14:
-                        left_knee = parts[14]
                     if part.id == 3:
                         neck = parts[3]
-                    # print(type(left_leg))
-                    # print(type(aux_left_leg))
-                    # print((left_knee_angle),aux_left_leg,left_leg)
+                    elif part.id == 13:
+                        left_hip = parts[13]
+                    elif part.id == 14:
+                        left_knee = parts[14]
+                    elif part.id == 15:
+                        left_ankle = parts[15]
 
                 if left_ankle and left_hip and left_knee and neck:
                     left_hip = parts[13]
@@ -263,14 +251,6 @@ class Parameter:
                         left_knee[2] - left_hip[2]) ** 2)
                     left_leg = a + b
                     aux_left_leg = left_leg
-                    # left_knee_angle_e_quadril_ang=math.degrees(math.atan(abs((left_ankle[1]-left_knee[1])/(left_knee[2]-left_ankle[2]))))
-                    # quadril_ang=math.degrees(abs(math.atan(abs((left_knee[1]-left_hip[1])/(left_hip[2]-left_knee[2])))))
-                    # if left_knee_angle_e_quadril_ang >= quadril_ang:
-                    #    left_knee_angle=left_knee_angle_e_quadril_ang-quadril_ang
-                    #    print(quadril_ang)
-                    # else:
-                    #    left_knee_angle=-left_knee_angle_e_quadril_ang+quadril_ang
-                    #    print(left_knee_angle)
 
                     c = np.sqrt((left_hip[1] - left_ankle[1])
                                 ** 2 + (left_hip[2] - left_ankle[2]) ** 2)
@@ -287,11 +267,7 @@ class Parameter:
                           (left_knee[2] - left_hip[2]))
                     ang = math.degrees(np.math.atan2(
                         np.linalg.det([v0, v1]), np.dot(v0, v1)))
-                    # print(v0,v1)
-                    '''if ang < 0:
-                        quadril_ang = -(180 + ang)
-                    else:
-                        quadril_ang = 180 - ang'''
+
 
                     delta_y = left_knee[1] - left_hip[1]
                     delta_z = left_knee[2] - left_hip[2]
@@ -299,33 +275,19 @@ class Parameter:
                     # CALCULADO COM A LUÍZA DIA 08/01/2021 - extansão do quadril esquerdo
                     angle_test = -1 * math.degrees(np.math.atan(razao))
                     quadril_ang = angle_test
-                    # B=pow(c,2)-(pow(a,2)+pow(b,2))
-                    # A=-2*b*c
-                    # print(a,b,c,B,A)
-                    # print(left_leg,aux_left_leg,left_knee_angle)
-                    # if (A!=0):
-                    # if ((B/A)<1):
-                    # left_knee_angle=(180-math.degrees(math.acos(B/A)))
-                    # print(left_leg,aux_left_leg,left_knee_angle)
-                    # else:
-                    # left_knee_angle=0
-                    # print(left_leg,aux_left_leg,left_knee_angle)
+
+                    # Return estranhos, parecem encerrar o código em 1 loop
                     return left_leg, aux_left_leg, left_knee_angle, quadril_ang
                 else:
                     left_leg = 0
                     left_knee_angle = 0
                     aux_left_leg = 0
-                    # Não usado???
-                    # neck = 0
-                    # print(left_leg,aux_left_leg,left_knee_angle)
-                    # print("aqui")
+
                     return left_leg, aux_left_leg, left_knee_angle, quadril_ang
-                # print(type(left_leg),type(aux_left_leg),type(left_knee_angle))
         else:
             left_leg = 0
             left_knee_angle = 0
             aux_left_leg = 0
-            # print(left_leg,aux_left_leg,left_knee_angle)
             return left_leg, aux_left_leg, left_knee_angle, quadril_ang
 
     @staticmethod
