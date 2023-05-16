@@ -221,7 +221,8 @@ n_sample = 0
 
 # inicializa a taxa de exibição e a variável de controle para salvar a sequência
 display_rate = 2
-start_save = False
+
+save = False
 # inicializa a variável que indica se a sequência foi salva
 sequence_saved = False
 
@@ -249,7 +250,9 @@ while True:
     current_timestamps[camera] = dt.utcfromtimestamp(msg.created_at).isoformat()
     print(len(images_data),len(options.cameras))
     if len(images_data) == len(options.cameras):
-        if start_save and not sequence_saved:
+        keyboard.on_press(on_key)
+
+        if save:
             for camera in options.cameras:
                 filename = os.path.join(
                     sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(
@@ -260,27 +263,21 @@ while True:
             n_sample += 1
             log.info('Sample {} saved', n_sample)
 
-
-        keyboard.on_press(on_key)
-        print(last_key)
         if last_key == "s":
             print("Saving sequence...")
-            if not start_save:
-                start_save = True
+            save = True
 
-            elif not sequence_saved:
-                timestamps_filename = os.path.join(
-                    options.folder, "{}_timestamps.json".format(sequence)
-                )
-                with open(timestamps_filename, "w") as f:
-                    json.dump(timestamps, f, indent=2, sort_keys=True)
-                sequence_saved = True
+        if last_key in "pq":
+            save = False
+            #save sequence
+            timestamps_filename = os.path.join(
+                options.folder, "{}_timestamps.json".format(sequence)
+            )
+            with open(timestamps_filename, "w") as f:
+                json.dump(timestamps, f, indent=2, sort_keys=True)
+            sequence_saved = True
+            print("Sequence saved")
+            break
 
-        if last_key == ("p"):
-            start_save = False
-
-        if last_key == ord("q"):
-            if (not start_save) or sequence_saved:
-                break
 
 log.info("Exiting")
