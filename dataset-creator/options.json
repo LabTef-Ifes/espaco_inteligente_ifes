@@ -10,11 +10,11 @@
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 1440,
+            "height": 1080
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",
@@ -37,11 +37,11 @@
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 1440,
+            "height": 1080
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",
@@ -64,11 +64,11 @@
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 1440,
+            "height": 1080
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",
@@ -91,11 +91,11 @@
         },
         "image": {
           "resolution": {
-            "width": 1288,
-            "height": 728
+            "width": 1440,
+            "height": 1080
           },
           "color_space": {
-            "value": "RGB"
+            "value": "GRAY"
           },
           "format": {
             "format": "JPEG",

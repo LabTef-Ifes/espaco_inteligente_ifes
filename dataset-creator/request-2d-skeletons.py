@@ -79,10 +79,8 @@ state = State.MAKE_REQUESTS
 frame_fetcher = FrameVideoFetcher(
     video_files=pending_videos, base_folder=options.folder)
 
-# Máquina de estados para processamento dos frames
 while True:
     if state == State.MAKE_REQUESTS:  # se o estado atual é fazer pedidos
-        state = State.RECV_REPLIES  # muda o estado para receber respostas
         if len(requests) < MIN_REQUESTS:  # se a quantidade de pedidos for menor que o minimo exigido
             # enquanto a quantidade de pedidos for menor ou igual ao máximo permitido
             while len(requests) <= MAX_REQUESTS:
@@ -105,6 +103,7 @@ while True:
                     'frame_id': frame_id,
                     'requested_at': time.time()
                 }
+        state = State.RECV_REPLIES  # muda o estado para receber respostas
 
     elif state == State.RECV_REPLIES:  # se o estado atual é receber respostas
         try:
@@ -158,7 +157,7 @@ while True:
         new_requests = {}
 
         # percorre todas as chaves do dicionário requests
-        for cid in list(requests.keys())[::-1]:
+        for cid in list(requests.keys()):
             # recupera a requisição com a chave cid
             request = requests[cid]
 
@@ -180,7 +179,7 @@ while True:
             }
 
             # remove a requisição do dicionário requests
-            del requests[cid]
+            requests.pop(cid)
 
             # exibe uma mensagem de log informando que a mensagem expirou
             log.warn("Message '{}' timeouted. Sending another request.", cid)

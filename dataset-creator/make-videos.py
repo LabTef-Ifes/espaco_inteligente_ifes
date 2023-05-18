@@ -12,7 +12,7 @@ def get_person_gesture(folder):
         folder (_type_): _description_
 
     Returns:
-        Tuple[int]: _description_
+        Tuple[int]: (person_id,gesture_id). Ex :(1,1) for p001g01
     """
     match = re.search(r'p(\d+)g(\d+)', folder)
     if match is None:
@@ -45,6 +45,9 @@ for root, dirs, files in os.walk(options.folder):
             video_file = os.path.join(
                 options.folder, 'p{:03d}g{:02d}c{:02d}.mp4'.format(
                     person_id, gesture_id, camera.id))
+            if os.path.exists(video_file):
+                log.info("Video '{}' already exists", video_file)
+                continue
             ffmpeg_command = ffmpeg_base_command.format(
                 fps=camera.config.sampling.frequency.value,
                 file_pattern=file_pattern,
