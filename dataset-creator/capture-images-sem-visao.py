@@ -248,7 +248,7 @@ while True:
 
     images_data[camera] = data
     current_timestamps[camera] = dt.utcfromtimestamp(msg.created_at).isoformat()
-    print(len(images_data),len(options.cameras))
+
     if len(images_data) == len(options.cameras):
         keyboard.on_press(on_key)
 
@@ -263,21 +263,23 @@ while True:
             n_sample += 1
             log.info('Sample {} saved', n_sample)
 
-        if last_key == "s":
-            print("Saving sequence...")
-            save = True
+        if n_sample % display_rate == 0:
+                
+            if last_key == "s":
+                print("Saving sequence...")
+                save = True
 
-        if last_key in "pq":
-            save = False
-            #save sequence
-            timestamps_filename = os.path.join(
-                options.folder, "{}_timestamps.json".format(sequence)
-            )
-            with open(timestamps_filename, "w") as f:
-                json.dump(timestamps, f, indent=2, sort_keys=True)
-            sequence_saved = True
-            print("Sequence saved")
-            break
+            if last_key == "p" or last_key == "q":
+                save = False
+                #save sequence
+                timestamps_filename = os.path.join(
+                    options.folder, "{}_timestamps.json".format(sequence)
+                )
+                with open(timestamps_filename, "w") as f:
+                    json.dump(timestamps, f, indent=2, sort_keys=True)
+                sequence_saved = True
+                print("Sequence saved")
+                break
 
 
 log.info("Exiting")
