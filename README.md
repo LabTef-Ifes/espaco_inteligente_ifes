@@ -8,15 +8,16 @@
 **Para utilizar o GitHub no Linux, é recomendado utilizar a extensão github nativa no VsCode**
 
 1. Crie uma pasta local para o projeto com o nome `desenvolvimento`
-	- Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes` para o repositório principal ou `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid` para clonar o fork de atualização.
-	
-	- É recomendado utilizar um virtualenv reservado para todas as bibliotecas desejadas no espaço inteligente.
+	- Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes` para o repositório principal ou `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid` para _clonar_ o fork de atualização.
 
-	- Para criar um venv, digite `python3 -m venv nomedovenv` no diretório reservado ao projeto.
-1. Com o venv ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivos [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
-1. Ajuste os diretórios dos arquivos `is-basic.sh`, `is-cameras.sh`, `is-frame-transformation.sh` e `is-skeletons-grouper.sh` de acordo com a sua máquina.
-1. Suba os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py) novamente.
-1. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
+    - Crie um _virtual enviroment_ para o projeto
+    	Para criar um venv, digite `python3 -m venv venv` no diretório reservado ao projeto.
+
+	- Ative o ambiente virtual com o comando `source venv/bin/activate`.
+2. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivos [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
+
+3. Suba os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py) novamente.
+4. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
   | containers ativos       |                                                      descrição |
   | :---------------------- | -------------------------------------------------------------: |
@@ -35,13 +36,15 @@
 ## Comentários sobre o uso dos containers
 O sistema de containeres foi criado pelo Felippe e a galera da Ufes e utilizado em seu mestrado.
 
-Há diversos topicos de comunicação relacionados a captura de imagem, envio de imagem e construção do esqueleto
+Há diversos topicos de comunicação relacionados à captura de imagem, envio de imagem e construção do esqueleto
 
-O rabbit e o zipkin são essenciais para a utilização da comunicação do EI.
+O rabbit e o zipkin são essenciais para a utilização da comunicação do EI e devem ser os primeiros serviços iniciados
 
-A ultima versao desenvolvida na Ufes do frame-transformation é a 0.0.4
+A ultima versao desenvolvida na Ufes do `frame-transformation` é a `0.0.4`
 
-Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _schema_ correto no diretorio definido no docker is-frame_transformation
+Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _schema_ correto no diretorio definido no volume do docker `is-frame_transformation`
+
+>O serviço [grouper](https://github.com/labviros/is-skeletons-grouper) quando operado no mode Stream, consome localizações de esqueleto (feitas pelo serviço [is-skeletons-detector](https://github.com/labviros/is-skeletons-detector) por meio do tópico `SkeletonsDetector.(ID).Detection`, agrupa as localizações 2D dos esqueletos dentro de uma janela de tempo _a cada 100ms por exemplo_, faz a reconstrução 3D e publica em outro tópico `SkeletonsGrouper.(GROUP_ID).Localization` a localização. Ele também pode operar no modo **RPC**, em que você envia um grupo de esqueletos 2D, e ele retorna as localizações 3D. Esse serviço depende do serviço de [Frame Transformation](https://github.com/labviros/is-frame-transformation), e este serviço precisa da pasta com as calibrações para inicializar.
 ---
 # Descrição de alguns arquivos do espaço inteligente.
 
@@ -70,7 +73,7 @@ Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _sch
 - O Flycapture SDK, software do fabricante das câmeras, é compatível com o modelo Blackfly GigE BFLY-PGE-09S2C.
 - É necessário instalar o `tkinter` no Ubuntu através do comando `sudo apt install python3-tk` no terminal.
 # Câmeras novas do switch e o novo serviço de gateway
-**❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containers do EI estão ativos.**
+**❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containers das câmeras antigas estão ativos.**
 
 As câmeras **Blackfly S GigE BFS-PGE-16S2C-CS** adquiridas recentemente para o EI não funcionam com o serviço de gateway já disponível. Desta forma, [um novo serviço de gateway](https://github.com/LabTef-Ifes/is-cameras-py) foi desenvolvido. Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualizar a imagem de uma câmera. 
 
@@ -88,7 +91,6 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 - O Readme contido dentro do arquivo `spinnaker-2.7.0.128-Ubuntu18.04-amd64-pkg.tar.gz` possui informações -_sobre alteração de buffer, por exemplo_- que podem ajudar caso esteja ocorrendo algum problema de captura de imagem.
 - O `Spinnaker SDK` é o software do fabricante das câmeras compatível com o modelo Blackfly S GigE BFS-PGE-16S2C-CS e com o Blackfly GigE BFLY-PGE-09S2C.
 <!-- Aqui está Spinnaker SDK e mais acima está Flycapture SDK. Qual é o certo? -->
-
 
 ## Como iniciar as câmeras
 
