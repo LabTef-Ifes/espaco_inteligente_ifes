@@ -15,5 +15,12 @@ guia-markdown.pdf
 .idea/misc.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/espaco_inteligente_ifes-deivid.iml
-ei_ifes
-env
+env/
+ei_ifes/
+venv/
+dataset-creator/__pycache__/
+dataset-creator/videos/*.avi
+dataset-creator/videos/*.mp4
+dataset-creator/record_screen.avi
+dataset-creator/*.pyc
+dataset-creator/videos/*/*.jpeg

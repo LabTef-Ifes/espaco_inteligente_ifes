@@ -13,3 +13,5 @@ docker container run --rm -d \
   --network=host \
   --name=sk2 \
   labviros/is-skeletons-detector:0.0.2-openpose ./rpc.bin #./stream.bin #./rpc.bin 
+
+# Por que duas vezes???

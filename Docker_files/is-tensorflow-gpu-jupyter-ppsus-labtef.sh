@@ -5,3 +5,5 @@ docker run -it -p 8080:8080 -v /home/julian/docker/ifes-2019-09-09/Modelos_para_
 #    -p 8888:8888 \
 #    --name tensorflow-gpu-jupyter \
 #    tensorflow/tensorflow:latest-gpu-jupyter
+
+# Path fixado???

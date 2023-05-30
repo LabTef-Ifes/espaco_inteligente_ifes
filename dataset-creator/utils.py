@@ -9,7 +9,7 @@ from is_wire.core import Logger
 from is_msgs.image_pb2 import Image
 
 
-def load_options(print_options=True):
+def load_options(print_options=False):
     log = Logger(name='LoadOptions')
     with open('options.json', 'r') as f:
         try:
@@ -97,6 +97,12 @@ class FrameVideoFetcher:
     """_summary_
     """    
     def __init__(self, video_files, base_folder):
+        """_summary_
+
+        Args:
+            video_files (_type_): _description_
+            base_folder (_type_): _description_
+        """        
         self._video_files = video_files
         self._it_videos = iter(self._video_files)
         self._base_folder = base_folder
@@ -104,6 +110,11 @@ class FrameVideoFetcher:
         self._current_video_base = ''
 
     def next(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """        
         n_frames = int(self._video_cap.get(cv2.CAP_PROP_FRAME_COUNT))
         n_next_frame = int(self._video_cap.get(cv2.CAP_PROP_POS_FRAMES))
         if not self._video_cap.isOpened() or n_frames == n_next_frame:
@@ -124,6 +135,14 @@ class FrameVideoFetcher:
 
 class AnnotationsFetcher:
     def __init__(self, pending_localizations, cameras, base_folder, fix_frame_id=True):
+        """_summary_
+
+        Args:
+            pending_localizations (_type_): _description_
+            cameras (_type_): _description_
+            base_folder (_type_): _description_
+            fix_frame_id (bool, optional): _description_. Defaults to True.
+        """        
         self._pending_localizations = pending_localizations
         self._cameras = cameras
         self._base_folder = base_folder
@@ -131,12 +150,17 @@ class AnnotationsFetcher:
         self._localizations_it = iter(self._pending_localizations)
         self._annotation_pos = 0
         self._n_annotations = 0
-        self._fwd_annotations = True
         self._current_annotations = {}
+        self._fwd_annotations = True
         self._current_person_id = None
         self._current_gesture_id = None
 
     def next(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """        
         if self._fwd_annotations:
             try:
                 pending_localization = next(self._localizations_it)

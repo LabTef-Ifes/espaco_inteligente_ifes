@@ -15,8 +15,8 @@ with open('keymap.json') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
 
-# Classe sem self???
-class Plota_graficos:
+# Classe sem self??? Acredito que eram todos staticmethod's, porém não declarados corretamente
+class Plot:
     @staticmethod
     def plota_grafico_perdas(y):
         """_summary_
@@ -90,6 +90,7 @@ class Plota_graficos:
         """        
         k = list(range(len(y)))
 
+        #  Má utilização de subplot
         fig, ax = plt.subplots()
         ax.plot(k, y)
         ax.set(xlabel='N° de amostras', ylabel='Ângulo (°)', title=titulo)
@@ -109,10 +110,9 @@ class Plota_graficos:
             y (_type_): _description_
             titulo (_type_): _description_
         """        
-        k = list(range(len(y)))
 
         fig, ax = plt.subplots()
-        ax.plot(k, y)
+        ax.plot(y)
         ax.set(xlabel='N° de amostras', ylabel='Simetria', title=titulo)
         ax.grid()
         plt.savefig(options.folder + '/' + titulo + '.png')
@@ -126,59 +126,6 @@ class Plota_graficos:
             y (_type_): _description_
             titulo (_type_): _description_
         """        
-        #     k_referencia=[]
-
-        # ## Essas referências podem mudar conforme os ciclos em interesse para análise !!!##
-        #     y_refencia=y[-1]
-
-        #    # for i in range (0,len(y_refencia)+1):
-        #    #k_referencia.append((100*i)/len(y_refencia))
-
-        #     for i in range(0,quant_de_ciclos_desejado-1):
-        #         a=np.array(y[i+1])
-        #         ultimo_elemento=a[-1]
-        #         B=np.array([ultimo_elemento])
-        #         y[i]=np.append(np.array(y[i]),B)
-
-        #     if quant_de_ciclos_desejado==1: #S for de 1 ciclo a análise final fica com menor quantidade de dados pra tirar a média
-        #         y=y[:(quant_de_ciclos_desejado)]
-
-        #     y=y[:(quant_de_ciclos_desejado-1)]
-
-        #     ##Alinhando as curvas
-        #     index_array_deslocado=0
-        #     aux_array=[]
-
-        #     aux_array=np.array(y[-1])
-        #     indice_maior_valor=np.argmax(aux_array) #int(len(aux_array)*0.6) #np.argmax(aux_array) #
-
-        #     for i in range(0,quant_de_ciclos_desejado-1):
-        #         index_array_deslocado=np.argmax(y[i])
-        #         while ((indice_maior_valor) != (index_array_deslocado+1)):
-        #             index_array_deslocado=np.argmax(y[i])
-        #             y[i]=np.roll(y[i],1)
-        #             if (indice_maior_valor==0 and index_array_deslocado==0):
-        #                 #print("break")
-        #                 break
-        #     aux=[]
-        #     aux=np.mean(y,axis=0)
-        #     k_referencia=np.linspace(0, 100, num=len(aux))
-        #     #print(len(y[0]),len(k_referencia))
-        #     ### Limpa aux_array!
-        #     aux_array=[]
-        #     indice_maior_valor=int(len(y_refencia)*(pico_do_sinal/100.0))
-        #     index_array_deslocado=np.argmax(aux)
-
-        #     #### Alinhamento final!!!!!#####
-        #     for i in range(0,len(y_refencia)): ## Array de referência !!!!!
-        #         if (i ==indice_maior_valor):
-        #             aux_array.append(1)
-        #         else:
-        #             aux_array.append(0)
-
-        #     while ((indice_maior_valor) != (index_array_deslocado)):
-        #             index_array_deslocado=np.argmax(aux)
-        #             aux=np.roll(aux,1)
 
         k_referencia = np.linspace(0, 100, num=len(y))
         with open(options.folder + '/Parâmetros_de_todos_normalizado_' + titulo + '.csv', 'w') as myCsv:
@@ -202,10 +149,10 @@ class Plota_graficos:
         eq_latex = printing.latex(poly)
         plt.plot(xnew, ynew, label="${}$".format(eq_latex))
         desvio_padrao_curva_media = np.std(y)
-        Sigma_new_vec = desvio_padrao_curva_media  # ynew-aux
-        lower_bound = y - Sigma_new_vec
-        upper_bound = y + Sigma_new_vec
-        # xnew = np.arange(0,100)
+        sigma_new_vec = desvio_padrao_curva_media  # ynew-aux
+        lower_bound = y - sigma_new_vec
+        upper_bound = y + sigma_new_vec
+
         plt.fill_between(xnew, lower_bound, upper_bound, color='green', alpha=.3)
 
         ax.set(xlabel='Gait Cycle %', ylabel='Angle (°)', title=titulo)

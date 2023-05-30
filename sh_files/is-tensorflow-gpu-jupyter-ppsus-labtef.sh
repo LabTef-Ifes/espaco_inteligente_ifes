@@ -5,3 +5,6 @@ docker run -it --gpus all -p 8888:8888  --name tensorflow-gpu-jupyter-wyctor -v 
 #    -p 8888:8888 \
 #    --name tensorflow-gpu-jupyter \
 #    tensorflow/tensorflow:latest-gpu-jupyter
+
+
+# Path fixado???
