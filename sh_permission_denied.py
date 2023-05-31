@@ -9,7 +9,8 @@ sh: 1: ./sh_files/is-skeletons-grouper.sh: Permission denied
 '''
 
 import os
-os.system("chmod +x ./sh_files/is-basic.sh")
+os.system("chmod +x ./sh_files/is-rabbitmq.sh")
+os.system("chmod +x ./sh_files/is-zipkin.sh")
 os.system("chmod +x ./sh_files/is-cameras.sh")
 os.system("chmod +x ./sh_files/is-skeletons-detector.sh")
 os.system("chmod +x ./sh_files/is-frame-transformation.sh")
