@@ -147,8 +147,8 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 # Referências
 
 ## Artigos
-[Drive da Mariana](https://drive.google.com/drive/folders/1TIPGF9pkX-jDV5Voz08XtdeS18ijzYBG?usp=sharing)
-[PPSUS 2021](https://drive.google.com/drive/folders/1USJJMGo9zSRY3Z4sJmGX9pXoy-Q5_ksf?usp=sharing)
+- [Drive da Mariana](https://drive.google.com/drive/folders/1TIPGF9pkX-jDV5Voz08XtdeS18ijzYBG?usp=sharing)
+- [PPSUS 2021](https://drive.google.com/drive/folders/1USJJMGo9zSRY3Z4sJmGX9pXoy-Q5_ksf?usp=sharing)
 ## Espaço Inteligente
 - [Curso de Espaço Inteligente](https://github.com/LabTef-Ifes/CursoEI)
 - Projeto original: [LabViros](https://github.com/labviros)
