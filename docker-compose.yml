@@ -79,7 +79,7 @@ services:
   
   sk2:
     image: labviros/is-skeletons-detector:0.0.2-openpose
-    command: ./rpc.bin
+    command: ./stream.bin
     mem_limit: 3g
     devices:
       - "/dev/nvidiactl"
