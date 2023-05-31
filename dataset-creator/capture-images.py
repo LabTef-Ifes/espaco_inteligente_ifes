@@ -153,15 +153,14 @@ if os.path.exists(sequence_folder):
     log.warn(
         'Path to PERSON_ID={} GESTURE_ID={} already exists.\nWould you like to proceed? All data will be deleted![y/n]',
         person_id, gesture_id)
-    key = input()
-    if key == 'y':
+    answer = input('Insert: ').lower()
+    if answer == 'y':
         # Recursively delete a directory tree.
         shutil.rmtree(sequence_folder)
-    elif key == 'n':
-        sys.exit(0)
+
     else:
-        log.critical('Invalid command \'{}\', exiting.', key)
-        sys.exit(-1)
+        sys.exit(0)
+
 
 # Criando a pasta para armazenamento das imagens da sequência
 os.makedirs(sequence_folder)
