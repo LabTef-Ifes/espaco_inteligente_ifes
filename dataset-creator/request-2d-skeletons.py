@@ -40,6 +40,7 @@ if not os.path.exists(options.folder):
     sys.exit(-1)
 
 # Carregamento da lista de arquivos de vídeo na pasta
+# Por que [2]???
 files = next(os.walk(options.folder))[2]  # only files from first folder level
 video_files = list(filter(lambda x: x.endswith('.mp4'), files))
 
@@ -53,10 +54,13 @@ for video_file in video_files:
     video_path = os.path.join(options.folder, video_file)
     cap = cv2.VideoCapture(video_path)
     n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
     if os.path.exists(annotation_path):
         with open(annotation_path, 'r') as f:
             annotations_data = json.load(f)
+
         n_annotations_on_file = len(annotations_data['annotations'])
+
         if n_annotations_on_file == n_frames:
             log.info(
                 "Video '{}' already annotated at '{}' with {} annotations",
@@ -66,6 +70,7 @@ for video_file in video_files:
 
     pending_videos.append(video_file)
     n_annotations[base_name] = n_frames
+
 if not pending_videos:
     log.info("Exiting...")
     sys.exit(-1)
@@ -80,6 +85,7 @@ frame_fetcher = FrameVideoFetcher(
     video_files=pending_videos, base_folder=options.folder)
 
 while True:
+
     if state == State.MAKE_REQUESTS:  # se o estado atual é fazer pedidos
         if len(requests) < MIN_REQUESTS:  # se a quantidade de pedidos for menor que o minimo exigido
             # enquanto a quantidade de pedidos for menor ou igual ao máximo permitido
@@ -87,7 +93,7 @@ while True:
                 # obtém informações do próximo frame do vídeo
                 base_name, frame_id, frame = frame_fetcher.next()
                 if frame is None:  # se o frame não for encontrado
-                    if len(requests) == 0:  # se não houver pedidos
+                    if not requests:  # se não houver pedidos
                         state = State.EXIT  # muda o estado para sair
                     break
                 # converte o frame em um objeto de imagem protobuf
@@ -192,7 +198,7 @@ while True:
 
     elif state == State.EXIT:
         log.info("Exiting...")
-        sys.exit(-1)
+        break
 
     else:
         state = State.MAKE_REQUESTS
