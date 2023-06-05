@@ -6,10 +6,10 @@ from is_wire.core import Logger
 """summary
 """
 def get_person_gesture(folder):
-    """_summary_
+    """???
 
     Args:
-        folder (_type_): _description_
+        folder (str): _description_
 
     Returns:
         Tuple[int]: (person_id,gesture_id). Ex :(1,1) for p001g01
@@ -52,14 +52,12 @@ for root, dirs, files in os.walk(options.folder):
                 fps=camera.config.sampling.frequency.value,
                 file_pattern=file_pattern,
                 video_file=video_file)
+            
             log.info("Creating video '{}'", video_file)
             process = Popen(ffmpeg_command.split(), stdout=PIPE, stderr=STDOUT)
-            # with process.stdout as pipe:
-            # for line in iter(pipe.readline, b''):
-            # print(line.decode('utf-8').strip())
+
             if process.wait() == 0:
                 log.info("Done")
-                # shutil.rmtree(sequence_folder)
             else:
                 log.warn("\'{}\' failed", video_file)
     # only first folder level
