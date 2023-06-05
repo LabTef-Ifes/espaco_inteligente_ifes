@@ -52,6 +52,7 @@ class Parameter:
                     return perdas
 
     # perna direita e angulo_real_joelho_esquerdo não usados
+    # Todas essas variaveis deveriam ser uma classe ou dicionário
     @staticmethod
     def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet,
                                 dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing,
