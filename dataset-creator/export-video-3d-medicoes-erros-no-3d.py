@@ -14,7 +14,6 @@ import numpy as np
 import pika
 from analysis import SkeletonsCoord
 from google.protobuf.json_format import ParseDict
-# from PIL import ImageGrab
 from is_msgs.image_pb2 import HumanKeypoints as HKP,ObjectAnnotations
 from is_wire.core import Logger
 from mpl_toolkits.mplot3d import Axes3D
@@ -25,6 +24,7 @@ from video_loader import MultipleVideoLoader
 
 # RGB fixado???
 CAPTURA = 'RGB'
+log = Logger(name='Export-Video')
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('CHEST')),
@@ -181,7 +181,6 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
                  x_offset:2 * w + x_offset, :] = images[3]
 
 
-log = Logger(name='WatchVideos')
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
@@ -246,7 +245,6 @@ full_image = np.zeros(size, dtype=np.uint8)
 
 video_loader = MultipleVideoLoader(video_files)
 
-
 # load annotations
 annotations = {}
 for cam_id, filename in json_files.items():
@@ -263,13 +261,14 @@ ax = Axes3D(fig)
 
 output_file = 'p{:03d}g{:02d}_output.mp4'.format(person_id, gesture_id)
 
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
+def video_writer(fps=60.0,width=1288,height=728):
+        
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
-#???
-#height e width devem ser variaveis aqui
-vid = cv2.VideoWriter('record_screen.avi', fourcc, 60.0, (1288, 728))
-# video_writer = cv2.VideoWriter()
-
+    #arquivo de vídeo que será preenchido com imagens
+    vid = cv2.VideoWriter('record_screen.avi', fourcc, fps, (width, height))
+    return vid
+vid = video_writer()
 ##Quantidade de ciclos analisados para se normalizar as medições no final!!!!!####
 # int(input("Número de ciclos desejado para normalização:"))
 quant_de_ciclos_desejado = 4
@@ -294,7 +293,7 @@ Swing_real = float(dados_da_medicao_real[6])
 dist_dos_pes_inicial = float(dados_da_medicao_real[7])
 altura_quadril = float(dados_da_medicao_real[8])'''
 
-# Digitado por Deivid para teste em 09/05/2023. É necessario um arquivo desconhecido.
+# Digitado por Deivid para teste em 09/05/2023. É necessario um arquivo que é atualmente desconhecido?
 altura_real = 1.87
 idade = 22
 massa = 84
@@ -321,22 +320,22 @@ angulo_real_joelho_esquerdo = (
 # Muitas variaveis soltas. Codigo extremamente sujo. Necessario refatorar.
 
 # [0, 0, 0, 0]           # Lista de juntas detectadas em cada câmera
-juntas = [0] * 4
-perdidas = [0] * 4  # Lista de juntas perdidas em cada câmera
-juntas_3d = perdidas_3d = 0
-it_frames = 0
 x, y = [], []
 a = b = i = 0
+r = 1
+k = 0
+
+juntas = [0] * 4
+perdidas = [0] * 4
+juntas_3d = perdidas_3d = 0
+it_frames = 0
 Velocidade_no_instante = 0
 picos_distancia = [0]
 average_height = [0]
 tempo_inicial = time.time()
 aux_tempo = 0
 dist_do_chao = [0]
-
-# tempo_inicial_1=tempo_inicial
 tempo_anterior = 0
-tempo_inicial_vetor = [0]
 perna_esquerda = [0]
 perna_esquerda_aux1 = perna_esquerda_aux2 = 0
 perna_direita = [0]
@@ -344,8 +343,7 @@ distance_feet = [0, 0, 0, 1]
 distance_feet_2 = [1]
 distance_feet_3 = [1]  # Plano XY
 contador_numero_de_passos = 0
-# picos_maximos_distancia=[]
-aceleracao = [0]  # aceleracao do paciente
+aceleracao = [0]
 classifier = 0.0
 gait_cycle_dist_feet_percent = [0]
 quant_de_ciclos = 0  # Mede a quantidade de ciclos em cada uma das caminhadas
@@ -358,7 +356,6 @@ tempo_suporte_duplo = [0]
 comprimento_passo_medido = [0]
 comprimento_stance = [1, 1]
 comprimento_swing = [1, 1]
-r = 1
 largura_da_passada = [1]
 largura_media = 0
 aux_largura_da_passada = 0
@@ -376,8 +373,8 @@ velocidade_angular_flexion_left_knee_angle = [0]
 velocidade_media = 0
 ang_ext_quadril_direito = [0]
 ang_ext_quadril_esquerdo = [0]
-aux_ang_ext_quadril = 0
 vetor_normal = [0]
+aux_ang_ext_quadril = 0
 aux_vetor_normal = 0
 aux_flexion_left_knee = 0
 simetria_comprimento_passo = [0]
@@ -389,7 +386,6 @@ altura_pe_direito = 0
 altura_calcanhar = 0.135 #??? PQ 0.135???
 ponto_tornozelo_direito = []
 ponto_tornozelo_esquerdo = []
-k = 0
 slide = 0  # input("Digite um valor para o silde: 0, 2 ou 4 ")
 slide_result = Parameter.slide_gait_cycle(slide)
 array_coordenadas = []  # Array de coordenadas do esqueleto
@@ -798,10 +794,10 @@ classifier = Parameter.fuzzy(velocidade_media, cadencia, largura_media,
 
 if classifier >= 5:
     print("O movimento foi realizado de forma correta !")
-    movimento = 0
+    #movimento = 0
 else:
     print("O movimento foi realizado de forma errada")
-    movimento = 1
+    #movimento = 1
 
 vid.release()
 cv2.destroyAllWindows()
