@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 import time
-os.system('python sh_permission_denied.py')
+os.system('sudo python sh_permission_denied.py')
 os.system('sudo docker container stop $(sudo docker container ls -q)') # Para todos os containeres que estejam rodando antes.
-os.system('cd is-cameras-py-deivid/deploy/multi-camera && sudo docker compose up -d')
+try:
+    os.system('cd is-cameras-py-labtef/deploy/multi-camera && sudo docker compose up -d')
+except:
+    print("Não foi possível iniciar o docker compose up")
 #os.system("./sh_files/is-basic.sh")
 #os.system("./sh_files/is-cameras.sh")
 time.sleep(5)

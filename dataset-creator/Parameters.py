@@ -52,6 +52,7 @@ class Parameter:
                     return perdas
 
     # perna direita e angulo_real_joelho_esquerdo não usados
+    # Todas essas variaveis deveriam ser uma classe ou dicionário
     @staticmethod
     def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet,
                                 dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing,
@@ -1896,6 +1897,7 @@ class Parameter:
 
     @staticmethod
     def slide_gait_cycle(slide):
+        # O que é???
         """_summary_
 
         Args:
@@ -1922,12 +1924,10 @@ class Parameter:
         Returns:
             _type_: _description_
         """
-        div = int(len(array) / quant_de_ciclos)
-        # print(div)
+        div = len(array) // quant_de_ciclos
         ref_tamanho = quant_de_ciclos * div
         while len(array) != ref_tamanho:
             array = array[:-1]
-            # print(len(aux_angulo),ref_tamanho)
         return array
 
     @staticmethod
@@ -1941,16 +1941,14 @@ class Parameter:
             pico_do_sinal (_type_): _description_
         """
 
-        # Essas referências podem mudar conforme os ciclos em interesse para análise !!!##
+        # Essas referências podem mudar conforme os ciclos em interesse para análise!
         div = int(len(y) // quant_de_ciclos)  # Prepara para a quebra do array
-        # print(div)
         # Garante que haja somente múltiplos da quantidade de ciclos  para a normalização
         ref_tamanho = quant_de_ciclos * div
 
         # ???
         while len(y) != ref_tamanho:
             y.pop()
-            # print(len(aux_angulo),ref_tamanho)
 
         y = np.array_split(y, quant_de_ciclos)
 

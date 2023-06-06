@@ -1,5 +1,5 @@
 {
     "broker_uri": "amqp://localhost:5672",
     "zipkin_uri": "http://localhost:9411",
-    "calibrations_path": "./calibrations/"
+    "calibrations_path": "./calibrations/ifes/"
   }

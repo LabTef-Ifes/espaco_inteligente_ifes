@@ -133,7 +133,7 @@ while True:
 
     elif state == State.RECV_REPLIES:
         try:
-            msg = channel.consume(timeout=1.0)
+            msg = channel.consume(timeout=5.0)
             if msg.status.ok():
                 localizations = msg.unpack(ObjectAnnotations)
                 cid = msg.correlation_id
