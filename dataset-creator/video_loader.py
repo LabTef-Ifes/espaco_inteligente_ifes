@@ -42,9 +42,9 @@ class VideoLoader:
 
 
 class MultipleVideoLoader:
-    def __init__(self, filenames, folder='.'):
-        assert (type(filenames) == dict)
-        assert (len(filenames) > 0)
+    def __init__(self, filenames:dict, folder='.'):
+        assert isinstance(filenames, dict), 'filenames must be a dict'
+        assert len(filenames) > 0
         self._filenames = {
             kv[0]: os.path.join(folder, kv[1])
             for kv in filenames.items()

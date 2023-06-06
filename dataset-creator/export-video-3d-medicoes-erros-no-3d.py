@@ -14,17 +14,17 @@ import numpy as np
 import pika
 from analysis import SkeletonsCoord
 from google.protobuf.json_format import ParseDict
-# from PIL import ImageGrab
 from is_msgs.image_pb2 import HumanKeypoints as HKP,ObjectAnnotations
 from is_wire.core import Logger
 from mpl_toolkits.mplot3d import Axes3D
 from Parameters import Parameter
-import Plota_graficos
+from Plota_graficos import Plot
 from utils import load_options
 from video_loader import MultipleVideoLoader
 
 # RGB fixado???
 CAPTURA = 'RGB'
+log = Logger(name='Export-Video')
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('CHEST')),
@@ -181,7 +181,6 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
                  x_offset:2 * w + x_offset, :] = images[3]
 
 
-log = Logger(name='WatchVideos')
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
@@ -246,7 +245,6 @@ full_image = np.zeros(size, dtype=np.uint8)
 
 video_loader = MultipleVideoLoader(video_files)
 
-
 # load annotations
 annotations = {}
 for cam_id, filename in json_files.items():
@@ -263,13 +261,14 @@ ax = Axes3D(fig)
 
 output_file = 'p{:03d}g{:02d}_output.mp4'.format(person_id, gesture_id)
 
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
+def video_writer(fps=60.0,width=1288,height=728):
+        
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
-#???
-#height e width devem ser variaveis aqui
-vid = cv2.VideoWriter('record_screen.avi', fourcc, 60.0, (1288, 728))
-# video_writer = cv2.VideoWriter()
-
+    #arquivo de vídeo que será preenchido com imagens
+    vid = cv2.VideoWriter('record_screen.avi', fourcc, fps, (width, height))
+    return vid
+vid = video_writer()
 ##Quantidade de ciclos analisados para se normalizar as medições no final!!!!!####
 # int(input("Número de ciclos desejado para normalização:"))
 quant_de_ciclos_desejado = 4
@@ -294,7 +293,7 @@ Swing_real = float(dados_da_medicao_real[6])
 dist_dos_pes_inicial = float(dados_da_medicao_real[7])
 altura_quadril = float(dados_da_medicao_real[8])'''
 
-# Digitado por Deivid para teste em 09/05/2023. É necessario um arquivo desconhecido.
+# Digitado por Deivid para teste em 09/05/2023. É necessario um arquivo que é atualmente desconhecido?
 altura_real = 1.87
 idade = 22
 massa = 84
@@ -321,22 +320,22 @@ angulo_real_joelho_esquerdo = (
 # Muitas variaveis soltas. Codigo extremamente sujo. Necessario refatorar.
 
 # [0, 0, 0, 0]           # Lista de juntas detectadas em cada câmera
-juntas = [0] * 4
-perdidas = [0] * 4  # Lista de juntas perdidas em cada câmera
-juntas_3d = perdidas_3d = 0
-it_frames = 0
 x, y = [], []
 a = b = i = 0
+r = 1
+k = 0
+
+juntas = [0] * 4
+perdidas = [0] * 4
+juntas_3d = perdidas_3d = 0
+it_frames = 0
 Velocidade_no_instante = 0
 picos_distancia = [0]
 average_height = [0]
 tempo_inicial = time.time()
 aux_tempo = 0
 dist_do_chao = [0]
-
-# tempo_inicial_1=tempo_inicial
 tempo_anterior = 0
-tempo_inicial_vetor = [0]
 perna_esquerda = [0]
 perna_esquerda_aux1 = perna_esquerda_aux2 = 0
 perna_direita = [0]
@@ -344,8 +343,7 @@ distance_feet = [0, 0, 0, 1]
 distance_feet_2 = [1]
 distance_feet_3 = [1]  # Plano XY
 contador_numero_de_passos = 0
-# picos_maximos_distancia=[]
-aceleracao = [0]  # aceleracao do paciente
+aceleracao = [0]
 classifier = 0.0
 gait_cycle_dist_feet_percent = [0]
 quant_de_ciclos = 0  # Mede a quantidade de ciclos em cada uma das caminhadas
@@ -358,7 +356,6 @@ tempo_suporte_duplo = [0]
 comprimento_passo_medido = [0]
 comprimento_stance = [1, 1]
 comprimento_swing = [1, 1]
-r = 1
 largura_da_passada = [1]
 largura_media = 0
 aux_largura_da_passada = 0
@@ -376,8 +373,8 @@ velocidade_angular_flexion_left_knee_angle = [0]
 velocidade_media = 0
 ang_ext_quadril_direito = [0]
 ang_ext_quadril_esquerdo = [0]
-aux_ang_ext_quadril = 0
 vetor_normal = [0]
+aux_ang_ext_quadril = 0
 aux_vetor_normal = 0
 aux_flexion_left_knee = 0
 simetria_comprimento_passo = [0]
@@ -389,7 +386,6 @@ altura_pe_direito = 0
 altura_calcanhar = 0.135 #??? PQ 0.135???
 ponto_tornozelo_direito = []
 ponto_tornozelo_esquerdo = []
-k = 0
 slide = 0  # input("Digite um valor para o silde: 0, 2 ou 4 ")
 slide_result = Parameter.slide_gait_cycle(slide)
 array_coordenadas = []  # Array de coordenadas do esqueleto
@@ -530,7 +526,7 @@ for it_frames in range(video_loader.n_frames()):
 
             aux_quantidade_de_ciclos.append(quant_de_ciclos)
             if (quant_de_ciclos % quant_de_ciclos_desejado) == 0 and quant_de_ciclos != 0:
-                # Verfica a mudança da quantidade de ciclos
+                # Verifica a mudança da quantidade de ciclos
                 if aux_quantidade_de_ciclos[-1] != aux_quantidade_de_ciclos[-2]:
                     # ???
                     # absolute path desconhecido
@@ -545,8 +541,8 @@ for it_frames in range(video_loader.n_frames()):
                         media_das_coordenadas = np.concatenate(
                             (media_das_coordenadas, aux_movimento), axis=None)
 
-                        media_das_coordenadas = []  # del media_das_coordenadas[:]
-                        matrix_coordenadas = []  # del matrix_coordenadas[:]
+                        media_das_coordenadas.clear()
+                        matrix_coordenadas.clear()
 
     aux_angulo.append(Parameter.angulo_caminhada_real(
         perna_esquerda_aux1, perna_direita_aux, distance_feet_2[len(distance_feet_2) - 1]))
@@ -554,11 +550,9 @@ for it_frames in range(video_loader.n_frames()):
     aux_ang_ext_quadril, aux_vetor_normal, aux_ponto_peito = (
         Parameter.ang_plano_torax(localizations[it_frames]))
     vetor_normal.append(aux_vetor_normal)
-    X, Y, Z = np.meshgrid(aux_vetor_normal[0]), np.meshgrid(
+    u, v, w = np.meshgrid(aux_vetor_normal[0]), np.meshgrid(
         aux_vetor_normal[1]), np.meshgrid(aux_vetor_normal[2])
-    u = X
-    v = Y
-    w = Z
+
     ax.quiver(aux_ponto_peito[0], aux_ponto_peito[1],
               aux_ponto_peito[2], u, v, w, length=1, color='r', normalize=True)
 
@@ -631,7 +625,7 @@ for it_frames in range(video_loader.n_frames()):
     })
 
     vid.write(display_image)
-
+    #???
     ##MANDA OS DADOS PELA REDE LOCAL!###
     # send_information(localizations[it_frames])
     # key = cv2.waitKey(1)
@@ -656,7 +650,7 @@ distance_feet_2 = distance_feet_2[1:]
 instante = instante[1:]
 tempo_passo = tempo_passo[2:]
 
-if len(picos_distancia)% 2 == 0:
+if len(picos_distancia) % 2 == 0:
     for j in range(len(picos_distancia) - 1):
         tempo_passo.append(instante_pico[j + 1] - instante_pico[j])
     for j in range(len(picos_distancia) - 2, 2):
@@ -711,73 +705,83 @@ print("Cadência (passos/min): %.3f " % cadencia)
 print("Tempo total: %.3f s " % tempo_total)
 
 # Muitos plots???
-Plota_graficos.Plot.plota_grafico_perdas(y)
-Plota_graficos.Plot.plota_grafico_distance_feet(instante, distance_feet)
-Plota_graficos.Plot.plota_grafico_tempo_de_passo(
+Plot.plota_grafico_perdas(y)
+Plot.plota_grafico_distance_feet(instante, distance_feet)
+Plot.plota_grafico_tempo_de_passo(
     h, tempo_passo, 'Passo', 'Tempo de passo(s)', 'Tempo de Passos')
 angulo = Parameter.angulo_caminhada(
     perna_direita, perna_esquerda, picos_distancia, altura_quadril)
 
-largura_media = statistics.mean(largura_da_passada)
-
+#
 title = 'Ângulo de abertura entre as pernas por número de amostras'
-Plota_graficos.Plot.plota_angulo_medido(aux_angulo, title)
+Plot.plota_angulo_medido(aux_angulo, title)
 coxa_perna_esquerda = Parameter.retira_primeiro_elemento(coxa_perna_esquerda)
+#
 title = 'Ângulo da coxa do joelho esquerdo durante a caminhada'
-Plota_graficos.Plot.plota_angulo_medido(coxa_perna_esquerda, title)
+Plot.plota_angulo_medido(coxa_perna_esquerda, title)
 flexion_left_knee_angle = Parameter.retira_primeiro_elemento(
     flexion_left_knee_angle)
+#
 title = 'Ângulo de flexão joelho esquerdo durante a caminhada'
-Plota_graficos.Plot.plota_angulo_medido(flexion_left_knee_angle, title)
+Plot.plota_angulo_medido(flexion_left_knee_angle, title)
 flexion_right_knee_angle = Parameter.retira_primeiro_elemento(
     flexion_right_knee_angle)
+#
 title = 'Ângulo de flexão joelho direito durante a caminhada'
-Plota_graficos.Plot.plota_angulo_medido(flexion_right_knee_angle, title)
+Plot.plota_angulo_medido(flexion_right_knee_angle, title)
 simetria_comprimento_passo = Parameter.retira_primeiro_elemento(
     simetria_comprimento_passo)
+#
 title = 'Simetria do comprimento de passo durante a caminhada'
-Plota_graficos.Plot.plota_simetria(simetria_comprimento_passo, title)
+Plot.plota_simetria(simetria_comprimento_passo, title)
 ang_ext_quadril_direito = Parameter.retira_primeiro_elemento(
     ang_ext_quadril_direito)
+#
 title = 'Ângulo da extensão do quadril direito durante a caminhada'
-Plota_graficos.Plot.plota_angulo_medido(ang_ext_quadril_direito, title)
+Plot.plota_angulo_medido(ang_ext_quadril_direito, title)
 
+#
 title = 'Ângulo de abertura entre as pernas por ciclo'
 aux_angulo = Parameter.normaliza_vetor(
     aux_angulo, quant_de_ciclos, quant_de_ciclos_desejado, 70)
-Plota_graficos.Plot.plota_angulo_medido_normalizado(aux_angulo, title)
+Plot.plota_angulo_medido_normalizado(aux_angulo, title)
 
+#
 title = 'Ângulo de flexão joelho esquerdo no ciclo'
 flexion_left_knee_angle = Parameter.normaliza_vetor(
     flexion_left_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado,
     70)  # pico do sinal em 70 % do ciclo para a flexão
-Plota_graficos.Plot.plota_angulo_medido_normalizado(flexion_left_knee_angle, title)
+Plot.plota_angulo_medido_normalizado(flexion_left_knee_angle, title)
 
+#
 title = 'Ângulo de flexão joelho direito no ciclo'
 flexion_right_knee_angle = Parameter.normaliza_vetor(
     flexion_right_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado, 70)
-Plota_graficos.Plot.plota_angulo_medido_normalizado(flexion_right_knee_angle, title)
+Plot.plota_angulo_medido_normalizado(flexion_right_knee_angle, title)
 
+#
 title = 'Ângulo de extensão do quadril direito por ciclo'
 right_extension_hip_angle = Parameter.normaliza_vetor(
     ang_ext_quadril_direito, quant_de_ciclos, quant_de_ciclos_desejado, 80)
-Plota_graficos.Plot.plota_angulo_medido_normalizado(
+Plot.plota_angulo_medido_normalizado(
     right_extension_hip_angle, title)
 
+#
 title = 'Ângulo de extensão do quadril esquerdo por ciclo'
 left_extension_hip_angle = Parameter.normaliza_vetor(
     ang_ext_quadril_esquerdo, quant_de_ciclos, quant_de_ciclos_desejado, 80)
-Plota_graficos.Plot.plota_angulo_medido_normalizado(left_extension_hip_angle, title)
+Plot.plota_angulo_medido_normalizado(left_extension_hip_angle, title)
 
+#
 title = 'Velocidade angular flexão do joelho direito normalizado por ciclo'
 velocidade_angular_flexion_right_knee_angle = Parameter.normaliza_vetor(
     velocidade_angular_flexion_right_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado, 50)
-Plota_graficos.Plot.plota_angulo_medido_normalizado(
+Plot.plota_angulo_medido_normalizado(
     velocidade_angular_flexion_right_knee_angle, title)
 
-Plota_graficos.Plot.plota_grafico(
+Plot.plota_grafico(
     ang_ext_quadril_esquerdo, "Ângulo de extensão do quadril esquerdo ")
-Plota_graficos.Plot.plota_grafico(aceleracao, "Aceleração [m.s-²]")
+Plot.plota_grafico(aceleracao, "Aceleração [m/s**2]")
 
 Parameter.file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_height, idade, porcentagem,
                       porcentagem_3d, perda_media, variancia, y, x, perna_esquerda, perna_direita, maior_passo_medido,
@@ -787,21 +791,25 @@ Parameter.file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_h
                       comprimento_swing, comprimento_stance, aux_angulo, altura_quadril, coxa_perna_esquerda,
                       angulo_real_joelho_esquerdo, comprimento_passo_real_medido, flexion_left_knee_angle,
                       simetria_comprimento_passo, largura_da_passada, ang_ext_quadril_direito)
+
 Parameter.erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet,
                                    dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing,
                                    comprimento_stance, aux_angulo, altura_quadril,
                                    perna_direita, coxa_perna_esquerda, angulo_real_joelho_esquerdo,
                                    flexion_left_knee_angle, flexion_right_knee_angle, simetria_comprimento_passo,
                                    largura_da_passada, left_extension_hip_angle, right_extension_hip_angle)
+
+largura_media = statistics.mean(largura_da_passada)
 classifier = Parameter.fuzzy(velocidade_media, cadencia, largura_media,
                               comprimento_passo_medido, comprimento_passo_real_medido, dist_dos_pes_inicial)
 
+# Por que 5???
 if classifier >= 5:
     print("O movimento foi realizado de forma correta !")
-    movimento = 0
+    #movimento = 0
 else:
     print("O movimento foi realizado de forma errada")
-    movimento = 1
+    #movimento = 1
 
 vid.release()
 cv2.destroyAllWindows()

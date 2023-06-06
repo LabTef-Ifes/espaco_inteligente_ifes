@@ -7,6 +7,8 @@ from sys import exit
 from video_loader import VideoLoader
 from is_wire.core import Logger
 
+"""_summary_
+"""
 log = Logger(name="DisplayGestures")
 
 with open('gestures.json', 'r') as f:

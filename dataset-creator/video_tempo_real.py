@@ -1,26 +1,25 @@
+import argparse
+import json
 import os
 import re
-import sys
-import cv2
-import json
-import time
-import argparse
-import numpy as np
 import statistics
-import pika
-# import mqtt
-from utils import load_options, to_labels_array, to_labels_dict
-from video_loader import MultipleVideoLoader
-from is_wire.core import Logger
+import sys
+import time
 from collections import OrderedDict
-from utils import get_np_image
-# from PIL import ImageGrab
-from is_msgs.image_pb2 import ObjectAnnotations
-from is_msgs.image_pb2 import HumanKeypoints as HKP
-from google.protobuf.json_format import ParseDict
 from itertools import permutations
+
+import cv2
 import matplotlib.pyplot as plt
+import numpy as np
+import pika
+from google.protobuf.json_format import ParseDict
+# from PIL import ImageGrab
+from is_msgs.image_pb2 import HumanKeypoints as HKP,ObjectAnnotations
+from is_wire.core import Logger
 from mpl_toolkits.mplot3d import Axes3D
+# import mqtt
+from utils import get_np_image, load_options, to_labels_array, to_labels_dict
+from video_loader import MultipleVideoLoader
 
 # import pyscreenshot as ImageGrab
 
@@ -45,7 +44,7 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
 
 
-def render_skeletons(images, annotations, it, links, colors):
+def render_skeletons(images:dict, annotations, it, links:list, colors:list):
     """_summary_
 
     Args:
@@ -83,7 +82,7 @@ def render_skeletons(images, annotations, it, links, colors):
     return juntas, perdidas
 
 
-def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
+def render_skeletons_3d(ax:plt.axes.Axes, skeletons, links:list, colors:list, juntas_3d, perdidas_3d):
     """_summary_
 
     Args:
@@ -117,7 +116,7 @@ def render_skeletons_3d(ax, skeletons, links, colors, juntas_3d, perdidas_3d):
                     zs=z_pair,
                     linewidth=3,
                     color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
-
+    #Por que 10 e 15 de novo???
     if deteccoes_3d < 10:
         juntas_3d -= deteccoes_3d
     else:

@@ -4,4 +4,6 @@ docker container run -d --rm \
 	--cpus=1 \
 	--network=host \
 	--name=grouper \
-	mendonca/is-skeletons-grouper:0.0.4-debug  ./rpc.bin /options.json  #./service.bin /options.json #./rpc.bin /options.json 
+	mendonca/is-skeletons-grouper:0.0.4-debug  ./rpc.bin /options.json  
+    #./service.bin /options.json 
+    #./rpc.bin /options.json 
