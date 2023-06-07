@@ -20,7 +20,7 @@ def get_person_gesture(folder):
     return int(match.group(1)), int(match.group(2))
 
 
-log = Logger(name='Capture')
+log = Logger(name='MakeVideos')
 options = load_options(print_options=False)
 
 if not os.path.exists(options.folder):
