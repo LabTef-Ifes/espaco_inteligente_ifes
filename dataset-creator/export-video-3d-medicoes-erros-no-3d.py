@@ -346,7 +346,7 @@ contador_numero_de_passos = 0
 aceleracao = [0]
 classifier = 0.0
 gait_cycle_dist_feet_percent = [0]
-quant_de_ciclos = 0  # Mede a quantidade de ciclos em cada uma das caminhadas
+quant_de_ciclos = 1  # Mede a quantidade de ciclos em cada uma das caminhadas
 aux_quantidade_de_ciclos = []
 instante = [0]
 aux_velocidade_instante = [0]
@@ -650,6 +650,7 @@ distance_feet_2 = distance_feet_2[1:]
 instante = instante[1:]
 tempo_passo = tempo_passo[2:]
 
+
 if len(picos_distancia) % 2 == 0:
     for j in range(len(picos_distancia) - 1):
         tempo_passo.append(instante_pico[j + 1] - instante_pico[j])
@@ -658,7 +659,7 @@ if len(picos_distancia) % 2 == 0:
 else:
     for j in range(len(picos_distancia) - 1):
         tempo_passo.append(instante_pico[j + 1] - instante_pico[j])
-    for j in range(len(picos_distancia) - 2, 2):
+    for j in range(0,len(picos_distancia) - 2, 2):
         tempo_suporte_duplo.append(instante_pico[j + 2] - instante_pico[j])
 
 for i in range(len(flexion_left_knee_angle)):
@@ -673,17 +674,19 @@ h = list(range(1, len(tempo_passo) + 1))
 print("Meio comprimento de passo médio: %.3f m" %
       statistics.mean(picos_distancia))
 
-maior_passo_medido = picos_distancia[0] + picos_distancia[1]
-print("Maior comprimento de passo: %.3f m" % maior_passo_medido)
+#???error
+#maior_passo_medido = picos_distancia[0] + picos_distancia[1]
+#print("Maior comprimento de passo: %.3f m" % maior_passo_medido)
 
 for cam_id in range(4):
     porcentagem = (perdidas[cam_id] / juntas[cam_id]) * 100
     log.info("cam{}: Juntas detectadas: {} | Perdidas: {} |  {:.2f} %".format(
         cam_id, juntas[cam_id], perdidas[cam_id], porcentagem))
 
-porcentagem_3d = (perdidas_3d / juntas_3d) * 100
-log.info("Juntas detectadas [Serviço 3d]: {} | Perdidas: {} |  {:.2f} %".format(
-    juntas_3d, perdidas_3d, porcentagem_3d))
+#???error
+#porcentagem_3d = (perdidas_3d / juntas_3d) * 100
+#log.info("Juntas detectadas [Serviço 3d]: {} | Perdidas: {} |  {:.2f} %".format(
+#    juntas_3d, perdidas_3d, porcentagem_3d))
 
 log.info('Exiting')
 soma_perdas = sum(y)
@@ -700,18 +703,35 @@ print("Número de passos: %d " % contador_numero_de_passos)
 
 tempo_total = sum(tempo_passo)  # Tempo em segundos
 tempo_total_em_min = tempo_total / 60
-cadencia = contador_numero_de_passos / tempo_total_em_min
-print("Cadência (passos/min): %.3f " % cadencia)
-print("Tempo total: %.3f s " % tempo_total)
+
+#???error divisionbyzero
+#cadencia = contador_numero_de_passos / tempo_total_em_min
+#print("Cadência (passos/min): %.3f " % cadencia)
+#print("Tempo total: %.3f s " % tempo_total)
 
 # Muitos plots???
-Plot.plota_grafico_perdas(y)
-Plot.plota_grafico_distance_feet(instante, distance_feet)
-Plot.plota_grafico_tempo_de_passo(
-    h, tempo_passo, 'Passo', 'Tempo de passo(s)', 'Tempo de Passos')
+#Plot.plota_grafico_perdas(y)
+#Plot.plota_grafico_distance_feet(instante, distance_feet)
+#Plot.plota_grafico_tempo_de_passo(
+#    h, tempo_passo, 'Passo', 'Tempo de passo(s)', 'Tempo de Passos')
 angulo = Parameter.angulo_caminhada(
     perna_direita, perna_esquerda, picos_distancia, altura_quadril)
 
+flexion_right_knee_angle = Parameter.normaliza_vetor(
+    flexion_right_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado, 70)
+right_extension_hip_angle = Parameter.normaliza_vetor(
+    ang_ext_quadril_direito, quant_de_ciclos, quant_de_ciclos_desejado, 80)
+left_extension_hip_angle = Parameter.normaliza_vetor(
+    ang_ext_quadril_esquerdo, quant_de_ciclos, quant_de_ciclos_desejado, 80)
+aux_angulo = Parameter.normaliza_vetor(
+    aux_angulo, quant_de_ciclos, quant_de_ciclos_desejado, 70)
+flexion_left_knee_angle = Parameter.normaliza_vetor(
+    flexion_left_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado,
+    70)  # pico do sinal em 70 % do ciclo para a flexão
+velocidade_angular_flexion_right_knee_angle = Parameter.normaliza_vetor(
+    velocidade_angular_flexion_right_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado, 50)
+#???retira_primeiro_elemento
+'''
 #
 title = 'Ângulo de abertura entre as pernas por número de amostras'
 Plot.plota_angulo_medido(aux_angulo, title)
@@ -742,47 +762,36 @@ Plot.plota_angulo_medido(ang_ext_quadril_direito, title)
 
 #
 title = 'Ângulo de abertura entre as pernas por ciclo'
-aux_angulo = Parameter.normaliza_vetor(
-    aux_angulo, quant_de_ciclos, quant_de_ciclos_desejado, 70)
 Plot.plota_angulo_medido_normalizado(aux_angulo, title)
 
 #
 title = 'Ângulo de flexão joelho esquerdo no ciclo'
-flexion_left_knee_angle = Parameter.normaliza_vetor(
-    flexion_left_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado,
-    70)  # pico do sinal em 70 % do ciclo para a flexão
 Plot.plota_angulo_medido_normalizado(flexion_left_knee_angle, title)
 
 #
 title = 'Ângulo de flexão joelho direito no ciclo'
-flexion_right_knee_angle = Parameter.normaliza_vetor(
-    flexion_right_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado, 70)
 Plot.plota_angulo_medido_normalizado(flexion_right_knee_angle, title)
 
 #
 title = 'Ângulo de extensão do quadril direito por ciclo'
-right_extension_hip_angle = Parameter.normaliza_vetor(
-    ang_ext_quadril_direito, quant_de_ciclos, quant_de_ciclos_desejado, 80)
 Plot.plota_angulo_medido_normalizado(
     right_extension_hip_angle, title)
 
 #
 title = 'Ângulo de extensão do quadril esquerdo por ciclo'
-left_extension_hip_angle = Parameter.normaliza_vetor(
-    ang_ext_quadril_esquerdo, quant_de_ciclos, quant_de_ciclos_desejado, 80)
 Plot.plota_angulo_medido_normalizado(left_extension_hip_angle, title)
 
 #
 title = 'Velocidade angular flexão do joelho direito normalizado por ciclo'
-velocidade_angular_flexion_right_knee_angle = Parameter.normaliza_vetor(
-    velocidade_angular_flexion_right_knee_angle, quant_de_ciclos, quant_de_ciclos_desejado, 50)
 Plot.plota_angulo_medido_normalizado(
     velocidade_angular_flexion_right_knee_angle, title)
 
 Plot.plota_grafico(
     ang_ext_quadril_esquerdo, "Ângulo de extensão do quadril esquerdo ")
 Plot.plota_grafico(aceleracao, "Aceleração [m/s**2]")
-
+'''
+porcentagem_3d = .6
+maior_passo_medido = .8
 Parameter.file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_height, idade, porcentagem,
                       porcentagem_3d, perda_media, variancia, y, x, perna_esquerda, perna_direita, maior_passo_medido,
                       tempo_total, velocidade_media, cadencia, contador_numero_de_passos, tempo_total_em_min,
@@ -791,14 +800,14 @@ Parameter.file_maker(cam_id, juntas, perdidas, juntas_3d, perdidas_3d, average_h
                       comprimento_swing, comprimento_stance, aux_angulo, altura_quadril, coxa_perna_esquerda,
                       angulo_real_joelho_esquerdo, comprimento_passo_real_medido, flexion_left_knee_angle,
                       simetria_comprimento_passo, largura_da_passada, ang_ext_quadril_direito)
-
+'''
 Parameter.erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet,
                                    dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing,
                                    comprimento_stance, aux_angulo, altura_quadril,
                                    perna_direita, coxa_perna_esquerda, angulo_real_joelho_esquerdo,
                                    flexion_left_knee_angle, flexion_right_knee_angle, simetria_comprimento_passo,
                                    largura_da_passada, left_extension_hip_angle, right_extension_hip_angle)
-
+'''
 largura_media = statistics.mean(largura_da_passada)
 classifier = Parameter.fuzzy(velocidade_media, cadencia, largura_media,
                               comprimento_passo_medido, comprimento_passo_real_medido, dist_dos_pes_inicial)

@@ -1,4 +1,4 @@
-docker container run -ti --rm \
+docker container run -d --rm \
 	-v $PWD/is-skeletons-grouper/options.json:/opt/is/options.json \
 	--memory=2g \
 	--cpus=1 \

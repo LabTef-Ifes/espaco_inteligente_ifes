@@ -2,7 +2,7 @@
 
 # Executa o contêiner Docker e exibe os logs em tempo real sem travar o terminal
 
-docker container run -ti --rm \
+docker container run -d --rm \
 	-v $PWD/calibrations/ifes:/opt/ifes_calibration/ \
 	-v $PWD/etc/conf/options.json:/etc/conf/options.json \
 	--network=host \

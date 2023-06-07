@@ -266,18 +266,18 @@ while True:
                     start_save = True
 
                 elif not sequence_saved:
-                    timestamps_filename = os.path.join(
-                        options.folder, '{}_timestamps.json'.format(sequence))
-                    with open(timestamps_filename, 'w') as f:
-                        json.dump(timestamps, f, indent=2, sort_keys=True)
+                    
                     sequence_saved = True
 
             if key == ord('p'):
                 start_save = False
+                timestamps_filename = os.path.join(
+                        options.folder, '{}_timestamps.json'.format(sequence))
+                with open(timestamps_filename, 'w') as f:
+                    json.dump(timestamps, f, indent=2, sort_keys=True)
 
             if key == ord('q'):
-                if (not start_save) or sequence_saved:
-                    break
+                break
         # clear dicts
         images_data.clear()
         current_timestamps.clear()
