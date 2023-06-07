@@ -43,18 +43,22 @@ annotation_files = list(filter(lambda x: x.endswith('_2d.json'), files))
 log.debug('Parsing Annotation Files')
 entries = defaultdict(lambda: defaultdict(list))
 n_annotations = defaultdict(lambda: defaultdict(dict))
-for annotation_file, n in zip(annotation_files, range(len(annotation_files))):
 
+for annotation_file, n in zip(annotation_files, range(len(annotation_files))):
     matches = re.search(
         "p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json", annotation_file)
+    
     if matches is None:
         continue
+
     person_id = int(matches.group(1))
     gesture_id = int(matches.group(2))
     camera_id = int(matches.group(3))
+
     entries[person_id][gesture_id].append(camera_id)
 
     annotation_path = os.path.join(options.folder, annotation_file)
+
     with open(annotation_path, 'r') as f:
         n = len(json.load(f)['annotations'])
         n_annotations[person_id][gesture_id][camera_id] = n
@@ -63,6 +67,8 @@ log.debug('Checking if detections files already exists')
 cameras = [int(camera_cfg.id) for camera_cfg in options.cameras]
 pending_localizations = []
 n_localizations = defaultdict(dict)
+
+#???
 for person_id, gestures in entries.items():
     for gesture_id, camera_ids in gestures.items():
         if set(camera_ids) != set(cameras):
@@ -79,7 +85,7 @@ for person_id, gestures in entries.items():
         file = os.path.join(
             options.folder, LOCALIZATION_FILE.format(person_id, gesture_id))
         if os.path.exists(file):
-            with open(file, 'r') as f:
+            with open(file) as f:
                 n_loc = len(json.load(f)['localizations'])
             if n_loc == n_an[0]:
                 log.info('PERSON_ID: {:03d} GESTURE_ID: {:02d} | Already have localization file.',
@@ -153,11 +159,15 @@ while True:
 
     elif state == State.CHECK_END_OF_SEQUENCE_AND_SAVE:
         done_sequences = []
+        # Error para p001g03???
         for person_id, gestures in localizations_received.items():
             for gesture_id, localizations_dict in gestures.items():
-                if len(localizations_dict) < n_localizations[person_id][gesture_id]:
+                try:
+                    if len(localizations_dict) < n_localizations[person_id][gesture_id]:
+                        continue
+                except:
                     continue
-
+                
                 output_localizations = {
                     'localizations': [x[1] for x in sorted(localizations_dict.items())],
                     'created_at': datetime.datetime.now().isoformat()
