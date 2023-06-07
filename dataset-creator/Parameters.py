@@ -1811,14 +1811,14 @@ class Parameter:
                 (nome_das_coordenadas, ['Movimento']), axis=None)
         return aux_array_coordenadas, nome_das_coordenadas
 
+    #?????????
     @staticmethod
     def write_json(data):
         try:
             to_unicode = unicode
         except NameError:
             to_unicode = str
-        # with open(options.folder+'/data.json', 'w') as outfile:
-        #    json.dump(data, ouqtfile)
+
         with io.open(options.folder + '/data.json', 'w', encoding='utf8') as outfile:
             str_ = json.dumps(data,
                               indent=4, sort_keys=False,
@@ -1849,38 +1849,19 @@ class Parameter:
             "/home/julian/docker/ifes-2019-09-09/Modelos_para_treinamento/Modelo_2/Modelo_detecta_caminhada_6_movimentos")
         input_values = [velocidade_media, comprimento_passo_medido,
                         largura_da_passada, simetria_comprimento_passo, cadencia]
-        input_values = array(input_values)
-        # print(input_values)
+        input_values = np.array(input_values)
         # pt=preprocessing.PowerTransformer(method='box-cox',standardize=False)
         input_values = input_values.reshape([1, 5])  # ,bacth_size=32])
-        # print(input_values)
         scaler = preprocessing.MinMaxScaler()  # preprocessing.normalize(input_values)
         input_values_normalize = scaler.fit_transform(input_values)
-        # print(input_values_normalize)
         # input_values=(input_values/np.argmax(input_values))
         # input_values_normalize=pt.fit_transform(input_values)
         prediction = modelo_final.predict(input_values_normalize)
-        # print(input_values_normalize)
         prediction = (np.around(prediction).reshape(1, 6))
-        # print(prediction)
-        # print(CATEGORIAS[np.argmax(prediction)])
         resultado = CATEGORIAS[np.argmax(prediction)]
         return resultado
 
-    # def rede_neural_imagens(): CATEGORIES=["Certo","Errado"] filepath='0' img_array = cv2.imread(filepath,
-    # cv2.IMREAD_GRAYSCALE) print(img_array) new_array = (cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)))/255 print(
-    # new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)) modelo_final = tf.keras.models.load_model(
-    # "/home/julian/docker/ifes-2019-09-09/Modelo_para_treinamento/Modelo_classificador_imagens
-    # /Modelo_movimento_certo_e_errado_3")
-
-    # prediction = model.predict([prepare('0')])
-    # print(prediction)  # will be a list in a list.
-    # print(CATEGORIES[int(prediction[0][0])])
-    # if((CATEGORIES[int(prediction[0][0])])==0):
-    #    return "Certo"
-
-    # return "Errado"
-
+    #?????????
     @staticmethod
     def prepare(filepath):
         """_summary_
