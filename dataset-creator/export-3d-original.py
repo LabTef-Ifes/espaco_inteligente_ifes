@@ -6,14 +6,11 @@ import json
 import time
 import argparse
 import numpy as np
-from utils import load_options
-from utils import to_labels_array, to_labels_dict
+from utils import to_labels_array, to_labels_dict,load_options
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
 from collections import defaultdict, OrderedDict
-
-from is_msgs.image_pb2 import ObjectAnnotations
-from is_msgs.image_pb2 import HumanKeypoints as HKP
+from is_msgs.image_pb2 import HumanKeypoints as HKP,ObjectAnnotations
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
 
@@ -41,7 +38,7 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
 
 
-def render_skeletons(images, annotations, it, links, colors):
+def render_skeletons(images:dict, annotations, it, links:list, colors:list):
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -52,11 +49,11 @@ def render_skeletons(images, annotations, it, links, colors):
                 begin, end = link_parts
                 if begin in parts and end in parts:
                     cv2.line(image, parts[begin], parts[end], color=color, thickness=4)
-            for _, center in parts.items():
+            for center in parts.values():
                 cv2.circle(image, center=center, radius=4, color=(255, 255, 255), thickness=-1)
 
 
-def render_skeletons_3d(ax, skeletons, links, colors):
+def render_skeletons_3d(ax, skeletons, links:list, colors:list):
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -84,7 +81,7 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
     output_image[h + y_offset:2 * h + y_offset, w + x_offset:2 * w + x_offset, :] = images[3]
 
 
-log = Logger(name='WatchVideos')
+log = Logger(name='Export3D')
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
