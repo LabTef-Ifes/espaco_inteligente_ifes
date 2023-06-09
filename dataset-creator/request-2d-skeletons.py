@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-import os
-import cv2
-import json
-import time
-import socket
 import datetime
+import json
+import os
+import socket
+import sys
+import time
 from collections import defaultdict
 from enum import Enum
+from glob import glob
+
+import cv2
 from google.protobuf.json_format import MessageToDict
-import sys
-from is_wire.core import Channel, Subscription, Message, Logger
 from is_msgs.image_pb2 import ObjectAnnotations
-from utils import load_options, make_pb_image, FrameVideoFetcher
+from is_wire.core import Channel, Logger, Message, Subscription
+from utils import FrameVideoFetcher, load_options, make_pb_image
 
 # Comentários explicativos gerados pelo chatGPT 29/04/2023. Não havia qualquer comentário no código original.
 
@@ -19,6 +21,7 @@ from utils import load_options, make_pb_image, FrameVideoFetcher
 MIN_REQUESTS = 5
 MAX_REQUESTS = 10
 DEADLINE_SEC = 15.0
+JSON2D_FORMAT = '{}_2d.json'
 
 
 # Definição de estados para a máquina de estados
@@ -41,17 +44,17 @@ if not os.path.exists(options.folder):
 
 # Carregamento da lista de arquivos de vídeo na pasta
 # Por que [2]???
-files = next(os.walk(options.folder))[2]  # only files from first folder level
-video_files = list(filter(lambda x: x.endswith('.mp4'), files))
+#files = next(os.walk(options.folder))[2]  # only files from first folder level
+video_files = glob(os.path.join(options.folder, '*.mp4'))#list(filter(lambda x: x.endswith('.mp4'), files))
 
 # Criação de lista de vídeos a serem processados e do número de frames em cada um
-pending_videos = []
-n_annotations = {}
+pending_videos:list = []
+n_annotations:dict = {}
 for video_file in video_files:
-    base_name = video_file.split('.')[0]
-    annotation_file = '{}_2d.json'.format(base_name)
-    annotation_path = os.path.join(options.folder, annotation_file)
-    video_path = os.path.join(options.folder, video_file)
+    base_name:str = video_file.split('.')[0] #pNNNgNN
+    annotation_file:str = JSON2D_FORMAT.format(base_name)
+    annotation_path:str = os.path.join(options.folder, annotation_file)
+    video_path:str = os.path.join(options.folder, video_file)
     cap = cv2.VideoCapture(video_path)
     n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
@@ -72,21 +75,24 @@ for video_file in video_files:
     n_annotations[base_name] = n_frames
 
 if not pending_videos:
-    log.info("Exiting...")
+    log.info("Exiting... No pending videos to annotate.")
     sys.exit(-1)
 
-# Inicialização de variáveis e objetos
+# Comunicação
 channel = Channel(options.broker_uri)
 subscription = Subscription(channel)
-requests = {}
-annotations_received = defaultdict(dict)
-state = State.MAKE_REQUESTS
+
+requests:dict = {}
+annotations_received:defaultdict = defaultdict(dict)
 frame_fetcher = FrameVideoFetcher(
     video_files=pending_videos, base_folder=options.folder)
 
+state = State.MAKE_REQUESTS
 while True:
 
     if state == State.MAKE_REQUESTS:  # se o estado atual é fazer pedidos
+        state = State.RECV_REPLIES  # muda o estado para receber respostas
+
         if len(requests) < MIN_REQUESTS:  # se a quantidade de pedidos for menor que o minimo exigido
             # enquanto a quantidade de pedidos for menor ou igual ao máximo permitido
             while len(requests) <= MAX_REQUESTS:
@@ -109,26 +115,25 @@ while True:
                     'frame_id': frame_id,
                     'requested_at': time.time()
                 }
-        state = State.RECV_REPLIES  # muda o estado para receber respostas
 
     elif state == State.RECV_REPLIES:  # se o estado atual é receber respostas
         try:
-            # obtém uma mensagem do canal com um tempo limite de 1 segundo
-            msg = channel.consume(timeout=1.0)
+            # obtém uma mensagem do canal com um tempo limite
+            msg = channel.consume(timeout=DEADLINE_SEC)
             if msg.status.ok():  # se a mensagem estiver ok
                 # desempacota as anotações de objetos
                 annotations = msg.unpack(ObjectAnnotations)
-                cid = msg.correlation_id  # obtém a assinatura da mensagem
-                if cid in requests:  # se a assinatura estiver nos pedidos
+                correlation_id = msg.correlation_id  # obtém a assinatura da mensagem
+                if correlation_id in requests:  # se a assinatura estiver nos pedidos
                     # obtém o nome base do arquivo
-                    base_name = requests[cid]['base_name']
-                    frame_id = requests[cid]['frame_id']  # obtém o ID do frame
+                    base_name = requests[correlation_id]['base_name']
+                    frame_id = requests[correlation_id]['frame_id']  # obtém o ID do frame
                     annotations_received[base_name][frame_id] = MessageToDict(  # armazena as anotações recebidas
                         annotations,
                         preserving_proto_field_name=True,
                         including_default_value_fields=True)
                     # remove o pedido da lista de pedidos ativos
-                    del requests[cid]
+                    del requests[correlation_id]
 
             # muda o estado para verificar o fim do vídeo e salvar
             state = State.CHECK_END_OF_VIDEO_AND_SAVE
@@ -149,10 +154,10 @@ while True:
                     'created_at': datetime.datetime.now().isoformat()
                 }
                 filename = os.path.join(options.folder,
-                                        '{}_2d.json'.format(base_name))
+                                        JSON2D_FORMAT.format(base_name))
                 with open(filename, 'w') as f:
                     json.dump(output_annotations, f, indent=2)
-                del annotations_received[base_name]
+                annotations_received.pop(base_name)
                 log.info('{} has been saved.', filename)
 
         state = State.CHECK_FOR_TIMEOUTED_REQUESTS
@@ -163,9 +168,9 @@ while True:
         new_requests = {}
 
         # percorre todas as chaves do dicionário requests
-        for cid in list(requests.keys()):
-            # recupera a requisição com a chave cid
-            request = requests[cid]
+        for correlation_id in list(requests.keys()):
+            # recupera a requisição com a chave correlation_id
+            request = requests[correlation_id]
 
             # verifica se a requisição ainda não passou do DEADLINE_SEC
             if (request['requested_at'] + DEADLINE_SEC) > time.time():
@@ -185,10 +190,10 @@ while True:
             }
 
             # remove a requisição do dicionário requests
-            requests.pop(cid)
+            requests.pop(correlation_id)
 
             # exibe uma mensagem de log informando que a mensagem expirou
-            log.warn("Message '{}' timeouted. Sending another request.", cid)
+            log.warn("Message '{}' timeouted. Sending another request.", correlation_id)
 
         # atualiza o dicionário requests com as novas requisições
         requests.update(new_requests)
