@@ -25,13 +25,11 @@ class Skeleton2D:
     JSON2D_FORMAT = '{}_2d.json'
 
     def __init__(self):
-        self.check_path()
-        self.start_communication()
-        self.get_pending_videos()
-
-        # Configuração de logging e carregamento de opções
         self.options = load_options(print_options=False)
         self.log = Logger(name='Request2dSkeletons')
+        self.video_files:list = glob(os.path.join(self.options.folder, '*.mp4'))
+
+
 
         self.requests:dict = {}
         self.annotations_received:defaultdict = defaultdict(dict)
@@ -41,8 +39,9 @@ class Skeleton2D:
         self.n_annotations:dict = {}
         self.frame_fetcher:FrameVideoFetcher = None
 
-        # Carregamento da lista de arquivos de vídeo na pasta
-        self.video_files:list = glob(os.path.join(self.options.folder, '*.mp4'))
+        self.check_path()
+        self.start_communication()
+        self.get_pending_videos()
 
     def _make_request(self):
         self.state = State.RECV_REPLIES  # muda o estado para receber respostas
@@ -58,7 +57,7 @@ class Skeleton2D:
                 # converte o frame em um objeto de imagem protobuf
                 pb_image = make_pb_image(frame)
                 # cria uma mensagem com a imagem e uma assinatura
-                msg = Message(content=pb_image, reply_to=subscription)
+                msg = Message(content=pb_image, reply_to=self.subscription)
                 msg.timeout = self.DEADLINE_SEC  # define um tempo limite para receber uma resposta
                 
                 # publica a mensagem no canal
@@ -80,8 +79,8 @@ class Skeleton2D:
                 correlation_id = msg.correlation_id  # obtém a assinatura da mensagem
                 if correlation_id in self.requests:  # se a assinatura estiver nos pedidos
                     # obtém o nome base do arquivo
-                    base_name = requests[correlation_id]['base_name']
-                    frame_id = requests[correlation_id]['frame_id']  # obtém o ID do frame
+                    base_name = self.requests[correlation_id]['base_name']
+                    frame_id = self.requests[correlation_id]['frame_id']  # obtém o ID do frame
                     self.annotations_received[base_name][frame_id] = MessageToDict(  # armazena as anotações recebidas
                         annotations,
                         preserving_proto_field_name=True,
@@ -118,7 +117,7 @@ class Skeleton2D:
 
                 self.annotations_received.pop(base_name)
 
-                log.info('{} has been saved.', filename)
+                self.log.info('{} has been saved.', filename)
 
         self.state = State.CHECK_FOR_TIMEOUTED_REQUESTS
 
@@ -139,7 +138,7 @@ class Skeleton2D:
                 continue
 
             # se passou do prazo, cria uma nova mensagem com a requisição e publica no tópico 'SkeletonsDetector.Detect'
-            msg = Message(content=single_request['content'], reply_to=subscription)
+            msg = Message(content=single_request['content'], reply_to=self.subscription)
             msg.timeout = self.DEADLINE_SEC
 
             publish_message(msg,topic='SkeletonsDetector.Detect')
@@ -156,7 +155,7 @@ class Skeleton2D:
             self.requests.pop(correlation_id)
 
             # exibe uma mensagem de log informando que a mensagem expirou
-            log.warn("Message '{}' timeouted. Sending another request.", correlation_id)
+            self.log.warn("Message '{}' timeouted. Sending another request.", correlation_id)
 
         # atualiza o dicionário requests com as novas requisições
         self.requests.update(new_requests)
@@ -183,14 +182,14 @@ class Skeleton2D:
 
     def check_path(self):
         # Verificação da existência da pasta especificada nas opções
-        if not os.path.exists(request_skeleton.options.folder):
-            log.critical("Folder '{}' doesn't exist", options.folder)
+        if not os.path.exists(self.options.folder):
+            self.log.critical("Folder '{}' doesn't exist", self.options.folder)
             sys.exit(-1)
 
     def start_communication(self):
         # Comunicação
-        self.channel = Channel(options.broker_uri)
-        self.subscription = Subscription(channel)
+        self.channel = Channel(self.options.broker_uri)
+        self.subscription = Subscription(self.channel)
         self.subscription.subscribe(topic='SkeletonsDetector.Detected')
 
     def get_pending_videos(self):
@@ -213,7 +212,7 @@ class Skeleton2D:
                 n_annotations_on_file = len(annotations_data['annotations'])
 
                 if n_annotations_on_file == n_frames:
-                    log.info(
+                    self.log.info(
                         "Video '{}' already annotated at '{}' with {} annotations",
                         video_file, annotations_data['created_at'],
                         n_annotations_on_file)
@@ -223,7 +222,7 @@ class Skeleton2D:
             self.n_annotations[base_name] = n_frames
 
         if not self.pending_videos:
-            log.info("Exiting...")
+            self.log.info("Exiting...")
             sys.exit(-1)
         
         self.frame_fetcher:FrameVideoFetcher = FrameVideoFetcher(
@@ -239,5 +238,6 @@ class State(Enum):
 
 if __name__ == '__main__':
     request_skeleton = Skeleton2D()
-    request_skeleton.run()
+    print(request_skeleton.pending_videos)
+    #request_skeleton.run()
     

@@ -43,10 +43,8 @@ if not os.path.exists(options.folder):
     sys.exit(-1)
 
 # Carregamento da lista de arquivos de vídeo na pasta
-# Por que [2]???
-#files = next(os.walk(options.folder))[2]  # only files from first folder level
-video_files = glob(os.path.join(options.folder, '*.mp4'))#list(filter(lambda x: x.endswith('.mp4'), files))
-
+video_files = glob(os.path.join(options.folder, '*.mp4'))
+print(video_files)
 # Criação de lista de vídeos a serem processados e do número de frames em cada um
 pending_videos:list = []
 n_annotations:dict = {}
