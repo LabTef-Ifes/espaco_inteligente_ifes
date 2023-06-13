@@ -1,7 +1,1 @@
-[I][000001][06-06-2023 17:37:06:630] source=CalibrationServer event=NewCalibration id=1
-[I][000001][06-06-2023 17:37:06:631] source=CalibrationServer event=NewCalibration id=3
-[I][000001][06-06-2023 17:37:06:631] source=CalibrationServer event=NewCalibration id=0
-[I][000001][06-06-2023 17:37:06:631] source=CalibrationServer event=NewCalibration id=2
-
-[I][000001][06-06-2023 17:37:29:097] service=FrameTransformation.GetCalibration took=0ms code=OK
-Failed to connect to localhost port 9411: Connection refused
+fef2792575aaf983940d777616d568ce07942c5b0a51e374e902f791e68461b5

@@ -1,0 +1,615 @@
+{
+    "dados": [
+        0,
+        {
+            "frame": "0",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "7.438"
+        },
+        {
+            "frame": "1",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.237"
+        },
+        {
+            "frame": "2",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.324"
+        },
+        {
+            "frame": "3",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.220"
+        },
+        {
+            "frame": "4",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.025"
+        },
+        {
+            "frame": "5",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.387"
+        },
+        {
+            "frame": "6",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.508"
+        },
+        {
+            "frame": "7",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.492"
+        },
+        {
+            "frame": "8",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.480"
+        },
+        {
+            "frame": "9",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.262"
+        },
+        {
+            "frame": "10",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.321"
+        },
+        {
+            "frame": "11",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.674"
+        },
+        {
+            "frame": "12",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.558"
+        },
+        {
+            "frame": "13",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.191"
+        },
+        {
+            "frame": "14",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.441"
+        },
+        {
+            "frame": "15",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.518"
+        },
+        {
+            "frame": "16",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.032"
+        },
+        {
+            "frame": "17",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.577"
+        },
+        {
+            "frame": "18",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.513"
+        },
+        {
+            "frame": "19",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.552"
+        },
+        {
+            "frame": "20",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.267"
+        },
+        {
+            "frame": "21",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.528"
+        },
+        {
+            "frame": "22",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.288"
+        },
+        {
+            "frame": "23",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.728"
+        },
+        {
+            "frame": "24",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.240"
+        },
+        {
+            "frame": "25",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7185.552",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.222"
+        },
+        {
+            "frame": "26",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.284"
+        },
+        {
+            "frame": "27",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.276"
+        },
+        {
+            "frame": "28",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.247"
+        },
+        {
+            "frame": "29",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7283.496",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.388"
+        },
+        {
+            "frame": "30",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.235"
+        },
+        {
+            "frame": "31",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7432.064",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.361"
+        },
+        {
+            "frame": "32",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "7.713"
+        },
+        {
+            "frame": "33",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.490"
+        },
+        {
+            "frame": "34",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.372"
+        },
+        {
+            "frame": "35",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.153"
+        },
+        {
+            "frame": "36",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.221"
+        },
+        {
+            "frame": "37",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.478"
+        },
+        {
+            "frame": "38",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.610"
+        },
+        {
+            "frame": "39",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7438.216",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.415"
+        },
+        {
+            "frame": "40",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.201"
+        },
+        {
+            "frame": "41",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7795.849",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.380"
+        },
+        {
+            "frame": "42",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.368"
+        },
+        {
+            "frame": "43",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "0.000",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "7.730"
+        },
+        {
+            "frame": "44",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7435.633",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "9.883"
+        },
+        {
+            "frame": "45",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7405.446",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.344"
+        },
+        {
+            "frame": "46",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7405.871",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.899"
+        },
+        {
+            "frame": "47",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7546.104",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.818"
+        },
+        {
+            "frame": "48",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7563.082",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.927"
+        },
+        {
+            "frame": "49",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7461.639",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.014"
+        },
+        {
+            "frame": "50",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7975.650",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.776"
+        },
+        {
+            "frame": "51",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7946.237",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.049"
+        },
+        {
+            "frame": "52",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7607.496",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "9.837"
+        },
+        {
+            "frame": "53",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7563.952",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.317"
+        },
+        {
+            "frame": "54",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7602.858",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.589"
+        },
+        {
+            "frame": "55",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7566.606",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.238"
+        },
+        {
+            "frame": "56",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7448.922",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.059"
+        },
+        {
+            "frame": "57",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7363.009",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "10.986"
+        },
+        {
+            "frame": "58",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7384.532",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.478"
+        },
+        {
+            "frame": "59",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7437.168",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "8.149"
+        },
+        {
+            "frame": "60",
+            "flexion angle right knee": "1.00",
+            "flexion angle left knee": "1.00",
+            "altura medida (m)": "7452.875",
+            "angulo ext do quadril direito": "0.000",
+            "largura da passada": "0.000",
+            "angulo de caminhada": "0.000",
+            "velocidade no instante (m/s)": "11.258"
+        }
+    ]
+}
