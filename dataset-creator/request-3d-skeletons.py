@@ -16,10 +16,11 @@ from is_wire.core import Channel, ContentType, Logger, Message, Subscription
 from utils import AnnotationsFetcher, load_options
 
 MIN_REQUESTS = 50  # Número mínimo de solicitações
-MAX_REQUESTS = 644  # Número máximo de solicitações
+MAX_REQUESTS = 300  # Número máximo de solicitações
 DEADLINE_SEC = 5.0  # Prazo limite em segundos
-JSON2D = r'p(\d{3})g(\d{2})_c(\d{2})_2d.json'
+JSON2D = 'p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json'
 LOCALIZATION_FILE = 'p{:03d}g{:02d}_3d.json'
+
 log = Logger(name='Request3dSkeletons')
 options = load_options(print_options=False)
 
@@ -38,7 +39,7 @@ def get_person_gesture_camera(files):
     # Dicionário de dicionários de dicionários
     quantity_of_annotations = defaultdict(lambda: defaultdict(dict))
 
-    for n, file in enumerate(files):
+    for file in files:
         # Extrai os IDs de pessoa, gesto e câmera do nome do arquivo de anotação
         matches = re.search(JSON2D,  file)
         if matches is None:
@@ -57,6 +58,8 @@ def get_person_gesture_camera(files):
         with open(annotation_path) as f:
             len_annotations = len(json.load(f)['annotations'])
             quantity_of_annotations[person_id][gesture_id][camera_id] = len_annotations
+    #print('e',person_gesture_camera_dict)
+    #print('annot',quantity_of_annotations)
     return person_gesture_camera_dict, quantity_of_annotations
 
 
@@ -68,7 +71,7 @@ if not os.path.exists(options.folder):
 log.debug('Parsing Annotation Files')
 # Lista de arquivos de anotação 2d
 #annotation_files = list(filter(lambda x: x.endswith('_2d.json'), files))
-annotation_files = glob(os.path.join(options.folder, '*_2d.json'))
+annotation_files = list(map(lambda s: s.replace(options.folder+'/',''),glob(os.path.join(options.folder, '*_2d.json'))))
 
 person_gesture_camera, quantity_of_annotations = get_person_gesture_camera(annotation_files)
 
@@ -76,48 +79,47 @@ cameras_id_list:list = [int(camera_cfg.id) for camera_cfg in options.cameras]
 pending_localizations:list = []
 num_localizations:dict = defaultdict(dict)
 
+
+
+
+
+
 log.debug('Checking if detections files already exist')
 #???
 for person_id, gestures in person_gesture_camera.items():
     for gesture_id, camera_ids in gestures.items():
-        # Obtém o número de anotações para a combinação de pessoa, gesto e câmera atual
-
-        # Verifica se já existe um arquivo de localização para a combinação de pessoa e gesto atual
         file = os.path.join(options.folder, LOCALIZATION_FILE.format(person_id, gesture_id))
+        
+        if set(camera_ids) != set(cameras_id_list):
+            log.warn("PERSON_ID: {:03d} GESTURE_ID: {:02d} | Can't find all detections file.",
+                     person_id, gesture_id)
+            continue
+
+        n_an = list(quantity_of_annotations[person_id][gesture_id].values())
+
+        if not all(map(lambda x: x == n_an[0], n_an)):
+            log.warn("PERSON_ID: {:03d} GESTURE_ID: {:02d} | Annotations size inconsistent.",
+                     person_id, gesture_id)
+            continue
+
+        
         if os.path.exists(file):
-            with open(file) as f:
+            with open(file, 'r') as f:
                 n_loc = len(json.load(f)['localizations'])
             if n_loc == n_an[0]:
-                log.info('PERSON_ID: {:03d} GESTURE_ID: {:02d} | Already have localization file.', person_id, gesture_id)
+                log.info('PERSON_ID: {:03d} GESTURE_ID: {:02d} | Already have localization file.',
+                         person_id, gesture_id)
                 continue
 
-        n_an:list = list(quantity_of_annotations[person_id][gesture_id].values())
-        print('n_an=', n_an) # teste visual
-
-        # Verifica se todos os valores de anotações são iguais ao primeiro valor (anotações inconsistentes)
-        # Deveria tirar o not?
-        #if not all(map(lambda x: x == n_an[0], n_an)):
-        if all(map(lambda x: x == n_an[0], n_an)):
-            log.warn("PERSON_ID: {:03d} GESTURE_ID: {:02d} | Annotations size inconsistent.", person_id, gesture_id)
-            continue
-
-        # Verifica se os IDs das câmeras no arquivo correspondem aos IDs das câmeras especificadas nas opções
-        if set(camera_ids) != set(cameras_id_list):
-            log.warn("PERSON_ID: {:03d} GESTURE_ID: {:02d} | Can't find all detections file.", person_id, gesture_id)
-            continue
-
-        # Registra o número de localizações esperadas para a combinação de pessoa e gesto atual
-        num_localizations[person_id][gesture_id] = n_an[0] # Por que o primeiro?
-
-        # Adiciona as informações da localização pendente à lista de localizações pendentes
+        num_localizations[person_id][gesture_id] = n_an[0]
         pending_localizations.append({
             'person_id': person_id,
             'gesture_id': gesture_id,
-            'num_localizations': n_an[0]
+            'n_localizations': n_an[0]
         })
 
 if not pending_localizations:
-    log.info("Exiting...")
+    log.info("Exiting... No pending localizations.")
     sys.exit(0)
 
 # Comunicação
@@ -135,7 +137,7 @@ while True:
     if state == State.MAKE_REQUESTS:
         state = State.RECV_REPLIES
         
-        if len(requests) >= MIN_REQUESTS:
+        if len(requests) < MIN_REQUESTS:
             while len(requests) <= MAX_REQUESTS:
                 person_id, gesture_id, pos, annotations = annotations_fetcher.next()
                 if pos is None:
@@ -158,7 +160,7 @@ while True:
 
     elif state == State.RECV_REPLIES:
         try:
-            msg = channel.consume(timeout=DEADLINE_SEC)
+            msg = channel.consume(timeout=1.0)
             if msg.status.ok():
                 localizations = msg.unpack(ObjectAnnotations)
                 correlation_id = msg.correlation_id
@@ -177,7 +179,7 @@ while True:
             state = State.CHECK_FOR_TIMEDOUT_REQUESTS
 
     elif state == State.CHECK_END_OF_SEQUENCE_AND_SAVE:
-        done_sequences:list[tuple] = []
+        done_sequences:list = []
         # Error para p001g03???
         for person_id, gestures in localizations_received.items():
             for gesture_id, localizations_dict in gestures.items():
@@ -198,32 +200,37 @@ while True:
 
                 localizations_count = [len(localization['objects']) for localization in output_localizations['localizations']]
 
-                unique_counts, count_occurrences = np.unique(localizations_count, return_counts=True)
-                count_dict = dict(zip(unique_counts, count_occurrences))
-                count_dict_str = ", ".join(["{}: {}".format(k, v) for k, v in count_dict.items()])
-
-                log.info('Saved: PERSON_ID: {:03d} GESTURE_ID: {:02d} | Count: {}',
-                         person_id, gesture_id, count_dict_str)
+                
+                log.info('Saved: PERSON_ID: {:03d} GESTURE_ID: {:02d}',
+                         person_id, gesture_id)
 
         for person_id, gesture_id in done_sequences:
-            localizations_received[person_id].pop(gesture_id)
+            del localizations_received[person_id][gesture_id]
 
-        state = State.MAKE_REQUESTS
+        state = State.CHECK_FOR_TIMEDOUT_REQUESTS
 
     elif state == State.CHECK_FOR_TIMEDOUT_REQUESTS:
-        current_time = time.time()
-        timedout_requests = [
-            correlation_id for correlation_id, request in requests.items() if current_time - request['requested_at'] >= DEADLINE_SEC
-        ]
-        for correlation_id in timedout_requests:
-            person_id = requests[correlation_id]['person_id']
-            gesture_id = requests[correlation_id]['gesture_id']
-            pos = requests[correlation_id]['pos']
-            requests.pop(correlation_id)
+        new_requests = {}
 
-            log.warn('Timed out: PERSON_ID: {:03d} GESTURE_ID: {:02d} | Position: {}',
-                     person_id, gesture_id, pos)
+        for cid in list(requests.keys()):
+            request = requests[cid]
+            if (request['requested_at'] + DEADLINE_SEC) > time.time():
+                continue
+            msg = Message(reply_to=subscription, content_type=ContentType.JSON)
+            msg.body = request['body']
+            msg.timeout = DEADLINE_SEC
+            channel.publish(msg, topic='SkeletonsGrouper.Localize')
+            new_requests[msg.correlation_id] = {
+                'body': request['body'],
+                'person_id': request['gesture_id'],
+                'gesture_id': request['gesture_id'],
+                'pos': request['pos'],
+                'requested_at': time.time()
+            }
+            del requests[cid]
+            log.warn("Message '{}' timeouted. Sending another request.", cid)
 
+        requests.update(new_requests)
         state = State.MAKE_REQUESTS
 
     elif state == State.EXIT:
