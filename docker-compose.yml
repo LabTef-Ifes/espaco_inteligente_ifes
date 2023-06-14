@@ -1,4 +1,4 @@
-version: "0.0.2" # Teste do Deivid em 6/6/23
+version: "3" # Teste do Deivid em 6/6/23
 
 services:
   rabbitmq:
@@ -9,6 +9,7 @@ services:
       - 5672:5672
       - 15672:15672
     container_name: rabbitmq
+    network_mode: host
 
   mjpeg-server:
     image: labviros/is-mjpeg-server:0.0.1
@@ -16,49 +17,17 @@ services:
       - 3000:3000
     environment:
       - IS_URI=amqp://rabbitmq:5672
-    mem_limit: 60M
+    deploy:
+      resources:
+        limits:
+          memory: 60M
     container_name: mjpeg-server
     command: sh -c "until nc -z rabbitmq 5672; do sleep 1; done; npm start"
-
-  is-frame_transformation:
-    image: labviros/is-frame-transformation:0.0.4
-    volumes:
-      - $PWD/calibrations/ifes:/opt/ifes_calibration/
-      - $PWD/etc/conf/options.json:/etc/conf/options.json
-    container_name: is-frame_transformation
-    command: sh -c "until nc -z mjpeg-server 3000; do sleep 1; done; ./service.bin /etc/conf/options.json"
-
-  grouper:
-    image: mendonca/is-skeletons-grouper:0.0.4-debug
-    volumes:
-      - $PWD/is-skeletons-grouper/options.json:/opt/is/options.json
-    mem_limit: 2g
-    container_name: grouper
-    command: sh -c "until nc -z is-frame_transformation 5000; do sleep 1; done; ./rpc.bin /options.json"
+    network_mode: host
 
   zipkin:
     image: openzipkin/zipkin
     ports:
       - 9411:9411
     container_name: zipkin
-
-  sk1:
-    image: labviros/is-skeletons-detector:0.0.2-openpose
-    command: ./rpc.bin
-    mem_limit: 3g
-    devices: 
-      - "/dev/nvidiactl"
-      - "/dev/nvidia-uvm"
-      - "/dev/nvidia0"
-    container_name: sk1
-
-  sk2:
-    image: labviros/is-skeletons-detector:0.0.2-openpose
-    command: ./rpc.bin
-    mem_limit: 3g
-    devices:
-      - "/dev/nvidiactl"
-      - "/dev/nvidia-uvm"
-      - "/dev/nvidia0"
-    container_name: sk2
 
