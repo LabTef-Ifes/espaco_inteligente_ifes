@@ -13,9 +13,12 @@ from collections import defaultdict, OrderedDict
 from is_msgs.image_pb2 import HumanKeypoints as HKP,ObjectAnnotations
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
-from tempfile import NamedTemporaryFile as TempFile
+import tempfile
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import os
+current_file_path = os.path.abspath(__file__)
+current_dir_path = os.path.dirname(current_file_path)
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('CHEST')),
@@ -38,7 +41,7 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
 
 
-def render_skeletons(images:dict, annotations, it, links:list, colors:list):
+def render_skeletons(images:dict, annotations:dict, it, links:list, colors:list):
     for cam_id, image in images.items():
         skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
         for ob in skeletons.objects:
@@ -53,7 +56,7 @@ def render_skeletons(images:dict, annotations, it, links:list, colors:list):
                 cv2.circle(image, center=center, radius=4, color=(255, 255, 255), thickness=-1)
 
 
-def render_skeletons_3d(ax, skeletons, links:list, colors:list):
+def render_skeletons_3d(ax, skeletons:dict, links:list, colors:list):
     skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
     for skeleton in skeletons_pb.objects:
         parts = {}
@@ -68,8 +71,8 @@ def render_skeletons_3d(ax, skeletons, links:list, colors:list):
                 ax.plot(
                     x_pair,
                     y_pair,
-                    zs=z_pair,
                     linewidth=3,
+                    zs=z_pair,
                     color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
 
 
@@ -121,12 +124,12 @@ json_files = {
         person_id, gesture_id, cam_id))
     for cam_id in cameras
 }
-json_locaizations_file = os.path.join(options.folder, 'p{:03d}g{:02d}_3d.json'.format(
+json_localizations_file = os.path.join(options.folder, 'p{:03d}g{:02d}_3d.json'.format(
     person_id, gesture_id))
 
 if not all(
         map(os.path.exists,
-            list(video_files.values()) + list(json_files.values()) + [json_locaizations_file])):
+            list(video_files.values()) + list(json_files.values()) + [json_localizations_file])):
     log.critical('Missing one of video or annotations files from PERSON_ID {} and GESTURE_ID {}',
                  person_id, gesture_id)
 
@@ -141,31 +144,19 @@ for cam_id, filename in json_files.items():
     with open(filename, 'r') as f:
         annotations[cam_id] = json.load(f)['annotations']
 #load localizations
-with open(json_locaizations_file, 'r') as f:
+with open(json_localizations_file, 'r') as f:
     localizations = json.load(f)['localizations']
 
 plt.ioff()
 fig = plt.figure(figsize=(5, 5))
 ax:Axes3D = Axes3D(fig)
-ax.view_init(azim=28, elev=32)
-ax.set_xlim(-1.5, 1.5)
-ax.set_ylim(-1.5, 1.5)
-ax.set_zlim(-0.25, 1.5)
-
-ax.set_xticks(np.arange(-1.5, 2.0, 0.5))
-ax.set_yticks(np.arange(-1.5, 2.0, 0.5))
-ax.set_zticks(np.arange(0, 1.75, 0.5))
-
-ax.set_xlabel('X', labelpad=20)
-ax.set_ylabel('Y', labelpad=10)
-ax.set_zlabel('Z', labelpad=5)
 
 update_image = True
-output_file = 'p{:03d}g{:02d}_output.mp4'.format(person_id, gesture_id)
-fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-print(output_file)
-video_writer = cv2.VideoWriter(output_file, fourcc, 15, (full_image.shape[1], full_image.shape[0]))
+output_file = os.path.join(current_dir_path,'videos','p{:03d}g{:02d}_output.avi'.format(person_id, gesture_id))
 
+fourcc = cv2.VideoWriter_fourcc(*"XVID")
+
+video_writer = cv2.VideoWriter(output_file, fourcc, 15, (1940, 1080))
 
 for it_frames in range(video_loader.n_frames()):
     video_loader.load_next()
@@ -177,11 +168,25 @@ for it_frames in range(video_loader.n_frames()):
         place_images(full_image, frames_list)
 
     
+    ax.clear()
+    ax.view_init(azim=28, elev=32)
+    ax.set_xlim(-1.5, 1.5)
+    ax.set_ylim(-1.5, 1.5)
+    ax.set_zlim(-0.25, 1.5)
+
+    ax.set_xticks(np.arange(-1.5, 2.0, 0.5))
+    ax.set_yticks(np.arange(-1.5, 2.0, 0.5))
+    ax.set_zticks(np.arange(0, 1.75, 0.5))
+
+    ax.set_xlabel('X', labelpad=20)
+    ax.set_ylabel('Y', labelpad=10)
+    ax.set_zlabel('Z', labelpad=5)
+
     render_skeletons_3d(ax, localizations[it_frames], links, colors)
 
     fig.canvas.draw()
     data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-    view_3d = data.reshape(fig.canvas.get_width_height()[::-1] + (3, ))
+    view_3d = data.copy().reshape(fig.canvas.get_width_height()[::-1] + (3, ))
 
     display_image = cv2.resize(full_image, dsize=(0, 0), fx=0.5, fy=0.5)
     hd, wd, _ = display_image.shape
@@ -190,9 +195,10 @@ for it_frames in range(video_loader.n_frames()):
     display_image = np.hstack([display_image, 255 * np.ones(shape=(hd, wv, 3), dtype=np.uint8)])
     display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
 
+    video_writer.write(display_image.astype(np.uint8))
+    cv2.imshow('data', data)
+    cv2.waitKey(1)
 
-    video_writer.write(display_image)
-    #cv2.imshow('', display_image)
-    #cv2.waitKey(1)
 video_writer.release()
+cv2.destroyAllWindows()
 log.info('Done!')

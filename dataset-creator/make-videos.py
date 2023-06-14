@@ -33,10 +33,10 @@ ffmpeg_base_command = "ffmpeg -y -r {fps:.1f} -start_number 0 -i {file_pattern:s
 
 for root, dirs, files in os.walk(options.folder):
     for exp_folder in dirs:
-        pg = get_person_gesture(exp_folder)
-        if pg is None:
+        person_id, gesture_id = get_person_gesture(exp_folder)
+        if person_id is None or gesture_id is None:
             continue
-        person_id, gesture_id = pg
+         
         sequence_folder = os.path.join(options.folder, exp_folder)
         for camera in options.cameras:
             file_pattern = os.path.join(
