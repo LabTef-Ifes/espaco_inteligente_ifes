@@ -1,5 +1,5 @@
 nvidia-docker run --rm -d \
-  --memory=3g \
+  --memory=2g \
   --gpus=1 \
   --network=host \
   --name=sk1 \
@@ -7,7 +7,7 @@ nvidia-docker run --rm -d \
    #./stream.bin #./rpc.bin #
 
 nvidia-docker run --rm -d \
-  --memory=3g \
+  --memory=2g \
   --gpus=1 \
   --network=host \
   --name=sk2 \
@@ -15,7 +15,7 @@ nvidia-docker run --rm -d \
   #./stream.bin #./rpc.bin
 
 nvidia-docker run --rm -d \
-  --memory=3g \
+  --memory=2g \
   --gpus=1 \
   --network=host \
   --name=sk3 \
@@ -23,7 +23,7 @@ nvidia-docker run --rm -d \
    #./stream.bin #./rpc.bin #
 
 nvidia-docker run --rm -d \
-  --memory=3g \
+  --memory=2g \
   --gpus=1 \
   --network=host \
   --name=sk4 \
