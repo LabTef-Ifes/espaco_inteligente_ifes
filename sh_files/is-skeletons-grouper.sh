@@ -7,3 +7,4 @@ docker container run -d --rm \
 	mendonca/is-skeletons-grouper:0.0.4-debug  ./rpc.bin /options.json
     #./service.bin /options.json 
     #./rpc.bin /options.json 
+    
