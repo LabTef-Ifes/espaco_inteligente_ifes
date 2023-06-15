@@ -35,6 +35,14 @@ args = parser.parse_args()
 person_id = args.person
 gesture_id = args.gesture
 
+with open('gestures.json', 'r') as f:
+            gestures = json.load(f)
+            gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
+
+if str(gesture_id) not in gestures:
+    log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}", gesture_id,
+                json.dumps(gestures, indent=2))
+    
 if str(gesture_id) not in gestures:
     log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}", gesture_id,
                  json.dumps(gestures, indent=2))
