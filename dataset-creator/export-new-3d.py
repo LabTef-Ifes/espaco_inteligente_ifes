@@ -13,12 +13,43 @@ from collections import defaultdict, OrderedDict
 from is_msgs.image_pb2 import HumanKeypoints as HKP,ObjectAnnotations
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
-import tempfile
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import os
+
+log = Logger(name='Export3D')
+
 current_file_path = os.path.abspath(__file__)
 current_dir_path = os.path.dirname(current_file_path)
+
+JSON2D_FORMAT = 'p{:03d}g{:02d}c{:02d}_2d.json'
+JSON3D_FORMAT = 'p{:03d}g{:02d}_3d.json'
+update_image = True
+
+parser = argparse.ArgumentParser(
+    description='Utility to capture a sequence of images from multiples cameras')
+parser.add_argument('--person', '-p', type=int, required=True, help='ID to identity person')
+parser.add_argument('--gesture', '-g', type=int, required=True, help='ID to identity gesture')
+args = parser.parse_args()
+
+person_id = args.person
+gesture_id = args.gesture
+
+if str(gesture_id) not in gestures:
+    log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}", gesture_id,
+                 json.dumps(gestures, indent=2))
+
+if person_id < 1 or person_id > 999:
+    log.critical("Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
+
+log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
+
+
+output_file = os.path.join(current_dir_path,'videos','p{:03d}g{:02d}_output.avi'.format(person_id, gesture_id))
+
+fourcc = cv2.VideoWriter_fourcc(*"XVID")
+
+video_writer = cv2.VideoWriter(output_file, fourcc, 15, (1940, 1080))
 
 colors = list(permutations([0, 255, 85, 170], 3))
 links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('CHEST')),
@@ -84,7 +115,6 @@ def place_images(output_image, images, x_offset=0, y_offset=0):
     output_image[h + y_offset:2 * h + y_offset, w + x_offset:2 * w + x_offset, :] = images[3]
 
 
-log = Logger(name='Export3D')
 with open('keymap.json', 'r') as f:
     keymap = json.load(f)
 options = load_options(print_options=False)
@@ -96,22 +126,7 @@ with open('gestures.json', 'r') as f:
     gestures = json.load(f)
     gestures = OrderedDict(sorted(gestures.items(), key=lambda kv: int(kv[0])))
 
-parser = argparse.ArgumentParser(
-    description='Utility to capture a sequence of images from multiples cameras')
-parser.add_argument('--person', '-p', type=int, required=True, help='ID to identity person')
-parser.add_argument('--gesture', '-g', type=int, required=True, help='ID to identity gesture')
-args = parser.parse_args()
 
-person_id = args.person
-gesture_id = args.gesture
-if str(gesture_id) not in gestures:
-    log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}", gesture_id,
-                 json.dumps(gestures, indent=2))
-
-if person_id < 1 or person_id > 999:
-    log.critical("Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
-
-log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
 
 cameras = [int(cam_config.id) for cam_config in options.cameras]
 video_files = {
@@ -120,11 +135,11 @@ video_files = {
     for cam_id in cameras
 }
 json_files = {
-    cam_id: os.path.join(options.folder, 'p{:03d}g{:02d}c{:02d}_2d.json'.format(
+    cam_id: os.path.join(options.folder, JSON2D_FORMAT.format(
         person_id, gesture_id, cam_id))
     for cam_id in cameras
 }
-json_localizations_file = os.path.join(options.folder, 'p{:03d}g{:02d}_3d.json'.format(
+json_localizations_file = os.path.join(options.folder, JSON3D_FORMAT.format(
     person_id, gesture_id))
 
 if not all(
@@ -151,12 +166,6 @@ plt.ioff()
 fig = plt.figure(figsize=(5, 5))
 ax:Axes3D = Axes3D(fig)
 
-update_image = True
-output_file = os.path.join(current_dir_path,'videos','p{:03d}g{:02d}_output.avi'.format(person_id, gesture_id))
-
-fourcc = cv2.VideoWriter_fourcc(*"XVID")
-
-video_writer = cv2.VideoWriter(output_file, fourcc, 15, (1940, 1080))
 
 for it_frames in range(video_loader.n_frames()):
     video_loader.load_next()
@@ -167,7 +176,7 @@ for it_frames in range(video_loader.n_frames()):
         frames_list = [frames[cam] for cam in sorted(frames.keys())]
         place_images(full_image, frames_list)
 
-    
+    # draw axis 3d
     ax.clear()
     ax.view_init(azim=28, elev=32)
     ax.set_xlim(-1.5, 1.5)
@@ -196,7 +205,7 @@ for it_frames in range(video_loader.n_frames()):
     display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
 
     video_writer.write(display_image.astype(np.uint8))
-    cv2.imshow('data', data)
+    cv2.imshow('data', display_image)
     cv2.waitKey(1)
 
 video_writer.release()
