@@ -3,7 +3,6 @@ import json
 import os
 import re
 import socket
-import sys
 import time
 from collections import defaultdict
 from enum import Enum
@@ -18,7 +17,7 @@ MIN_REQUESTS = 50  # Número mínimo de solicitações
 MAX_REQUESTS = 300  # Número máximo de solicitações
 DEADLINE_SEC = 5.0  # Prazo limite em segundos
 JSON2D_REGEX = 'p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json'
-JSON3D = 'p{:03d}g{:02d}_3d.json'
+JSON3D_FORMAT = 'p{:03d}g{:02d}_3d.json'
 # Enumeração para representar os diferentes estados do programa
 class State(Enum):
     MAKE_REQUESTS = 1
@@ -49,8 +48,6 @@ class Request3D:
         self.check_for_detection_files()
 
         self.annotations_fetcher:AnnotationsFetcher = AnnotationsFetcher(pending_localizations=self.pending_localizations, cameras=self.cameras_id_list, base_folder=self.options.folder)
-
-        #self.run() 
     
     def _get_cameras_id_list(self):
         return [int(camera_cfg.id) for camera_cfg in self.options.cameras]
@@ -69,8 +66,8 @@ class Request3D:
 
     def _get_options(self):
         options = load_options(print_options=False)
-        if not os.path.exists(self.options.folder):
-            self.log.critical("Folder '{}' doesn't exist", self.options.folder)
+        if not os.path.exists(options.folder):
+            self.log.critical("Folder '{}' doesn't exist", options.folder)
         return options
     
     def _get_person_gesture_camera(self):
@@ -106,7 +103,7 @@ class Request3D:
 
         for person_id, gestures in self.person_gesture_camera_dict.items():
             for gesture_id, camera_ids in gestures.items():
-                file = os.path.join(self.options.folder, JSON3D.format(person_id, gesture_id))
+                file = os.path.join(self.options.folder, JSON3D_FORMAT.format(person_id, gesture_id))
                 
                 number_of_annotations:list = list(self.quantity_of_annotations[person_id][gesture_id].values())
 
@@ -146,15 +143,17 @@ class Request3D:
 
     def run(self):
         """ Executa o while True loop de requests
-        """        
-        while request3d.state != State.EXIT:
-            if request3d.state == State.MAKE_REQUESTS:
+        """
+        self.state = State.MAKE_REQUESTS
+
+        while self.state != State.EXIT:
+            if self.state == State.MAKE_REQUESTS:
                 self._make_requests()
-            elif request3d.state == State.RECV_REPLIES:
+            elif self.state == State.RECV_REPLIES:
                 self._recv_replies()
-            elif request3d.state == State.CHECK_FOR_TIMEDOUT_REQUESTS:
+            elif self.state == State.CHECK_FOR_TIMEDOUT_REQUESTS:
                 self._check_for_timed_out_requests()
-            elif request3d.state == State.CHECK_END_OF_SEQUENCE_AND_SAVE:
+            elif self.state == State.CHECK_END_OF_SEQUENCE_AND_SAVE:
                 self._check_end_of_sequence_and_save()
 
     def _make_requests(self):
@@ -214,7 +213,7 @@ class Request3D:
         """        
         new_requests = {}
 
-        for cid in self.requests.keys():
+        for cid in list(self.requests.keys()):
             request = self.requests[cid]
             if (request['requested_at'] + DEADLINE_SEC) > time.time():
                 continue
@@ -245,15 +244,19 @@ class Request3D:
         # Error para p001g03 e g02???
         for person_id, gestures in self.localizations_received.items():
             for gesture_id, localizations_dict in gestures.items():
-
-                if len(localizations_dict) < self.num_localizations[person_id][gesture_id]:
+                try:
+                    print(person_id, gesture_id, len(localizations_dict), self.num_localizations[person_id][gesture_id])
+                    if len(localizations_dict) < self.num_localizations[person_id][gesture_id]:
+                        continue
+                except KeyError:
+                    self.log.warn('KeyError: PERSON_ID: {:03d} GESTURE_ID: {:02d}',person_id, gesture_id)
                     continue
-                
+
                 output_localizations = {
                     'localizations': [x[1] for x in sorted(localizations_dict.items())],
                     'created_at': datetime.datetime.now().isoformat()
                 }
-                filename = JSON3D.format(person_id, gesture_id)
+                filename = JSON3D_FORMAT.format(person_id, gesture_id)
                 filepath = os.path.join(self.options.folder, filename)
                 with open(filepath, 'w') as f:
                     json.dump(output_localizations, f, indent=2)

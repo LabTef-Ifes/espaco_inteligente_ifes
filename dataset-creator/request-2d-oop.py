@@ -25,6 +25,8 @@ class Skeleton2D:
     JSON2D_FORMAT = '{}_2d.json'
 
     def __init__(self):
+        """Inicializa o objeto de rastreamento de esqueletos 2D.
+        """        
         self.options = load_options(print_options=False)
         self.check_path()
 
@@ -34,7 +36,8 @@ class Skeleton2D:
         self.requests:dict = {}
         self.annotations_received:defaultdict = defaultdict(dict)
         self.n_annotations:dict = {}
-        self.state = None
+        
+        self.state = None # Estado atual do loop em self.run()
 
         self.pending_videos:list = []
 
