@@ -26,6 +26,8 @@ class Skeleton2D:
 
     def __init__(self):
         self.options = load_options(print_options=False)
+        self.check_path()
+
         self.log = Logger(name='Request2dSkeletons')
         self.video_files:list = glob(os.path.join(self.options.folder, '*.mp4'))
 
@@ -37,10 +39,12 @@ class Skeleton2D:
         self.pending_videos:list = []
         self.frame_fetcher:FrameVideoFetcher = None
 
-        self.check_path()
-        self.start_communication()
+        self.channel,self.subscription = self.start_communication()
         self.get_pending_videos()
 
+        self.frame_fetcher:FrameVideoFetcher = FrameVideoFetcher(
+                    video_files=self.pending_videos, base_folder=self.options.folder)
+        
     def _make_request(self):
         self.state = State.RECV_REPLIES  # muda o estado para receber respostas
         if len(self.requests) < self.MIN_REQUESTS:  # se a quantidade de pedidos for menor que o minimo exigido
@@ -186,9 +190,10 @@ class Skeleton2D:
 
     def start_communication(self):
         # Comunicação
-        self.channel = Channel(self.options.broker_uri)
-        self.subscription = Subscription(self.channel)
-        self.subscription.subscribe(topic='SkeletonsDetector.Detected')
+        channel = Channel(self.options.broker_uri)
+        subscription = Subscription(self.channel)
+        return channel, subscription
+        #self.subscription.subscribe(topic='SkeletonsDetector.Detected')
 
     def get_pending_videos(self):
         # Criação de lista de vídeos a serem processados e do número de frames em cada um
@@ -207,13 +212,13 @@ class Skeleton2D:
                 with open(annotation_path, 'r') as f:
                     annotations_data = json.load(f)
 
-                n_annotations_on_file = len(annotations_data['annotations'])
+                num_annotations_on_file = len(annotations_data['annotations'])
 
-                if n_annotations_on_file == n_frames:
+                if num_annotations_on_file == n_frames:
                     self.log.info(
                         "Video '{}' already annotated at '{}' with {} annotations",
                         video_file, annotations_data['created_at'],
-                        n_annotations_on_file)
+                        num_annotations_on_file)
                     continue
 
             self.pending_videos.append(video_file)
@@ -223,8 +228,7 @@ class Skeleton2D:
             self.log.info("Exiting...")
             sys.exit(-1)
         
-        self.frame_fetcher:FrameVideoFetcher = FrameVideoFetcher(
-            video_files=self.pending_videos, base_folder=self.options.folder)
+        
 
 # Definição de estados para a máquina de estados
 class State(Enum):
