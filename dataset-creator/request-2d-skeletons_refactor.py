@@ -29,14 +29,12 @@ class Skeleton2D:
         self.log = Logger(name='Request2dSkeletons')
         self.video_files:list = glob(os.path.join(self.options.folder, '*.mp4'))
 
-
-
         self.requests:dict = {}
         self.annotations_received:defaultdict = defaultdict(dict)
+        self.n_annotations:dict = {}
         self.state = None
 
         self.pending_videos:list = []
-        self.n_annotations:dict = {}
         self.frame_fetcher:FrameVideoFetcher = None
 
         self.check_path()
@@ -103,7 +101,7 @@ class Skeleton2D:
                                         self.JSON2D_FORMAT.format(base_name))
 
             # obtém o dicionário de anotações
-            annotations_dict = self.annotations_received[base_name]
+            annotations_dict:dict = self.annotations_received[base_name]
 
             # se todas as anotações estiverem presentes
             if len(annotations_dict) == self.n_annotations[base_name]:

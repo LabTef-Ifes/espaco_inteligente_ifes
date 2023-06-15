@@ -32,7 +32,6 @@ class State(Enum):
     CHECK_FOR_TIMEDOUT_REQUESTS = 4
     EXIT = 5
 
-
 def get_person_gesture_camera(files):
     # Dicionário de dicionários de listas
     person_gesture_camera_dict = defaultdict(lambda: defaultdict(list))
