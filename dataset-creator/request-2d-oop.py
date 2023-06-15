@@ -37,7 +37,6 @@ class Skeleton2D:
         self.state = None
 
         self.pending_videos:list = []
-        self.frame_fetcher:FrameVideoFetcher = None
 
         self.channel,self.subscription = self.start_communication()
         self.get_pending_videos()
@@ -72,9 +71,10 @@ class Skeleton2D:
                     'requested_at': time.time()
                 }
     def _recv_replies(self):
+        
         try:
             # obtém uma mensagem do canal com um tempo limite
-            msg = self.channel.consume(timeout=self.DEADLINE_SEC)
+            msg = self.channel.consume(timeout=1.0)
             if msg.status.ok():  # se a mensagem estiver ok
                 # desempacota as anotações de objetos
                 annotations = msg.unpack(ObjectAnnotations)
@@ -165,7 +165,7 @@ class Skeleton2D:
         # muda o estado para State.MAKE_REQUESTS
         self.state = State.MAKE_REQUESTS
     def run(self):
-        self.state == State.MAKE_REQUESTS
+        self.state = State.MAKE_REQUESTS
         while True:
             if self.state == State.MAKE_REQUESTS: # se o estado atual é fazer pedidos
                 self._make_request()
@@ -181,7 +181,7 @@ class Skeleton2D:
             
             elif self.state == State.EXIT: # se o estado atual é sair
                 break
-
+        self.log.info("Completed!")
     def check_path(self):
         # Verificação da existência da pasta especificada nas opções
         if not os.path.exists(self.options.folder):
@@ -191,7 +191,7 @@ class Skeleton2D:
     def start_communication(self):
         # Comunicação
         channel = Channel(self.options.broker_uri)
-        subscription = Subscription(self.channel)
+        subscription = Subscription(channel)
         return channel, subscription
         #self.subscription.subscribe(topic='SkeletonsDetector.Detected')
 
@@ -199,11 +199,12 @@ class Skeleton2D:
         # Criação de lista de vídeos a serem processados e do número de frames em cada um
         
         for video_file in self.video_files:
+            video_file = video_file.split('/')[-1] #raw filename
             base_name = video_file.split('.')[0] #pNNNgNN
-            annotation_file = self.JSON2D_FORMAT.format(base_name)
+            annotation_file = self.JSON2D_FORMAT.format(base_name) #p001g01c00_2d.json
             
-            annotation_path = os.path.join(self.options.folder, annotation_file)
-            video_path = os.path.join(self.options.folder, video_file)
+            annotation_path = os.path.join(self.options.folder, annotation_file) #videos/p001g01c00_2d.json
+            video_path = os.path.join(self.options.folder, video_file) #videos/p001g01c00.mp4
 
             cap = cv2.VideoCapture(video_path)
             n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -227,7 +228,7 @@ class Skeleton2D:
         if not self.pending_videos:
             self.log.info("Exiting...")
             sys.exit(-1)
-        
+        print(self.pending_videos)
         
 
 # Definição de estados para a máquina de estados
@@ -240,6 +241,5 @@ class State(Enum):
 
 if __name__ == '__main__':
     request_skeleton = Skeleton2D()
-    print(request_skeleton.pending_videos)
-    #request_skeleton.run()
+    request_skeleton.run()
     
