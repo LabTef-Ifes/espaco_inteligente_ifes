@@ -47,7 +47,7 @@ if str(gesture_id) not in gestures:
     log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}", gesture_id,
                  json.dumps(gestures, indent=2))
 
-if person_id < 1 or person_id > 999:
+if not 1<=person_id<=999:
     log.critical("Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
 
 log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
