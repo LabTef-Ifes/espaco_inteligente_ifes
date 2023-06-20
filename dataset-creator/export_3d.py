@@ -47,15 +47,15 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
 
 
-class Export:
+class Export3D:
     OUTPUT_FORMAT = 'p{:03d}g{:02d}_output.avi'
     FPS = 15
-    def __init__(self):
+    def __init__(self,show:bool=True):
         plt.ioff()
         self.log = Logger(name='Export3D')
         self.fig = plt.figure(figsize=(5, 5))
         self.ax: Axes3D = Axes3D(self.fig)
-
+        self.show = show
         self.person_id, self.gesture_id = self.get_person_gesture_parser()
         self.output_file = os.path.join(
             current_dir_path, 'videos', self.OUTPUT_FORMAT.format(self.person_id, self.gesture_id))
@@ -78,12 +78,12 @@ class Export:
         self.json_files, self.video_files, self.json_localizations_file = self.check_annotations_files()
 
         self.multiple_video_loader = MultipleVideoLoader(self.video_files)
-        self.annotations = self.load_annotations()
-        self.localizations = self.load_localizations()
+        self.annotations = self.get_annotations()
+        self.localizations = self.get_localizations()
 
     def get_keymap(self):
         with open('keymap.json', 'r') as f:
-            keymap = json.load(f)
+            keymap:dict = json.load(f)
         return keymap
 
     def get_options(self):
@@ -109,7 +109,7 @@ class Export:
 
     def get_annotations(self):
         # load annotations
-        annotations = {}
+        annotations:dict = {}
         for cam_id, filename in self.json_files.items():
             with open(filename, 'r') as f:
                 annotations[cam_id] = json.load(f)['annotations']
@@ -151,7 +151,6 @@ class Export:
 
         json_localizations_file = os.path.join(self.options.folder, JSON3D_FORMAT.format(
             self.person_id, self.gesture_id))
-        self.check_annotations_files()
 
         if not all(
             map(os.path.exists,
@@ -208,8 +207,9 @@ class Export:
             display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
 
             self.video_writer.write(display_image.astype(np.uint8))
-            cv2.imshow('image', display_image)
-            cv2.waitKey(1)
+            if self.show:
+                cv2.imshow('image', display_image)
+                cv2.waitKey(1)
 
         self.video_writer.release()
         cv2.destroyAllWindows()
@@ -289,3 +289,7 @@ class Export:
         output_composition[h + y_offset:2 * h + y_offset,
                            w + x_offset:2 * w + x_offset, :] = images_list[3]
         return output_composition
+
+if __name__ == '__main__':
+    export = Export3D(show=True)
+    export.run()

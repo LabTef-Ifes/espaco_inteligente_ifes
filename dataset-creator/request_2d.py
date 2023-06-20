@@ -35,14 +35,13 @@ class Skeleton2D:
 
         self.requests:dict = {}
         self.annotations_received:defaultdict = defaultdict(dict)
-        self.n_annotations:dict = {}
         
         self.state = None # Estado atual do loop em self.run()
 
-        self.pending_videos:list = []
+        self.pending_videos,self.n_annotations = self.get_pending_videos()
 
         self.channel,self.subscription = self.start_communication()
-        self.get_pending_videos()
+        
 
         self.frame_fetcher:FrameVideoFetcher = FrameVideoFetcher(
                     video_files=self.pending_videos, base_folder=self.options.folder)
@@ -168,23 +167,27 @@ class Skeleton2D:
         # muda o estado para State.MAKE_REQUESTS
         self.state = State.MAKE_REQUESTS
     def run(self):
-        self.state = State.MAKE_REQUESTS
-        while True:
-            if self.state == State.MAKE_REQUESTS: # se o estado atual é fazer pedidos
-                self._make_request()
-            
-            elif self.state == State.RECV_REPLIES: # se o estado atual é receber respostas
-                self._recv_replies()
-            
-            elif self.state == State.CHECK_END_OF_VIDEO_AND_SAVE: # se o estado atual é verificar o fim do vídeo e salvar
-                self._check_end_of_video_and_save()
-            
-            elif self.state == State.CHECK_FOR_TIMEOUTED_REQUESTS: # se o estado atual é verificar pedidos com tempo limite excedido
-                self._check_for_timeouted_requests()
-            
-            elif self.state == State.EXIT: # se o estado atual é sair
-                break
-        self.log.info("Completed!")
+        if self.pending_videos:
+                
+            self.state = State.MAKE_REQUESTS
+            while True:
+                if self.state == State.MAKE_REQUESTS: # se o estado atual é fazer pedidos
+                    self._make_request()
+                
+                elif self.state == State.RECV_REPLIES: # se o estado atual é receber respostas
+                    self._recv_replies()
+                
+                elif self.state == State.CHECK_END_OF_VIDEO_AND_SAVE: # se o estado atual é verificar o fim do vídeo e salvar
+                    self._check_end_of_video_and_save()
+                
+                elif self.state == State.CHECK_FOR_TIMEOUTED_REQUESTS: # se o estado atual é verificar pedidos com tempo limite excedido
+                    self._check_for_timeouted_requests()
+                
+                elif self.state == State.EXIT: # se o estado atual é sair
+                    break
+            self.log.info("Completed!")
+        else:
+            self.log.info("No videos to process!")
     def check_path(self):
         # Verificação da existência da pasta especificada nas opções
         if not os.path.exists(self.options.folder):
@@ -200,7 +203,8 @@ class Skeleton2D:
 
     def get_pending_videos(self):
         # Criação de lista de vídeos a serem processados e do número de frames em cada um
-        
+        pending_videos = []
+        n_annotations = {}
         for video_file in self.video_files:
             video_file = video_file.split('/')[-1] #raw filename
             base_name = video_file.split('.')[0] #pNNNgNN
@@ -225,13 +229,14 @@ class Skeleton2D:
                         num_annotations_on_file)
                     continue
 
-            self.pending_videos.append(video_file)
-            self.n_annotations[base_name] = n_frames
+            pending_videos.append(video_file)
+            n_annotations[base_name] = n_frames
 
-        if not self.pending_videos:
+        if pending_videos:
+            self.log.info('{}',pending_videos)
+        else:            
             self.log.info("Exiting...")
-            sys.exit(-1)
-        print(self.pending_videos)
+        return pending_videos,n_annotations
         
 
 # Definição de estados para a máquina de estados

@@ -27,7 +27,7 @@ class State(Enum):
     EXIT = 5
 
 
-class Request3D:
+class Skeleton3D:
     def __init__(self):
         self.log = Logger(name='Request3dSkeletons')
 
@@ -136,7 +136,7 @@ class Request3D:
                 })
 
         if not self.pending_localizations:
-            self.log.critical("Exiting... No pending localizations.")
+            self.log.info("Exiting... No pending localizations.")
 
     def _publish(self,msg,topic='SkeletonsGrouper.Localize'):
         self.channel.publish(msg, topic=topic)
@@ -273,5 +273,6 @@ class Request3D:
         self.state = State.CHECK_FOR_TIMEDOUT_REQUESTS
 
 if __name__ == '__main__':
-    request3d = Request3D()
+    request3d = Skeleton3D()
     request3d.run()
+    
