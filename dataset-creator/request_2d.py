@@ -76,7 +76,7 @@ class Skeleton2D:
         
         try:
             # obtém uma mensagem do canal com um tempo limite
-            msg = self.channel.consume(timeout=1.0)
+            msg = self.channel.consume(timeout=3.0)
             if msg.status.ok():  # se a mensagem estiver ok
                 # desempacota as anotações de objetos
                 annotations = msg.unpack(ObjectAnnotations)
@@ -126,7 +126,7 @@ class Skeleton2D:
         self.state = State.CHECK_FOR_TIMEOUTED_REQUESTS
 
     def _check_for_timeouted_requests(self):
-        def publish_message(message,topic):
+        def publish_message(message,topic:str='SkeletonsDetector.Detect'):
             self.channel.publish(message, topic=topic)
 
         # cria um novo dicionário vazio para as novas requisições

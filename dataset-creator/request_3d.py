@@ -13,7 +13,7 @@ from is_msgs.image_pb2 import ObjectAnnotations
 from is_wire.core import Channel, ContentType, Logger, Message, Subscription
 from utils import AnnotationsFetcher, load_options
 
-MIN_REQUESTS = 50  # Número mínimo de solicitações
+MIN_REQUESTS = 150  # Número mínimo de solicitações
 MAX_REQUESTS = 1000  # Número máximo de solicitações
 DEADLINE_SEC = 5.0  # Prazo limite em segundos
 JSON2D_REGEX = 'p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json'
@@ -142,7 +142,7 @@ class Skeleton3D:
         self.channel.publish(msg, topic=topic)
 
     def run(self):
-        """ Executa o while True loop de requests
+        """ Executa o loop de requests
         """
         self.state = State.MAKE_REQUESTS
 
@@ -157,7 +157,8 @@ class Skeleton3D:
                 self._check_end_of_sequence_and_save()
 
     def _make_requests(self):
-        
+        """_summary_
+        """        
 
         self.state = State.RECV_REPLIES
             
@@ -185,14 +186,13 @@ class Skeleton3D:
                 }
 
     def _recv_replies(self):
-        """_summary_
+        """ Consome a mensagem de localização 3D e salva no dicionário
         """        
         try:
             msg = self.channel.consume(timeout=1.0)
             if msg.status.ok():
                 localizations = msg.unpack(ObjectAnnotations)
                 correlation_id = msg.correlation_id
-
                 if correlation_id in self.requests:
                     person_id = self.requests[correlation_id]['person_id']
                     gesture_id = self.requests[correlation_id]['gesture_id']
