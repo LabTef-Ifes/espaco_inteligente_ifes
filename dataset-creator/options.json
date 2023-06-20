@@ -6,7 +6,7 @@
       "id": 0,
       "config": {
         "sampling": {
-          "frequency": 20
+          "frequency": 15
         },
         "image": {
           "resolution": {
@@ -14,7 +14,7 @@
             "height": 1080
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -33,7 +33,7 @@
       "id": 1,
       "config": {
         "sampling": {
-          "frequency": 20
+          "frequency": 15
         },
         "image": {
           "resolution": {
@@ -41,7 +41,7 @@
             "height": 1080
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -60,7 +60,7 @@
       "id": 2,
       "config": {
         "sampling": {
-          "frequency": 20
+          "frequency": 15
         },
         "image": {
           "resolution": {
@@ -68,7 +68,7 @@
             "height": 1080
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",
@@ -87,7 +87,7 @@
       "id": 3,
       "config": {
         "sampling": {
-          "frequency": 20
+          "frequency": 15
         },
         "image": {
           "resolution": {
@@ -95,7 +95,7 @@
             "height": 1080
           },
           "color_space": {
-            "value": "GRAY"
+            "value": "RGB"
           },
           "format": {
             "format": "JPEG",

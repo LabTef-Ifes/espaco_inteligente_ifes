@@ -11,7 +11,7 @@
   "parallelism": -1,
   "initial_config": {
     "sampling": {
-      "frequency": 20
+      "frequency": 15
     },
     "camera": {
       "shutter": {
@@ -21,7 +21,7 @@
     },
     "image": {
       "color_space": {
-        "value": "GRAY"
+        "value": "RGB"
       },
       "resolution": {
         "width": 1440,
