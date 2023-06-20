@@ -15,7 +15,7 @@
     },
     "camera": {
       "shutter": {
-        "ratio": 0.2,
+        "ratio": 0.1,
         "automatic": false
       }
     },
