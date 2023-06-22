@@ -289,3 +289,7 @@ class Export:
         output_composition[h + y_offset:2 * h + y_offset,
                            w + x_offset:2 * w + x_offset, :] = images_list[3]
         return output_composition
+
+if __name__ == '__main__':
+    export = Export()
+    export.run()
