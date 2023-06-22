@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import time
-os.system('sudo docker container stop $(sudo docker container ls -q)') # Para todos os containeres que estejam rodando antes.
+os.system('sudo docker container stop $(sudo docker container ls -q)') # Para todos os containers que estejam rodando antes.
 os.system('sudo python sh_permission_denied.py')
 os.system('cd is-cameras-py-labtef/deploy/multi-camera && sudo docker compose up -d')
-#os.system("./sh_files/is-basic.sh")
 #os.system("./sh_files/is-cameras.sh")
-time.sleep(5)
+time.sleep(7)
 #os.system("./sh_files/is-rabbitmq.sh")
 #os.system("./sh_files/is-zipkin.sh")
 #os.system("./sh_files/is-mjpeg.sh")
