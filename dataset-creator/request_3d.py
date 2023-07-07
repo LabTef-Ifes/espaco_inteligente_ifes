@@ -13,7 +13,7 @@ from is_msgs.image_pb2 import ObjectAnnotations
 from is_wire.core import Channel, ContentType, Logger, Message, Subscription
 from utils import AnnotationsFetcher, load_options
 
-MIN_REQUESTS = 150  # Número mínimo de solicitações
+MIN_REQUESTS = 50  # Número mínimo de solicitações
 MAX_REQUESTS = 1000  # Número máximo de solicitações
 DEADLINE_SEC = 5.0  # Prazo limite em segundos
 JSON2D_REGEX = 'p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json'
