@@ -39,16 +39,16 @@
 7. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
 
-    | containers ativos (**Comunicação**) |                                                  **descrição** |
+    | Containers ativos (**Comunicação**) |                                                  **Descrição** |
     | :---------------------------------- | -------------------------------------------------------------: |
     | rabbitmq                            |                               Canal de comunicação dos tópicos |
     | zipkin                              |                  Exibe e organiza os tópicos para visualização |
-    | **Câmeras antigas**                 |                                                  **descrição** |
+    | **Câmeras antigas**                 |                                                  **Descrição** |
     | cam0                                |                                                Conexão da cam0 |
     | cam1                                |                                                Conexão da cam1 |
     | cam2                                |                                                Conexão da cam2 |
     | cam3                                |                                                Conexão da cam3 |
-    | **Reconstrução**                    |                                                  **descrição** |
+    | **Reconstrução**                    |                                                  **Descrição** |
     | sk1                                 |                                                          #TODO |
     | sk2                                 |                                                          #TODO |
     | is-frame_transformation             | Serviço de transformar esqueletos 2d em 3d usando a calibração |
