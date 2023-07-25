@@ -39,20 +39,19 @@
 8. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
 
-    | containers ativos (**Comunicação**) |                                                  **descrição** |
-    | :---------------------------------- | -------------------------------------------------------------: |
-    | rabbitmq                            |                               Canal de comunicação dos tópicos |
-    | zipkin                              |                  Exibe e organiza os tópicos para visualização |
-    | **Câmeras antigas**                 |                                                  **descrição** |
-    | cam0                                |                                                Conexão da cam0 |
-    | cam1                                |                                                Conexão da cam1 |
-    | cam2                                |                                                Conexão da cam2 |
-    | cam3                                |                                                Conexão da cam3 |
-    | **Reconstrução**                    |                                                  **descrição** |
-    | sk1                                 |                                                          #TODO |
-    | sk2                                 |                                                          #TODO |
-    | is-frame_transformation             | Serviço de transformar esqueletos 2d em 3d usando a calibração |
-    | grouper                             |                         Descrito na [citação abaixo](#grouper) |
+    | containers ativos (**Comunicação**) |                                                                                             **descrição** |
+    | :---------------------------------- | --------------------------------------------------------------------------------------------------------: |
+    | rabbitmq                            |                                                                          Canal de comunicação dos tópicos |
+    | zipkin                              |                                                             Exibe e organiza os tópicos para visualização |
+    | **Câmeras antigas[^1]**             |                                                                                             **descrição** |
+    | cam0                                |                                                                                           Conexão da cam0 |
+    | cam1                                |                                                                                           Conexão da cam1 |
+    | cam2                                |                                                                                           Conexão da cam2 |
+    | cam3                                |                                                                                           Conexão da cam3 |
+    | **Reconstrução**                    |                                                                                             **descrição** |
+    | skX (X in [1,2,...])                | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
+    | is-frame_transformation             |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
+    | grouper                             |                                                                    Descrito na [citação abaixo](#grouper) |
 <!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator. 8. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
 
 ---

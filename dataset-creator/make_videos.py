@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os, re, sys
 from subprocess import Popen, PIPE, STDOUT
 from utils import load_options

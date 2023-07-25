@@ -6,7 +6,7 @@
       "id": 0,
       "config": {
         "sampling": {
-          "frequency": 12
+          "frequency": 6
         },
         "image": {
           "resolution": {
@@ -33,7 +33,7 @@
       "id": 1,
       "config": {
         "sampling": {
-          "frequency": 12
+          "frequency": 6
         },
         "image": {
           "resolution": {
@@ -60,7 +60,7 @@
       "id": 2,
       "config": {
         "sampling": {
-          "frequency": 12
+          "frequency": 6
         },
         "image": {
           "resolution": {
@@ -87,7 +87,7 @@
       "id": 3,
       "config": {
         "sampling": {
-          "frequency": 12
+          "frequency": 6
         },
         "image": {
           "resolution": {
