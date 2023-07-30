@@ -9,7 +9,7 @@ import argparse
 from datetime import datetime as dt
 from collections import defaultdict, OrderedDict
 from subprocess import PIPE, STDOUT
-import multiprocessing
+import threading
 import cv2
 import numpy as np
 from utils import load_options
@@ -20,7 +20,7 @@ from is_wire.core import Channel, Subscription, Message, Logger
 # Estou fazendo multithreading, que compartilha recursos entre as threads. Para isolar os recursos, usar multiprocessing
 """_summary_
 """
-NUMBER_OF_PROCESSES = 4
+NUMBER_OF_THREADS = 4
 
 def get_id(topic):
     """A partir do nome do tópico 'CameraGateway.(\d+).Frame' retorna o id da câmera
@@ -205,7 +205,7 @@ size = (2 * options.cameras[0].config.image.resolution.height,
 full_image = np.zeros(size, dtype=np.uint8)
 
 start_save = False
-def consume_images(lock:multiprocessing.Lock,topic:int = 0):
+def consume_images(lock:threading.Lock,topic:int = 0):
     global start_save
 
     #images_dict = defaultdict(list)
@@ -233,7 +233,7 @@ def consume_images(lock:multiprocessing.Lock,topic:int = 0):
         # salva as imagens
         if start_save:
             filename = os.path.join(
-                sequence_folder, f'c{camera.id:02d}s{n_sample:08d}.jpeg')
+                sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera.id, n_sample))
             lock.acquire()
             cv2.imwrite(filename, data)
             lock.release()
@@ -253,12 +253,8 @@ def consume_images(lock:multiprocessing.Lock,topic:int = 0):
             break
         
 if __name__ == '__main__':
-
-    # create a default process pool
-    with multiprocessing.Pool(processes=NUMBER_OF_PROCESSES) as pool:
-        lock = multiprocessing.Lock()
-        
-
-        # create a lock
-
-        
+    lock = threading.Lock()
+    for i in range(NUMBER_OF_THREADS):
+        t = threading.Thread(target=consume_images, args=(lock,))
+        t.start()
+        t.join()
