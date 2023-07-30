@@ -134,8 +134,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 6. Confira que os containeres listados estão em execução
 7. As câmeras foram iniciadas, visualize-as com o script `capture_images.py` executado dentro do `venv`
 <!-- Necessário completar -->
-## Repositório do gateway das novas câmeras
-[Spinnaker Gateway do Felippe Mendonça](https://github.com/LabTef-Ifes/is-cameras-py)
+
 # Configurações do Labtef
 
 | Item                   |                           Detalhamento |
@@ -150,6 +149,9 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 | Portas com PoE ativado |                    19, 21, 22, 23 e 24 |
 
 # Referências
+
+## Repositório do gateway das novas câmeras
+[Spinnaker Gateway do Felippe Mendonça](https://github.com/LabTef-Ifes/is-cameras-py)
 
 ## Artigos
 - [Drive da Mariana](https://drive.google.com/drive/folders/1TIPGF9pkX-jDV5Voz08XtdeS18ijzYBG?usp=sharing)
