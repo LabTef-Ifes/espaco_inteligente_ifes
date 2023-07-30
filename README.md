@@ -27,16 +27,19 @@
 2. Instale o `venv python3.6` através do comando ```sudo add-apt-repository ppa:jonathonf/python-3.6 && sudo apt-get update && sudo apt-get install python3.6 && sudo apt-get install python3-venv```
 3. Instale o `tkinter` no Ubuntu através do comando `sudo apt install python3-tk` no terminal.
 4. Crie uma pasta local para o projeto com o nome `desenvolvimento`
-	- Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes` para o repositório principal ou `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid` para _clonar_ o fork de atualização.
-
-    - Crie um _virtual environment_ para o projeto
-    	Para criar um venv, digite `python3.6 -m venv venv` no diretório reservado ao projeto.
-
-	- Ative o ambiente virtual com o comando `source venv/bin/activate`.
-5. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef` 
-6. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivo [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
-7. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py) novamente.
-8. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
+	<ol type="i">
+        <li>Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes` para o repositório principal ou `git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid` para _clonar_ o fork de atualização.</li>
+        
+        <li>
+            Crie um _virtual environment_ para o projeto
+                    Para criar um venv, digite `python3.6 -m venv venv` no diretório reservado ao projeto.
+        </li>
+        <li>Ative o ambiente virtual com o comando `source venv/bin/activate`.</li>
+    </ol>
+1. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef` 
+2. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivo [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
+3. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py). Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.py](iniciar_principais_containers.py) novamente.
+4. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
 
     | containers ativos (**Comunicação**) |                                                                                             **descrição** |
@@ -67,14 +70,16 @@
   Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos .json, os containers deverão ser parados e reinicializados.
 - Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O Flycapture SDK, software do fabricante das câmeras, é compatível com o modelo *antigo*[^1].
+  
+- o arquivo [options.json](dataset-creator/options.json) está vinculado às câmeras antigas e à captura de imagem, portando ele permanece sendo necessário de se atualizar quando mudar parâmetros das câmeras
 ## Comentários sobre o uso dos containers
 O sistema de containeres foi criado pelo Felippe na Ufes e utilizado em seu mestrado.
 
 Há diversos topicos de comunicação relacionados à captura de imagem, envio de imagem e construção do esqueleto
 
-O rabbit e o zipkin são essenciais para a utilização da comunicação do EI e devem ser os primeiros serviços iniciados
+O `rabbit` e o `zipkin` são essenciais para a utilização da comunicação do EI e devem ser os primeiros serviços iniciados
 
-A ultima versao desenvolvida na Ufes do `frame-transformation` é a `0.0.4`
+A ultima versão desenvolvida na Ufes do `frame-transformation` é a `0.0.4`
 
 Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _schema_ correto no diretorio definido no volume do docker `is-frame_transformation`
 
@@ -127,6 +132,9 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 2. Abra o software **SpinView**
 3. Clique com o botão direito no IP da câmera e clique em `Auto Force IP`
 4. Confira que os IP's das câmeras estão corretos nos arquivos `settings-camera-X.yaml`, dentro de [multi-camera](is-cameras-py-labtef\deploy\multi-camera)
+5. Inicie os containeres com o comando `python iniciar_principais_containers.py` na pasta principal.
+6. Confira que os containeres listados estão em execução
+7. As câmeras foram iniciadas, visualize-as com o script `capture_images.py` executado dentro do `venv`
 <!-- Necessário completar -->
 ## Repositório do gateway das novas câmeras
 [Spinnaker Gateway do Felippe Mendonça](https://github.com/LabTef-Ifes/is-cameras-py)
