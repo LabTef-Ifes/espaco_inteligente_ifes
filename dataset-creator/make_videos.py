@@ -5,13 +5,14 @@ from utils import load_options
 from is_wire.core import Logger
 import argparse
 
-"""summary
+"""Seleciona as imagens de todas as pastas "pXXXgXX" dentro da pasta `options.folder` e cria um vídeo de cada câmera para cada pasta com o nome "pXXXgXXcXX.mp4".
+Pode ser executado com os argumentos -p e -g para gerar vídeos apenas para uma pessoa e gesto específicos.
 """
 def get_person_gesture(folder):
-    """???
+    """Gera uma tupla (person_id,gesture_id) a partir do nome da pasta
 
     Args:
-        folder (str): _description_
+        folder (str): nome da pasta que contém as fotos. Ex: p001g01
 
     Returns:
         Tuple[int]: (person_id,gesture_id). Ex :(1,1) for p001g01
@@ -48,7 +49,7 @@ for root, dirs, files in os.walk(options.folder):
             continue
         
         # Se tiver person_id_pre e gesture_id_pre, só cria o video se for da mesma pessoa e gesto
-        if (person_id_pre is not None and gesture_id_pre is not None) and not(person_id == person_id_pre and gesture_id == gesture_id_pre):
+        if (person_id_pre is not None and gesture_id_pre is not None) and not (person_id == person_id_pre and gesture_id == gesture_id_pre):
             continue
          
         sequence_folder = os.path.join(options.folder, exp_folder)
