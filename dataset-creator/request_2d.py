@@ -20,8 +20,8 @@ from utils import FrameVideoFetcher, load_options, make_pb_image
 class Skeleton2D:
 # Definição de constantes
     MIN_REQUESTS = 5
-    MAX_REQUESTS = 10
-    DEADLINE_SEC = 15.0
+    MAX_REQUESTS = 15
+    DEADLINE_SEC = 5.0
     JSON2D_FORMAT = '{}_2d.json'
 
     def __init__(self):

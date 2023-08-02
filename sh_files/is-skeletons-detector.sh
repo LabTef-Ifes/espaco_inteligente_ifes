@@ -13,9 +13,9 @@ for i in $(seq 1 $NUM_REPLICAS); do
     CONTAINER_NAME=${CONTAINER_NAME_PREFIX}$i
 
     # Execute o contêiner com o docker run
-    nvidea-docker run -d --rm -d\
+    nvidia-docker run -d --rm -d\
         -v $PWD/is-skeletons-grouper/options.json:/opt/is/options.json \
-        --memory=1g \
+        --memory=2g \
         --gpus=1 \
         --network=host \
         --name $CONTAINER_NAME \

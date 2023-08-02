@@ -4,7 +4,7 @@ import sys
 import json
 import shutil
 import argparse
-from datetime import datetime as DT
+from datetime import datetime as dt
 from collections import defaultdict, OrderedDict
 from subprocess import Popen, PIPE, STDOUT
 import time
@@ -148,7 +148,7 @@ while True:
         continue
     data = np.fromstring(pb_image.data, dtype=np.uint8)
     images_data[camera] = data
-    current_timestamps[camera] = DT.utcfromtimestamp(
+    current_timestamps[camera] = dt.utcfromtimestamp(
         msg.created_at).isoformat()
 
     if len(images_data) == len(options.cameras):

@@ -216,11 +216,10 @@ def consume_images(lock:threading.Lock,topic:int = 0):
         msg = channel.consume()
         lock.release()
         # obtém o id da câmera a partir do tópico da mensagem
-        camera = get_id(msg.topic)
+        camera_id = get_id(msg.topic)
         # verifica se o id da câmera é válido, senão pula para a próxima iteração do loop
-        if camera is None:
+        if camera_id is None:
             continue
-
         # desempacota a mensagem em um objeto do tipo Image
         pb_image = msg.unpack(Image)
         # verifica se o objeto é válido, se não, pula para a próxima iteração do loop
@@ -229,11 +228,11 @@ def consume_images(lock:threading.Lock,topic:int = 0):
 
         # converte o array de bytes da mensagem em um array numpy
         data = np.fromstring(pb_image.data, dtype=np.uint8)
-
+        cv2.imshow('Camera {}'.format(camera_id), data)
         # salva as imagens
         if start_save:
             filename = os.path.join(
-                sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera.id, n_sample))
+                sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera_id, n_sample))
             lock.acquire()
             cv2.imwrite(filename, data)
             lock.release()
@@ -254,7 +253,11 @@ def consume_images(lock:threading.Lock,topic:int = 0):
         
 if __name__ == '__main__':
     lock = threading.Lock()
+    threads = []
     for i in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=consume_images, args=(lock,))
+        threads.append(t)
+    for t in threads:
         t.start()
+    for t in threads:
         t.join()

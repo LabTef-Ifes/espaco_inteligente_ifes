@@ -7,7 +7,7 @@ sudo docker container stop $(sudo docker container ls -q)
 sudo python sh_permission_denied.py
 
 # Change directory and start Docker Compose in detached mode
-cd is-cameras-py-labtef/deploy/multi-camera && sudo docker compose up -d
+cd is-cameras-py-labtef/deploy/multi-camera && sudo docker compose up -d && cd ../../..
 
 # Wait for 7 seconds
 sleep 7
@@ -19,6 +19,6 @@ sleep 7
 #./sh_files/is-mjpeg.sh
 
 # Run the specified scripts
-./sh_files/is-skeletons-detector.sh
-./sh_files/is-frame-transformation.sh
-./sh_files/is-skeletons-grouper.sh
+bash sh_files/is-skeletons-detector.sh
+bash sh_files/is-frame-transformation.sh
+bash sh_files/is-skeletons-grouper.sh

@@ -81,14 +81,14 @@ def draw_info_bar(image, text, x, y,
 
     if draw_circle:
         cv2.circle(
-            display_image,
+            image,
             center=(int(x / 2), int(y - text_height / 2)),
             radius=int(text_height / 3),
             color=(0, 0, 255),
             thickness=cv2.FILLED)
 
     cv2.putText(
-        display_image,
+        image,
         text=text,
         org=(x, y),
         fontFace=fontFace,
@@ -136,7 +136,6 @@ sequence_folder = os.path.join(options.folder, sequence)
 if str(gesture_id) not in gestures:
     log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}",
                  gesture_id, json.dumps(gestures, indent=2))
-    sys.exit(-1)
 
 # Verificando se o id de pessoa informado é válido
 if person_id < 1 or person_id > 999:
@@ -237,12 +236,12 @@ while True:
     if len(images_data) == len(options.cameras):
         # salva as imagens
         if start_save and not sequence_saved:
-            for camera_id in options.cameras:
+            for camera in options.cameras:
                 filename = os.path.join(
                     sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera.id, n_sample))
                 with open(filename, 'wb') as f:
                     f.write(images_data[camera.id])
-                timestamps[camera.id].append(current_timestamps[camera.id])
+                #timestamps[camera.id].append(current_timestamps[camera.id])
             n_sample += 1
             log.info('Sample {} saved', n_sample)
 
@@ -251,7 +250,7 @@ while True:
             # decodifica as imagens para o formato BGR
             images = [
                 cv2.imdecode(data, cv2.IMREAD_COLOR)
-                for _, data in images_data.items()
+                for data in images_data.values()
             ]
             place_images(full_image, images)
             display_image = cv2.resize(full_image, (0, 0), fx=0.5, fy=0.5)
@@ -275,10 +274,10 @@ while True:
 
             if key == ord('p'):
                 start_save = False
-                timestamps_filename = os.path.join(
-                        options.folder, '{}_timestamps.json'.format(sequence))
-                with open(timestamps_filename, 'w') as f:
-                    json.dump(timestamps, f, indent=2, sort_keys=True)
+                #timestamps_filename = os.path.join(
+                #        options.folder, '{}_timestamps.json'.format(sequence))
+                #with open(timestamps_filename, 'w') as f:
+                #    json.dump(timestamps, f, indent=2, sort_keys=True)
 
             if key == ord('q'):
                 break

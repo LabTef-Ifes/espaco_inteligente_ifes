@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import re
 import os
 import sys
@@ -8,22 +7,21 @@ import shutil
 import argparse
 from datetime import datetime as dt
 from collections import defaultdict, OrderedDict
-from subprocess import PIPE, STDOUT
-import multiprocessing
 import cv2
 import numpy as np
 from utils import load_options
 from is_msgs.image_pb2 import Image
 from is_wire.core import Channel, Subscription, Message, Logger
 
-# Conferir se é melhor fazer o imwrite direto ou salvar tudo e fazer depois
-# Estou fazendo multithreading, que compartilha recursos entre as threads. Para isolar os recursos, usar multiprocessing
 """_summary_
 """
-NUMBER_OF_PROCESSES = 4
+# Iniciando o logger
+log = Logger(name='capture-images')
+# Carregando as opções de configuração
+options = load_options(print_options=False)
 
 def get_id(topic):
-    """A partir do nome do tópico 'CameraGateway.(\d+).Frame' retorna o id da câmera
+    """_summary_
 
     Args:
         topic (_type_): _description_
@@ -39,27 +37,25 @@ def get_id(topic):
     return int(match.group(1))
 
 def place_images(output_image, images_):
-    """Enquadra 4 imagens em uma única imagem
+    """_summary_
 
     Args:
-        output_image_ (_type_): _description_
+        output_image (_type_): _description_
         images_ (_type_): _description_
     """
     h, w = images_[0].shape[0:2]
-    output_image_ = output_image.copy()
 
-    output_image_[0:h, 0:w, :] = images_[0]
-    output_image_[0:h, w:2 * w, :] = images_[1]
-    output_image_[h:2 * h, 0:w, :] = images_[2]
-    output_image_[h:2 * h, w:2 * w, :] = images_[3]
+    output_image[0:h, 0:w, :] = images_[0]
+    output_image[0:h, w:2 * w, :] = images_[1]
+    output_image[h:2 * h, 0:w, :] = images_[2]
+    output_image[h:2 * h, w:2 * w, :] = images_[3]
 
-    return output_image_
 
 def draw_info_bar(image, text, x, y,
                   background_color=(0, 0, 0),
                   text_color=(255, 255, 255),
                   draw_circle=False):
-    """Draw a bar on top of the image
+    """_summary_
 
     Args:
         image (_type_): _description_
@@ -99,6 +95,8 @@ def draw_info_bar(image, text, x, y,
         fontScale=fontScale,
         color=text_color,
         thickness=thickness)
+
+
 def get_gestures():
     """_summary_
 
@@ -127,36 +125,7 @@ def get_person_gesture_by_parser():
     parser.add_argument(
         '--gesture', '-g', type=int, required=True, help='ID to identity gesture')
     args = parser.parse_args()
-
-    # Verificando se o id de pessoa informado é válido
-    if args.person < 1 or args.person > 999:
-        log.critical(
-            "Invalid PERSON_ID: {}. Must be between 1 and 999.", args.person)
-
     return args.person, args.gesture
-
-
-# Carregando as opções de configuração
-options = load_options(print_options=False)
-# Iniciando o logger
-log = Logger(name='capture-images')
-# cria um dicionário vazio para armazenar os timestamps de cada imagem
-current_timestamps = {}
-# cria um dicionário vazio para armazenar as imagens de cada câmera
-images = {}
-
-# cria um defaultdict vazio para armazenar os timestamps de cada câmera
-timestamps = defaultdict(list)
-
-# inicializa o número de amostras
-n_sample = 0
-
-# inicializa a taxa de exibição e a variável de controle para salvar a sequência
-display_rate = 2
-start_save = False
-# inicializa a variável que indica se a sequência foi salva
-sequence_saved = False
-
 gestures = get_gestures()
 
 person_id, gesture_id = get_person_gesture_by_parser()
@@ -164,14 +133,24 @@ person_id, gesture_id = get_person_gesture_by_parser()
 sequence = 'p{:03d}g{:02d}'.format(person_id, gesture_id)
 sequence_folder = os.path.join(options.folder, sequence)
 
+if str(gesture_id) not in gestures:
+    log.critical("Invalid GESTURE_ID: {}. \nAvailable gestures: {}",
+                 gesture_id, json.dumps(gestures, indent=2))
+
+# Verificando se o id de pessoa informado é válido
+if person_id < 1 or person_id > 999:
+    log.critical(
+        "Invalid PERSON_ID: {}. Must be between 1 and 999.", person_id)
+
 # Exibindo os ids de pessoa e gesto informados
 log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
+
 
 # Verificando se a pasta para armazenamento das imagens existe e, se não existe, criando-a
 if not os.path.exists(options.folder):
     os.makedirs(options.folder)
 
-# Verificando se já existe uma pasta com o mesmo nome da sequência a ser salva, e perguntando ao usuário se deseja
+# Verifica se já existe uma pasta com o mesmo nome da sequência a ser salva, e perguntando ao usuário se deseja
 # sobrescrevê-la, caso ela exista
 if os.path.exists(sequence_folder):
     log.warn(
@@ -192,73 +171,123 @@ os.makedirs(sequence_folder)
 # cria um objeto do tipo Channel passando o URI do broker como parâmetro
 channel = Channel(options.broker_uri)
 
-#subscription_list = [Subscription(channel) for _ in range(len(options.cameras))]
-subscription=Subscription(channel)
+# cria um objeto do tipo Subscription passando o objeto channel como parâmetro
+subscription = Subscription(channel)
 
-for i in range(len(options.cameras)):
-    subscription.subscribe(f'CameraGateway.{i}.Frame')
+# itera sobre as câmeras presentes nas opções do programa e se inscreve no tópico de cada uma
+for camera in options.cameras:
+    subscription.subscribe('CameraGateway.{}.Frame'.format(camera.id))
 
 # cria um array de zeros que será utilizado para armazenar a imagem completa
 size = (2 * options.cameras[0].config.image.resolution.height,
-        2 * options.cameras[0].config.image.resolution.width, 
-        3)
+        2 * options.cameras[0].config.image.resolution.width, 3)
 full_image = np.zeros(size, dtype=np.uint8)
 
-start_save = False
-def consume_images(lock:multiprocessing.Lock,topic:int = 0):
-    global start_save
+# cria um dicionário vazio para armazenar as imagens das câmeras
+images_data = {}
+# cria um dicionário vazio para armazenar os timestamps de cada imagem
+current_timestamps = {}
+# cria um dicionário vazio para armazenar as imagens de cada câmera
+images = {}
 
-    #images_dict = defaultdict(list)
+# cria um defaultdict vazio para armazenar os timestamps de cada câmera
+timestamps = defaultdict(list)
+
+# inicializa o número de amostras
+n_sample = 0
+
+# inicializa a taxa de exibição e a variável de controle para salvar a sequência
+display_rate = 2
+start_save = False
+# inicializa a variável que indica se a sequência foi salva
+sequence_saved = False
+
+# inicializa a barra de informações que será exibida na imagem
+info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(
+    person_id, gesture_id, gestures[str(gesture_id)])
+
+def main():
+    global start_save,n_sample,sequence_saved,display_rate,info_bar_text
     # loop principal do programa
     while True:
         # consome uma mensagem do canal
-        lock.acquire()
         msg = channel.consume()
-        lock.release()
+
         # obtém o id da câmera a partir do tópico da mensagem
-        camera = get_id(msg.topic)
+        camera_id = get_id(msg.topic)
+
         # verifica se o id da câmera é válido, senão pula para a próxima iteração do loop
-        if camera is None:
+        if camera_id is None:
             continue
 
         # desempacota a mensagem em um objeto do tipo Image
         pb_image = msg.unpack(Image)
-        # verifica se o objeto é válido, se não, pula para a próxima iteração do loop
+        # verifica se o objeto é válido, senão pula para a próxima iteração do loop
         if pb_image is None:
             continue
 
         # converte o array de bytes da mensagem em um array numpy
         data = np.fromstring(pb_image.data, dtype=np.uint8)
 
-        # salva as imagens
-        if start_save:
-            filename = os.path.join(
-                sequence_folder, f'c{camera.id:02d}s{n_sample:08d}.jpeg')
-            lock.acquire()
-            cv2.imwrite(filename, data)
-            lock.release()
+        # armazena a imagem e o timestamp no dicionário correspondente
+        images_data[camera_id] = data
+        current_timestamps[camera_id] = dt.utcfromtimestamp(
+            msg.created_at).isoformat()
 
-            n_sample += 1
-            log.info('Sample {} saved', n_sample) #Pode dar erro durante o paralelismo
+        # verifica se todas as imagens foram recebidas
+        if len(images_data) == len(options.cameras):
+            # salva as imagens
+            if start_save and not sequence_saved:
+                for camera in options.cameras:
+                    filename = os.path.join(
+                        sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(camera.id, n_sample))
+                    with open(filename, 'wb') as f:
+                        f.write(images_data[camera.id])
+                    #timestamps[camera.id].append(current_timestamps[camera.id])
+                n_sample += 1
+                log.info('Sample {} saved', n_sample)
 
-        if cv2.waitKey(1) & 0xFF == ord('s'):
-            start_save = True
-            log.info('Start saving samples')
-        
-        if cv2.waitKey(1) & 0xFF == ord('p'):
-            start_save = False
-            log.info('Stop saving samples')
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-        
+            # exibe as imagens
+            if n_sample % display_rate == 0:
+                # decodifica as imagens para o formato BGR
+                images = [
+                    cv2.imdecode(data, cv2.IMREAD_COLOR)
+                    for data in images_data.values()
+                ]
+                place_images(full_image, images)
+                display_image = cv2.resize(full_image, (0, 0), fx=0.5, fy=0.5)
+                # put recording message
+                draw_info_bar(
+                    display_image,
+                    info_bar_text,
+                    x=50,
+                    y=50,
+                    draw_circle=start_save and not sequence_saved)
+
+                cv2.imshow('', display_image)
+                key = cv2.waitKey(1)
+                if key == ord('s'):
+                    if not start_save:
+                        start_save = True
+
+                    elif not sequence_saved:
+                        
+                        sequence_saved = True
+
+                if key == ord('p'):
+                    start_save = False
+                    #timestamps_filename = os.path.join(
+                    #        options.folder, '{}_timestamps.json'.format(sequence))
+                    #with open(timestamps_filename, 'w') as f:
+                    #    json.dump(timestamps, f, indent=2, sort_keys=True)
+
+                if key == ord('q'):
+                    break
+            # clear dicts
+            images_data.clear()
+            current_timestamps.clear()
+
 if __name__ == '__main__':
-
-    # create a default process pool
-    with multiprocessing.Pool(processes=NUMBER_OF_PROCESSES) as pool:
-        lock = multiprocessing.Lock()
-        
-
-        # create a lock
-
-        
+    main()
+    
+log.info("Exiting")
