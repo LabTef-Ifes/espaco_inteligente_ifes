@@ -53,7 +53,8 @@
     | skX (X in [1,2,...])                | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
     | is-frame_transformation             |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
     | grouper                             |                                                                    Descrito na [citação abaixo](#grouper) |
-<!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator. 8. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
+<!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator. 
+8. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
 
 ---
 # Informações importantes
@@ -77,7 +78,7 @@ Há diversos topicos de comunicação relacionados à captura de imagem, envio d
 
 O `rabbit` e o `zipkin` são essenciais para a utilização da comunicação do EI e devem ser os primeiros serviços iniciados
 
-A ultima versão desenvolvida na Ufes do `frame-transformation` é a `0.0.4`
+A ultima versão desenvolvida na Ufes da Image `frame-transformation` é a `0.0.4`
 
 Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _schema_ correto no diretorio definido no volume do docker `is-frame_transformation`
 
@@ -152,13 +153,14 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 
 ## Repositório do gateway das novas câmeras
 [Spinnaker Gateway do Felippe Mendonça](https://github.com/LabTef-Ifes/is-cameras-py)
+[Spinnaker Gateway modificado para o labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef)
 
 ## Artigos
 - [Drive da Mariana](https://drive.google.com/drive/folders/1TIPGF9pkX-jDV5Voz08XtdeS18ijzYBG?usp=sharing)
 - [PPSUS 2021](https://drive.google.com/drive/folders/1USJJMGo9zSRY3Z4sJmGX9pXoy-Q5_ksf?usp=sharing)
 ## Espaço Inteligente
-- [Curso de Espaço Inteligente](https://github.com/LabTef-Ifes/CursoEI)
 - Projeto original: [LabViros](https://github.com/labviros)
+- [Curso de Espaço Inteligente](https://github.com/LabTef-Ifes/CursoEI)
 - [Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
 - [dataset-creator original](https://github.com/felippe-mendonca/dataset-creator/)
 ## Calibração das câmeras
@@ -173,7 +175,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 ---
 # Recomendações de estudo
 
-- [CursoEI](https://github.com/LabTef-Ifes/CursoEI)
+- [Introdução aos conceitos do EI - CursoEI](https://github.com/LabTef-Ifes/CursoEI)
 - [Github by The Coding Train](https://www.youtube.com/playlist?list=PLRqwX-V7Uu6ZF9C0YMKuns9sLDzK6zoiV)
 - [Curso de Git e GitHub do CursoEmVideo](https://www.cursoemvideo.com/curso/curso-de-git-e-github/)
 
