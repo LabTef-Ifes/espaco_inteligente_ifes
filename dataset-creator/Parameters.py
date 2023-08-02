@@ -259,9 +259,8 @@ class Parameter:
                                 ** 2 + (left_hip[2] - left_knee[2]) ** 2)
                     b = np.sqrt((left_knee[1] - left_ankle[1])
                                 ** 2 + (left_knee[2] - left_ankle[2]) ** 2)
-                    produto = ((pow(a, 2) + pow(b, 2) -
-                               pow(c, 2)) / (2 * a * b))
-                    left_knee_angle = (180 - math.degrees(math.acos(produto)))
+                    produto = ((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b)) #Lei dos cossenos?
+                    left_knee_angle = (180 - math.degrees(math.acos(produto))) #180- cos^-1(lei dos cossenos)
 
                     v0 = ((neck[1] - left_hip[1]), (neck[2] - left_hip[2]))
                     v1 = ((left_knee[1] - left_hip[1]),
@@ -401,6 +400,7 @@ class Parameter:
     @staticmethod
     def right_leg(skeletons):
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
+        # Não deveria ter tanta variavel solta, poderia ser classe ou dicionario
         right_hip = None
         right_knee = None
         right_ankle = None
@@ -483,6 +483,7 @@ class Parameter:
                     right_leg = 0
                     largura_de_passo = 0
                     right_knee_angle = 0
+        #Todos os returns são iguais. Código sujo
                     return right_leg, height_mid_point_ankle, largura_de_passo, right_knee_angle, altura_pe_direito, altura_pe_esquerdo, right_ankle, left_ankle
 
         else:
@@ -558,7 +559,7 @@ class Parameter:
         plt.savefig(options.folder + '/resultado.png')
 
         # Regras para a classificação
-
+        # Muitas rules em variável, impossível.
         rule1 = ctrl.Rule(velocidade['normal'] & cadencia['normal'] &
                           largura['normal'] & comprimento['normal'], resultado['certo'])
         rule2 = ctrl.Rule(velocidade['rápido'] & cadencia['alta'] &
@@ -1053,7 +1054,7 @@ class Parameter:
                                'normal_time_up'], movimento['Time Up and Go'])
         rule54 = ctrl.Rule(cadencia['normal_assimetria'] &
                            largura_da_passada['normal_circulos'], movimento['Circundacao do pe'])
-
+        # Tem desde rule1 até rule54
         # movimento_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10,
         # rule11, rule12, rule13, rule14, rule15, rule16, rule17, rule18, rule19, rule20, rule21, rule22, rule23,
         # rule24,rule25, rule26, rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35,
@@ -1165,6 +1166,7 @@ class Parameter:
             break
         return altura_da_pessoa
 
+    #variaveis Perna direita e esquerda não usadas
     @staticmethod
     def angulo_caminhada(perna_direita, perna_esquerda, picos_distancia, altura_quadril):
         """_summary_
@@ -1406,9 +1408,9 @@ class Parameter:
             vetor_erro_comprimento_de_passo.append(
                 abs(comprimento_passo_real - comprimento_passo_medido[j]))
 
-        for i in range(0, len(picos_distancia)):
+        for j in range(0, len(picos_distancia)):
             vetor_erro_comprimento_de_meio_passo.append(
-                abs(comprimento_medio_real_de_meio_passo - picos_distancia[i]))
+                abs(comprimento_medio_real_de_meio_passo - picos_distancia[j]))
 
         for j in range(0, len(comprimento_stance)):
             vetor_erro_comprimento_stance.append(
