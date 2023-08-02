@@ -254,7 +254,11 @@ def consume_images(lock:threading.Lock,topic:int = 0):
         
 if __name__ == '__main__':
     lock = threading.Lock()
+    threads = []
     for i in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=consume_images, args=(lock,))
+        threads.append(t)
+    for t in threads:
         t.start()
+    for t in threads:
         t.join()
