@@ -25,7 +25,7 @@ def get_person_gesture(folder):
     """
     match = re.search(r'p(\d+)g(\d+)', folder)
     if match is None:
-        return None
+        return None, None
     return int(match.group(1)), int(match.group(2))
 
 
