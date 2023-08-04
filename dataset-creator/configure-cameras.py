@@ -2,21 +2,21 @@ from is_wire.core import Channel, Subscription, Message, Logger
 from utils import load_options
 
 """
-__summary__
+????
 """
 
 log = Logger(name='ConfigureCameras')
 
 options = load_options()
 channel = Channel(options.broker_uri)
-sb = Subscription(c)
+subscription = Subscription(channel)
 
 cids = {}
 for camera in options.cameras:
     log.info("Camera: {}\nConfiguration: {}", camera.id, camera.config)
     msg = Message()
     msg.pack(camera.config)
-    msg.reply_to = sb
+    msg.reply_to = subscription
     msg.topic = 'CameraGateway.{}.SetConfig'.format(camera.id)
     channel.publish(msg)
     cids[msg.correlation_id] = {'camera': camera.id, 'ok': False}
