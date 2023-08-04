@@ -12,7 +12,7 @@ import numpy as np
 from utils import load_options
 from is_msgs.image_pb2 import Image
 from is_wire.core import Channel, Subscription, Message, Logger
-
+import multiprocessing as mp
 """_summary_
 """
 # Iniciando o logger
@@ -206,7 +206,7 @@ sequence_saved = False
 info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(
     person_id, gesture_id, gestures[str(gesture_id)])
 
-def main():
+def main(topic = 0):
     global start_save,n_sample,sequence_saved,display_rate,info_bar_text
     # loop principal do programa
     while True:
@@ -215,11 +215,10 @@ def main():
 
         # obtém o id da câmera a partir do tópico da mensagem
         camera_id = get_id(msg.topic)
-
         # verifica se o id da câmera é válido, senão pula para a próxima iteração do loop
         if camera_id is None:
             continue
-
+        print(camera_id)
         # desempacota a mensagem em um objeto do tipo Image
         pb_image = msg.unpack(Image)
         # verifica se o objeto é válido, senão pula para a próxima iteração do loop
@@ -264,6 +263,7 @@ def main():
                     y=50,
                     draw_circle=start_save and not sequence_saved)
 
+                #if camera_id == 0:
                 cv2.imshow('', display_image)
                 key = cv2.waitKey(1)
                 if key == ord('s'):
@@ -286,8 +286,16 @@ def main():
             # clear dicts
             images_data.clear()
             current_timestamps.clear()
-
+    cv2.destroyAllWindows()
 if __name__ == '__main__':
-    main()
-    
+    # Run main with multiprocessing
+    processes = []
+    with mp.Pool(5) as p:
+        for i in range(2):
+            p.apply(main, args=(i,))
+            processes.append(p)
+        for p in processes:
+            p.close()
+            p.join()
+
 log.info("Exiting")
