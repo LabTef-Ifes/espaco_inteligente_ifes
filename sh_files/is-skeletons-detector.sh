@@ -1,26 +1,33 @@
-#!/bin/bash
+nvidia-docker run --rm -d \
+  --memory=2g \
+  --gpus=1 \
+  --network=host \
+  --name=sk1 \
+  labviros/is-skeletons-detector:0.0.2-openpose ./rpc.bin
+   #./stream.bin #./rpc.bin #
 
-# Defina a quantidade de réplicas que você deseja criar
-NUM_REPLICAS=4
+ nvidia-docker run --rm -d \
+   --memory=2g \
+   --gpus=1 \
+   --network=host \
+   --name=sk2 \
+   labviros/is-skeletons-detector:0.0.2-openpose ./rpc.bin
+   #./stream.bin #./rpc.bin
 
-# Defina o nome do contêiner e o nome da imagem
-CONTAINER_NAME_PREFIX=sk
-IMAGE_NAME=labviros/is-skeletons-detector:0.0.2-openpose
+ nvidia-docker run --rm -d \
+   --memory=2g \
+   --gpus=1 \
+   --network=host \
+   --name=sk3 \
+   labviros/is-skeletons-detector:0.0.2-openpose ./rpc.bin
+    #./stream.bin #./rpc.bin #
 
-# Loop para criar e executar as réplicas
-for i in $(seq 1 $NUM_REPLICAS); do
-    # Defina o nome do contêiner com um sufixo numérico
-    CONTAINER_NAME=${CONTAINER_NAME_PREFIX}$i
+ nvidia-docker run --rm -d \
+   --memory=2g \
+   --gpus=1 \
+   --network=host \
+   --name=sk4 \
+   labviros/is-skeletons-detector:0.0.2-openpose ./rpc.bin
+   #./stream.bin #./rpc.bin 
 
-    # Execute o contêiner com o docker run
-    nvidia-docker run -d --rm -d\
-        -v $PWD/is-skeletons-grouper/options.json:/opt/is/options.json \
-        --memory=2g \
-        --gpus=1 \
-        --network=host \
-        --name $CONTAINER_NAME \
-        $IMAGE_NAME ./stream.bin /options.json
-
-    # Aguarde um curto período antes de iniciar a próxima réplica
-    sleep 0.5
-done
+# Inicia várias instâncias do detector para aumentar o poder de processamento
