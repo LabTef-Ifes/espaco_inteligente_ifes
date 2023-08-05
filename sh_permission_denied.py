@@ -10,5 +10,5 @@ sh: 1: ./sh_files/is-skeletons-grouper.sh: Permission denied
 '''
 
 import os
-os.system("chmod -R +x .")
+os.system("chmod +x sh_files/*.sh")
 
