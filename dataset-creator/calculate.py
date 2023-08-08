@@ -2,6 +2,7 @@
 import json
 import numpy as np
 import math
+from collections import defaultdict
 '''
 HumanKeypoints
 Models keypoints present in the human body.
@@ -160,7 +161,7 @@ class Calculate:
             Returns:
                 float: angulo em graus
             """
-            assert self.point_a == vector.point_a, "Os vetores devem ter o mesmo ponto de origem"
+            #assert self.point_a == vector.point_a, "Os vetores devem ter o mesmo ponto de origem"
             return math.degrees(math.acos(np.dot(self.vector, vector.vector)/(self.magnitude*vector.magnitude)))
 
         # Define a operação //
@@ -169,19 +170,18 @@ class Calculate:
 
     def __init__(self, file3d):
         # Dicionario para guardar as informações que serão plotadas posteriormente
-        self.plot_data: dict = {}
+        self.plot_data: dict = defaultdict(list)
         self.file3d = file3d
         self.data = self.read_json()
         self.frames = len(self.data)
-        self.skeleton: Skeleton = Skeleton(self.data[0])
         self.dt = 1/6 # Tempo entre cada frame. inverso de frames por segundo
 
     def run_frames(self):
         """Passa por todos os frames, calculando as informações necessárias para o plot usando a classe Skeleton para guardar as informações. Ao final, chama a função que plota os dados"""
         for i, frame_info in enumerate(self.data):
-            self.skeleton = Skeleton(frame_info)
+            self._calculate_angle('13','14','15', frame_info)
 
-    def _calculate_angle(self, first, central, last):
+    def _calculate_angle(self, first, central, last,frame:int):
         """Calcula o ângulo entre tres pontos. 
         Função usada por outras funções para calcular ângulos entre segmentos do corpo. 
         Recebe os ids das partes do corpo em string.
@@ -194,19 +194,23 @@ class Calculate:
         Returns:
             float: ângulo em graus
         """
+        try:
+            first_joint:Skeleton.Joint = Skeleton(frame).joints[first]
+            central_joint:Skeleton.Joint = Skeleton(frame).joints[central]
+            last_joint:Skeleton.Joint = Skeleton(frame).joints[last]
 
-        first_joint = self.skeleton.joints[first]
-        central_joint = self.skeleton.joints[central]
-        last_joint = self.skeleton.joints[last]
-        first_vector = Calculate.Vector(central_joint, first_joint)
-        second_vector = Calculate.Vector(central_joint, last_joint)
-        return first_vector // second_vector
-
+            first_vector = Calculate.Vector(central_joint, first_joint)
+            second_vector = Calculate.Vector(central_joint, last_joint)
+        
+        except KeyError:
+            return np.nan
+        else:
+            return first_vector // second_vector
+    
     def read_json(self):
         with open(self.file3d) as f:
             data: list = json.load(f)['localizations']
         return data
-
 
 if __name__ == "__main__":
     calc = Calculate('videos/p001g01_3d.json')
