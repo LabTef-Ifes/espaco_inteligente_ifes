@@ -254,18 +254,19 @@ def main(topic:int = 0):
                     cv2.imdecode(data, cv2.IMREAD_COLOR)
                     for data in images_data.values()
                 ]
-                place_images(full_image, images)
-                display_image = cv2.resize(full_image, (0, 0), fx=0.5, fy=0.5)
+                #place_images(full_image, images)
+                #display_image = cv2.resize(full_image, (0, 0), fx=0.5, fy=0.5)
                 # put recording message
+                show_image = images[0]
                 draw_info_bar(
-                    display_image,
+                    show_image,
                     info_bar_text,
                     x=50,
                     y=50,
                     draw_circle=start_save and not sequence_saved)
 
                 #if camera_id == 0:
-                cv2.imshow('', display_image)
+                cv2.imshow('', show_image)
                 key = cv2.waitKey(1)
                 if key == ord('s'):
                     if not start_save:
@@ -292,7 +293,7 @@ if __name__ == '__main__':
     # Run main with multiprocessing
     processes = []
     with ThreadPoolExecutor(max_workers=2) as executor:#(max_workers=len(options.cameras)) as executor:
-        for i in range(2):
+        for i in range(1):
             processes.append(executor.submit(main, i))
         for task in as_completed(processes):
             try:
