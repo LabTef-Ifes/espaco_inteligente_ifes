@@ -13,6 +13,7 @@ from utils import load_options
 from is_msgs.image_pb2 import Image
 from is_wire.core import Channel, Subscription, Message, Logger
 import multiprocessing as mp
+from concurrent.futures import ThreadPoolExecutor,as_completed
 """_summary_
 """
 # Iniciando o logger
@@ -170,10 +171,10 @@ os.makedirs(sequence_folder)
 
 # cria um objeto do tipo Channel passando o URI do broker como parâmetro
 channel = Channel(options.broker_uri)
-
+channels = [Channel(options.broker_uri) for cam in range(len(options.cameras))]
 # cria um objeto do tipo Subscription passando o objeto channel como parâmetro
 subscription = Subscription(channel)
-
+subscriptions = [Subscription(channels[cam]) for cam in range(len(options.cameras))]
 # itera sobre as câmeras presentes nas opções do programa e se inscreve no tópico de cada uma
 for camera in options.cameras:
     subscription.subscribe('CameraGateway.{}.Frame'.format(camera.id))
@@ -206,7 +207,7 @@ sequence_saved = False
 info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(
     person_id, gesture_id, gestures[str(gesture_id)])
 
-def main(topic = 0):
+def main(topic:int = 0):
     global start_save,n_sample,sequence_saved,display_rate,info_bar_text
     # loop principal do programa
     while True:
@@ -218,7 +219,7 @@ def main(topic = 0):
         # verifica se o id da câmera é válido, senão pula para a próxima iteração do loop
         if camera_id is None:
             continue
-        print(camera_id)
+        #print(camera_id)
         # desempacota a mensagem em um objeto do tipo Image
         pb_image = msg.unpack(Image)
         # verifica se o objeto é válido, senão pula para a próxima iteração do loop
@@ -290,12 +291,14 @@ def main(topic = 0):
 if __name__ == '__main__':
     # Run main with multiprocessing
     processes = []
-    with mp.Pool(5) as p:
+    with ThreadPoolExecutor(max_workers=2) as executor:#(max_workers=len(options.cameras)) as executor:
         for i in range(2):
-            p.apply(main, args=(i,))
-            processes.append(p)
-        for p in processes:
-            p.close()
-            p.join()
+            processes.append(executor.submit(main, i))
+        for task in as_completed(processes):
+            try:
+                task.result()
+            except Exception as e:
+                log.error(e)
+    
 
 log.info("Exiting")
