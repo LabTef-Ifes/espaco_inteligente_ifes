@@ -3,7 +3,7 @@ from collections import defaultdict
 import json
 import numpy as np
 import math
-
+import matplotlib.pyplot as plt
 """
 HumanKeypoints
 Models keypoints present in the human body.
@@ -217,12 +217,14 @@ class Calculate:
             ## Joelho direito
             self.plot_data["angulo_joelho_direito"].append(self.angulo_joelho_direito())
 
-    def angulo_tronco_vertical(self, joint_tronco="20"):  # 20 é o id do peito no HKP
+    def angulo_tronco_vertical(self):  # 20 é o id do peito no HKP
+        joint_tronco = self.human_parts_name["CHEST"]
+        joint_neck = self.human_parts_name["NECK"]
         chest: Skeleton.Joint = self.skeleton.joints[joint_tronco]
-        neck: Skeleton.Joint = self.skeleton.joints[Calculate.human_parts_name["NECK"]]
+        neck: Skeleton.Joint = self.skeleton.joints[joint_neck]
         point_vertical = chest + Skeleton.Joint(
             "vertical", 0, 0, 1
-        )  # Ponto uma unidade de z acima do chest
+        )  # uma unidade de z acima do chest
 
         vertical_vector = Calculate.Vector(
             chest, point_vertical
@@ -271,10 +273,22 @@ class Plot:
     def __init__(self, data):
         self.data = data
 
+        self.plot()
     
+    def plot(self):
+        self.plot_joelho()
 
-
+    def plot_joelho(self):
+        fig, ax = plt.subplots()
+        ax.plot(self.data["angulo_joelho_direito"], label="Joelho Direito")
+        ax.plot(self.data["angulo_joelho_esquerdo"], label="Joelho Esquerdo")
+        ax.legend()
+        plt.savefig("angulo_joelho.png")
+        plt.show()
+    
 if __name__ == "__main__":
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
-    print(calc.plot_data['angulo_joelho_direito'])
+
+    plot = Plot(calc.plot_data)
+    
