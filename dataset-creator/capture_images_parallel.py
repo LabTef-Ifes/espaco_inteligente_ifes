@@ -207,7 +207,7 @@ sequence_saved = False
 info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(
     person_id, gesture_id, gestures[str(gesture_id)])
 
-def main(topic:int = 0):
+def main(topic = 0):
     global start_save,n_sample,sequence_saved,display_rate,info_bar_text
     # loop principal do programa
     while True:
