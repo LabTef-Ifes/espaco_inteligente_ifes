@@ -126,29 +126,29 @@ class Calculate:
         "19": "LEFT_EAR",
         "20": "CHEST",
     }
-    human_parts_name: dict = {
-        "UNKNOWN_HUMAN_KEYPOINT": 0,
-        "HEAD": 1,
-        "NOSE": 2,
-        "NECK": 3,
-        "RIGHT_SHOULDER": 4,
-        "RIGHT_ELBOW": 5,
-        "RIGHT_WRIST": 6,
-        "LEFT_SHOULDER": 7,
-        "LEFT_ELBOW": 8,
-        "LEFT_WRIST": 9,
-        "RIGHT_HIP": 10,
-        "RIGHT_KNEE": 11,
-        "RIGHT_ANKLE": 12,
-        "LEFT_HIP": 13,
-        "LEFT_KNEE": 14,
-        "LEFT_ANKLE": 15,
-        "RIGHT_EYE": 16,
-        "LEFT_EYE": 17,
-        "RIGHT_EAR": 18,
-        "LEFT_EAR": 19,
-        "CHEST": 20,
-    }
+    human_parts_name = {
+    "UNKNOWN_HUMAN_KEYPOINT": "0",
+    "HEAD": "1",
+    "NOSE": "2",
+    "NECK": "3",
+    "RIGHT_SHOULDER": "4",
+    "RIGHT_ELBOW": "5",
+    "RIGHT_WRIST": "6",
+    "LEFT_SHOULDER": "7",
+    "LEFT_ELBOW": "8",
+    "LEFT_WRIST": "9",
+    "RIGHT_HIP": "10",
+    "RIGHT_KNEE": "11",
+    "RIGHT_ANKLE": "12",
+    "LEFT_HIP": "13",
+    "LEFT_KNEE": "14",
+    "LEFT_ANKLE": "15",
+    "RIGHT_EYE": "16",
+    "LEFT_EYE": "17",
+    "RIGHT_EAR": "18",
+    "LEFT_EAR": "19",
+    "CHEST": "20",
+}
 
     class Vector:
         """Um segmento do corpo pode ser tratado como um vetor, com origem no ponto A e destino no ponto B. Assim, usamos álgebra para obter sua magnitude e ângulo criando vetores entre dois pontos do corpo."""
@@ -208,7 +208,7 @@ class Calculate:
             # Calcula os ângulos entre os segmentos do corpo
 
             ## Angulo do tronco com o eixo vertical
-            self.plot_data["angulo_tronco"].append(self.angulo_tronco_vertical)
+            self.plot_data["angulo_tronco"].append(self.angulo_tronco_vertical())
 
             ## Joelho esquerdo
             self.plot_data["angulo_joelho_esquerdo"].append(
@@ -218,21 +218,25 @@ class Calculate:
             self.plot_data["angulo_joelho_direito"].append(self.angulo_joelho_direito())
 
     def angulo_tronco_vertical(self):  # 20 é o id do peito no HKP
-        joint_tronco = self.human_parts_name["CHEST"]
-        joint_neck = self.human_parts_name["NECK"]
-        chest: Skeleton.Joint = self.skeleton.joints[joint_tronco]
-        neck: Skeleton.Joint = self.skeleton.joints[joint_neck]
-        point_vertical = chest + Skeleton.Joint(
-            "vertical", 0, 0, 1
-        )  # uma unidade de z acima do chest
+        try:
+            joint_tronco = self.human_parts_name["CHEST"]
+            joint_neck = self.human_parts_name["NECK"]
+            chest: Skeleton.Joint = self.skeleton.joints[joint_tronco]
+            neck: Skeleton.Joint = self.skeleton.joints[joint_neck]
+            point_vertical = chest + Skeleton.Joint(
+                "vertical", 0, 0, 1
+            )  # uma unidade de z acima do chest
 
-        vertical_vector = Calculate.Vector(
-            chest, point_vertical
-        )  # Vetor paralelo ao eixo z
-        chest_neck_vector = Calculate.Vector(
-            chest, neck
-        )  # Vetor entre o peito e o pescoço
-        return vertical_vector // chest_neck_vector  # Angulo
+            vertical_vector = Calculate.Vector(
+                chest, point_vertical
+            )  # Vetor paralelo ao eixo z
+            chest_neck_vector = Calculate.Vector(
+                chest, neck
+            )  # Vetor entre o peito e o pescoço
+        except KeyError:
+            return np.nan
+        else:
+            return round(vertical_vector // chest_neck_vector,3)  # Angulo
 
     def _calculate_angle(self, first, central, last):
         """Calcula o ângulo entre tres pontos.
@@ -277,18 +281,29 @@ class Plot:
     
     def plot(self):
         self.plot_joelho()
-
+        self.plot_tronco()
     def plot_joelho(self):
         fig, ax = plt.subplots()
         ax.plot(self.data["angulo_joelho_direito"], label="Joelho Direito")
         ax.plot(self.data["angulo_joelho_esquerdo"], label="Joelho Esquerdo")
+        ax.set_title("Ângulo do Joelho(graus)")
+        ax.set_xlabel("Frame")
+        ax.set_ylabel("Ângulo")
         ax.legend()
+        
         plt.savefig("angulo_joelho.png")
-        plt.show()
-    
+    def plot_tronco(self):
+        fig,ax = plt.subplots()
+        ax.plot(self.data["angulo_tronco"], label="Ângulo do tronco")
+        ax.set_title("Ângulo do tronco(graus)")
+        ax.set_xlabel("Frame")
+        ax.set_ylabel("Ângulo com o plano vertical")
+        ax.legend()
+        plt.savefig("angulo_tronco.png")
 if __name__ == "__main__":
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
+    print(calc.plot_data['angulo_tronco'])
 
     plot = Plot(calc.plot_data)
     
