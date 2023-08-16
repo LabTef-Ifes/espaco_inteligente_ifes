@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
+import os
 import json
 import numpy as np
 import math
@@ -165,7 +166,7 @@ class Calculate:
             return np.array([self.x, self.y, self.z])
 
         @property
-        def magnitude(self):
+        def magnitude(self) -> float:
             return np.linalg.norm(self.vector)
 
         def calculate_angle(self, vector):
@@ -205,6 +206,17 @@ class Calculate:
         for i, frame_info in enumerate(self.data):
             self.skeleton = Skeleton(frame_info)
 
+            # Distancia
+
+            ## Distancia dos pés
+            self.plot_data['distancia_pes'].append(self.distancia_pes())
+
+            # Altura
+
+            ## Altura do pé
+            self.plot_data['altura_pe_esquerdo'].append(self.altura_do_pe('esquerdo'))
+            self.plot_data['altura_pe_direito'].append(self.altura_do_pe('direito'))
+
             # Calcula os ângulos entre os segmentos do corpo
 
             ## Angulo do tronco com o eixo vertical
@@ -237,6 +249,22 @@ class Calculate:
             return np.nan
         else:
             return round(vertical_vector // chest_neck_vector,3)  # Angulo
+
+    def distancia_pes(self):
+
+        try:
+            pe_esquerdo = self.human_parts_name["LEFT_KNEE"]
+            pe_direito = self.human_parts_name["RIGHT_KNEE"]
+            joint_pe_esquerdo = self.skeleton.joints[pe_esquerdo]
+            joint_pe_direito = self.skeleton.joints[pe_direito]
+            vetor = Calculate.Vector(joint_pe_esquerdo,joint_pe_direito)
+        except:
+            return np.nan
+        else:
+
+            return vetor.magnitude
+        
+        
 
     def _calculate_angle(self, first, central, last):
         """Calcula o ângulo entre tres pontos.
@@ -272,9 +300,25 @@ class Calculate:
         with open(self.file3d) as f:
             data: list = json.load(f)["localizations"]
         return data
+    def altura_do_pe(self,lado:str):
+
+        assert lado in ("esquerdo","direito"),'Lado deve ser "esquerdo" ou "direito"'
+        try:
+            joint_pe = self.human_parts_name["RIGHT_KNEE"] if lado=='direito' else self.human_parts_name["LEFT_KNEE"]
+            pe = self.skeleton.joints[joint_pe]
+
+            chao = Skeleton.Joint('chao',0,0,0)
+
+            altura = Calculate.Vector(chao,pe)
+        except KeyError:
+            return np.nan
+        else:
+            return abs(altura.z)
 
 class Plot:
+    PASTA_RESULTADO = 'resultados'
     def __init__(self, data):
+        os.makedirs(self.PASTA_RESULTADO,exist_ok=True)
         self.data = data
 
         self.plot()
@@ -282,6 +326,18 @@ class Plot:
     def plot(self):
         self.plot_joelho()
         self.plot_tronco()
+        self.plot_altura_pe()
+        self.plot_distancia_pes()
+
+    def plot_distancia_pes(self):
+        fig, ax = plt.subplots()
+        ax.plot(self.data['distancia_pes'], label = 'Distância entre os pés')
+        ax.set_title('Distância entre os pés(m)')
+        ax.set_xlabel("Frame")
+        ax.set_ylabel("Distância(m)")
+        ax.legend()
+        plt.savefig(os.path.join(self.PASTA_RESULTADO,"distancia_pes.png"))
+
     def plot_joelho(self):
         fig, ax = plt.subplots()
         ax.plot(self.data["angulo_joelho_direito"], label="Joelho Direito")
@@ -291,19 +347,33 @@ class Plot:
         ax.set_ylabel("Ângulo")
         ax.legend()
         
-        plt.savefig("angulo_joelho.png")
+        plt.savefig(os.path.join(self.PASTA_RESULTADO,"angulo_joelho.png"))
+
     def plot_tronco(self):
+
         fig,ax = plt.subplots()
         ax.plot(self.data["angulo_tronco"], label="Ângulo do tronco")
         ax.set_title("Ângulo do tronco(graus)")
         ax.set_xlabel("Frame")
         ax.set_ylabel("Ângulo com o plano vertical")
         ax.legend()
-        plt.savefig("angulo_tronco.png")
+        plt.savefig(os.path.join(self.PASTA_RESULTADO,"angulo_tronco.png"))
+
+    def plot_altura_pe(self):
+        fig, ax = plt.subplots()
+        ax.plot(self.data["altura_pe_esquerdo"], label="Pé Esquerdo")
+        ax.plot(self.data["altura_pe_direito"], label="Pé Direito")
+        ax.set_title("Altura do Pé(metros)")
+        ax.set_xlabel("Frame")
+        ax.set_ylabel("Altura")
+        ax.legend()
+
+        plt.savefig(os.path.join(self.PASTA_RESULTADO,"altura_pe.png"))
+
 if __name__ == "__main__":
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
-    print(calc.plot_data['angulo_tronco'])
+    print(calc.plot_data['altura_pe_direito'])
 
     plot = Plot(calc.plot_data)
     
