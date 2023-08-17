@@ -19,6 +19,8 @@ sleep 7
 #./sh_files/is-mjpeg.sh
 
 # Run the specified scripts
-bash sh_files/is-skeletons-detector.sh
 bash sh_files/is-frame-transformation.sh
+sleep 1
 bash sh_files/is-skeletons-grouper.sh
+sleep 1
+bash sh_files/is-skeletons-detector.sh

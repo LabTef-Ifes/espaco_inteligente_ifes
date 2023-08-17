@@ -15,15 +15,18 @@ from is_msgs.image_pb2 import Image
 from is_wire.core import Channel, Subscription, Message, Logger
 
 """_summary_
+
+Código para salvar as imagens do EI sem vê-las.
+S - Inicia armazenamento das imagens
+P - Pausa o armazenamento das imagens 
+Q - Para definitivamente o armazenamento as imagens
+
 """
-
 last_key = None
-
 
 def on_key(event):
     global last_key
     last_key = event.name
-
 
 # topic não usado ???
 # corrigido por Deivid com base na interpretação pessoal do codigo
@@ -41,83 +44,6 @@ def get_id(topic):
     if not match:
         return None
     return int(match.group(1))
-
-
-# Sem return
-# O que faz???
-def place_images(output_image, images_):
-    """_summary_
-
-    Args:
-        output_image (_type_): _description_
-        images_ (_type_): _description_
-    """
-    h, w = images_[0].shape[0:2]
-
-    output_image[0:h, 0:w, :] = images_[0]
-    output_image[0:h, w : 2 * w, :] = images_[1]
-    output_image[h : 2 * h, 0:w, :] = images_[2]
-    output_image[h : 2 * h, w : 2 * w, :] = images_[3]
-
-
-# image não usado???
-# corrigido por Deivid com base na interpretação pessoal do codigo
-
-
-def draw_info_bar(
-    image,
-    text,
-    x,
-    y,
-    background_color=(0, 0, 0),
-    text_color=(255, 255, 255),
-    draw_circle=False,
-):
-    """_summary_
-
-    Args:
-        image (_type_): _description_
-        text (_type_): _description_
-        x (_type_): _description_
-        y (_type_): _description_
-        background_color (tuple, optional): _description_. Defaults to (0, 0, 0).
-        text_color (tuple, optional): _description_. Defaults to (255, 255, 255).
-        draw_circle (bool, optional): _description_. Defaults to False.
-    """
-    fontFace = cv2.FONT_HERSHEY_DUPLEX
-    fontScale = 1.0
-    thickness = 1
-    ((text_width, text_height), _) = cv2.getTextSize(
-        text=text, fontFace=fontFace, fontScale=fontScale, thickness=thickness
-    )
-
-    cv2.rectangle(
-        image,
-        pt1=(0, y - text_height),
-        pt2=(x + text_width, y),
-        color=background_color,
-        thickness=cv2.FILLED,
-    )
-
-    if draw_circle:
-        cv2.circle(
-            image,
-            center=(int(x / 2), int(y - text_height / 2)),
-            radius=int(text_height / 3),
-            color=(0, 0, 255),
-            thickness=cv2.FILLED,
-        )
-
-    cv2.putText(
-        image,
-        text=text,
-        org=(x, y),
-        fontFace=fontFace,
-        fontScale=fontScale,
-        color=text_color,
-        thickness=thickness,
-    )
-
 
 # Iniciando o logger
 log = Logger(name="capture-images")
@@ -222,7 +148,7 @@ n_sample = 0
 # inicializa a taxa de exibição e a variável de controle para salvar a sequência
 display_rate = 2
 
-save = False
+start_save = False
 # inicializa a variável que indica se a sequência foi salva
 sequence_saved = False
 
@@ -236,7 +162,7 @@ while True:
     msg = channel.consume()
 
     camera = get_id(msg.topic)
-    print(camera)
+
     if camera is None:
         continue
 
@@ -244,7 +170,7 @@ while True:
     if pb_image is None:
         continue
 
-    data = np.frombuffer(pb_image.data, dtype=np.uint8)
+    data = np.fromstring(pb_image.data, dtype=np.uint8)
 
     images_data[camera] = data
     current_timestamps[camera] = dt.utcfromtimestamp(msg.created_at).isoformat()
@@ -252,7 +178,7 @@ while True:
     if len(images_data) == len(options.cameras):
         keyboard.on_press(on_key)
 
-        if save:
+        if start_save and not sequence_saved:
             for camera in options.cameras:
                 filename = os.path.join(
                     sequence_folder, 'c{:02d}s{:08d}.jpeg'.format(
@@ -264,22 +190,29 @@ while True:
             log.info('Sample {} saved', n_sample)
 
         if n_sample % display_rate == 0:
-                
             if last_key == "s":
-                print("Saving sequence...")
-                save = True
+                if not start_save:
+                    start_save = True
+                    contador = 1
 
-            if last_key == "p" or last_key == "q":
-                save = False
-                #save sequence
-                timestamps_filename = os.path.join(
-                    options.folder, "{}_timestamps.json".format(sequence)
-                )
-                with open(timestamps_filename, "w") as f:
-                    json.dump(timestamps, f, indent=2, sort_keys=True)
-                sequence_saved = True
-                print("Sequence saved")
-                break
+                elif not sequence_saved:
+                    timestamps_filename = os.path.join(options.folder, '{}_timestamps.json'.format(sequence))
+                    with open(timestamps_filename, 'w') as f:
+                        json.dump(timestamps, f, indent=2, sort_keys=True)
+                    sequence_saved = True
+                    contador = 0
 
+            if last_key == "p":
+                start_save = False
+
+            if last_key == "q":
+                start_save = False
+                if not start_save or sequence_saved:
+                    break
+
+        # clear images dict
+        images_data.clear()
+        current_timestamps.clear()
+        last_key = None
 
 log.info("Exiting")
