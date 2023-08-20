@@ -303,9 +303,20 @@ class Calculate:
         return round(first_vector // second_vector, 3)
 
     def angulo_joelho_direito(self):
+        """Executa a função calculate angle para o joelho direito. Uso de função separada para facilitar a leitura do código.
+
+        Returns:
+            float: Ângulo do joelho, em graus
+
+        """        
         return self._calculate_angle("10", "11", "12")
 
     def angulo_joelho_esquerdo(self):
+        """Executa a função calculate angle para o joelho esquerdo. Uso de função separada para facilitar a leitura do código.
+
+        Returns:
+            float: Ângulo do joelho, em graus
+        """        
         return self._calculate_angle("13", "14", "15")
 
     @tratar_erro_frame
@@ -318,10 +329,10 @@ class Calculate:
         )
         pe = self.skeleton.joints[joint_pe]
 
-        chao = Skeleton.Joint("chao", 0, 0, 0)
+        chao = Skeleton.Joint("chao", 0, 0, 0) # Ponto de referência do chão para calcular a altura
 
-        altura = Calculate.Vector(chao, pe)
-        return abs(altura.z)
+        altura = Calculate.Vector(chao, pe).z
+        return abs(altura)
 
     def read_json(self):
         with open(self.file3d) as f:
@@ -333,7 +344,9 @@ class Plot:
     PASTA_RESULTADO = "resultados"
 
     def __init__(self, data):
+        #Cria a pasta, caso ela não exista
         os.makedirs(self.PASTA_RESULTADO, exist_ok=True)
+        # Recebe o dicionário plot_data do Calculate
         self.data = data
 
         self.plot()
@@ -374,10 +387,11 @@ class Plot:
         plt.savefig(os.path.join(self.PASTA_RESULTADO, "angulo_tronco.png"))
 
     def plot_altura_pe(self):
+        # Na verdade, está sendo medida a altura do tornozelo. Farei a alteração momentânea do label para entrega do relatório de IC
         fig, ax = plt.subplots()
-        ax.plot(self.data["altura_pe_esquerdo"], label="Pé Esquerdo")
-        ax.plot(self.data["altura_pe_direito"], label="Pé Direito")
-        ax.set_title("Altura do Pé(metros)")
+        ax.plot(self.data["altura_pe_esquerdo"], label="Tornozelo Esquerdo")
+        ax.plot(self.data["altura_pe_direito"], label="Tornozelo Direito")
+        ax.set_title("Altura do tornozelo(metros)")
         ax.set_xlabel("Frame")
         ax.set_ylabel("Altura")
         ax.legend()
