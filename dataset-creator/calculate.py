@@ -63,7 +63,7 @@ class Skeleton:
 
         __repr__ = __str__
 
-        def __add__(self, other):
+        def __add__(self, other: "Joint"):
             """Soma dois pontos do esqueleto, retornando um novo ponto com as coordenadas somadas
 
             Args:
@@ -76,6 +76,19 @@ class Skeleton:
                 "sum", self.x + other.x, self.y + other.y, self.z + other.z
             )
 
+        def __div__(self, other: int | float):
+            """Divide as coordenadas do ponto por um número
+
+            Args:
+                other (int|float): número pelo qual as coordenadas serão divididas
+
+            Returns:
+                Joint: novo ponto com as coordenadas divididas
+            """
+            return Skeleton.Joint(
+                "div", self.x / other, self.y / other, self.z / other
+            )
+        
     def __init__(self, frame_dict: dict):
         """Recebe um dicionario que possui as chaves "objects" e "keypoints" e salva um objeto com os dados do esqueleto no frame.
 
@@ -86,7 +99,8 @@ class Skeleton:
             "objects"
         ]  # Lista de objetos(pessoas) no frame
         # Lista os keypoints de todos os esqueletos presentes
-        self.keypoints: list[dict] = [human["keypoints"] for human in self.objects]
+        self.keypoints: list[dict] = [human["keypoints"]
+                                      for human in self.objects]
         self.joints: dict[str, Skeleton.Joint] = self.read_joints()
 
     def read_joints(self):
@@ -199,7 +213,8 @@ class Calculate:
 
         Args:
             func (function): Função que será decorada(Usa-se o @tratar_erro_frame acima da função)
-        """        
+        """
+
         def wrapper(self, *args, **kwargs):
             try:
                 result = func(self, *args, **kwargs)
@@ -219,33 +234,70 @@ class Calculate:
         self.frames = len(self.data)
         self.skeleton: Skeleton = Skeleton(self.data[0])
         self.dt = 1 / 6  # Tempo entre cada frame. inverso de frames por segundo
-
+        self.midpoint_history = [] # Lista para guardar os pontos médios entre as duas hips e calcular velocidade
     def run_frames(self):
         """Passa por todos os frames, calculando as informações necessárias para o plot usando a classe Skeleton para guardar as informações. Ao final, chama a função que plota os dados"""
         for i, frame_info in enumerate(self.data):
-            self.skeleton = Skeleton(frame_info) #Atualiza o esqueleto do frame
+            # Atualiza o esqueleto do frame
+            self.skeleton = Skeleton(frame_info)
+
+            # Velocidade
+            self.plot_data["velocidade"].append(self.velocidade())
             # Distancia
 
-            ## Distancia dos pés
+            # Distancia dos pés
             self.plot_data["distancia_pes"].append(self.distancia_pes())
 
             # Altura
 
-            ## Altura do pé
-            self.plot_data["altura_pe_esquerdo"].append(self.altura_do_pe("esquerdo"))
-            self.plot_data["altura_pe_direito"].append(self.altura_do_pe("direito"))
+            # Altura do pé
+            self.plot_data["altura_pe_esquerdo"].append(
+                self.altura_do_pe("esquerdo"))
+            self.plot_data["altura_pe_direito"].append(
+                self.altura_do_pe("direito"))
 
             # Calcula os ângulos entre os segmentos do corpo
 
-            ## Angulo do tronco com o eixo vertical
-            self.plot_data["angulo_tronco"].append(self.angulo_tronco_vertical())
+            # Angulo do tronco com o eixo vertical
+            self.plot_data["angulo_tronco"].append(
+                self.angulo_tronco_vertical())
 
-            ## Joelho esquerdo
+            # Joelho esquerdo
             self.plot_data["angulo_joelho_esquerdo"].append(
                 self.angulo_joelho_esquerdo()
             )
-            ## Joelho direito
-            self.plot_data["angulo_joelho_direito"].append(self.angulo_joelho_direito())
+            # Joelho direito
+            self.plot_data["angulo_joelho_direito"].append(
+                self.angulo_joelho_direito())
+    
+    @tratar_erro_frame
+    def velocidade(self):
+        """A velocidade é calculada usando como referência o ponto médio entre as duas HIPS do esqueleto e o deslocamento entre os frames.
+        """        
+        left_hip = self.human_parts_name["LEFT_HIP"]
+        right_hip = self.human_parts_name["RIGHT_HIP"]
+        joint_left_hip = self.skeleton.joints[left_hip]
+        joint_right_hip = self.skeleton.joints[right_hip]
+        midpoint:Skeleton.Joint = (joint_left_hip + joint_right_hip) / 2
+        self.midpoint_history.append(midpoint)
+
+        if len(self.midpoint_history) > 1: # Caso seja o primeiro frame, não há como calcular a velocidade
+            last_midpoint = self.midpoint_history[-2] # Pega o penúltimo ponto médio
+            displacement_vector = Calculate.Vector(last_midpoint, midpoint) # Vetor deslocamento entre os pontos médios
+            return displacement_vector.magnitude / self.dt
+        
+        return np.nan
+
+
+    @tratar_erro_frame
+    def distancia_pes(self):
+        pe_esquerdo = self.human_parts_name["LEFT_ANKLE"]
+        pe_direito = self.human_parts_name["RIGHT_ANKLE"]
+        joint_pe_esquerdo = self.skeleton.joints[pe_esquerdo]
+        joint_pe_direito = self.skeleton.joints[pe_direito]
+        vetor = Calculate.Vector(joint_pe_esquerdo, joint_pe_direito)
+
+        return vetor.magnitude
 
     @tratar_erro_frame
     def angulo_tronco_vertical(self):
@@ -253,7 +305,7 @@ class Calculate:
 
         Returns:
             _type_: _description_
-        """        
+        """
         joint_tronco = self.human_parts_name["CHEST"]
         joint_neck = self.human_parts_name["NECK"]
         chest: Skeleton.Joint = self.skeleton.joints[joint_tronco]
@@ -270,16 +322,6 @@ class Calculate:
         )  # Vetor entre o peito e o pescoço
 
         return round(vertical_vector // chest_neck_vector, 3)  # Angulo
-
-    @tratar_erro_frame
-    def distancia_pes(self):
-        pe_esquerdo = self.human_parts_name["LEFT_ANKLE"]
-        pe_direito = self.human_parts_name["RIGHT_ANKLE"]
-        joint_pe_esquerdo = self.skeleton.joints[pe_esquerdo]
-        joint_pe_direito = self.skeleton.joints[pe_direito]
-        vetor = Calculate.Vector(joint_pe_esquerdo, joint_pe_direito)
-
-        return vetor.magnitude
 
     @tratar_erro_frame
     def _calculate_angle(self, first, central, last):
@@ -308,7 +350,7 @@ class Calculate:
         Returns:
             float: Ângulo do joelho, em graus
 
-        """        
+        """
         return self._calculate_angle("10", "11", "12")
 
     def angulo_joelho_esquerdo(self):
@@ -316,12 +358,13 @@ class Calculate:
 
         Returns:
             float: Ângulo do joelho, em graus
-        """        
+        """
         return self._calculate_angle("13", "14", "15")
 
     @tratar_erro_frame
     def altura_do_pe(self, lado: str):
-        assert lado in ("esquerdo", "direito"), 'Lado deve ser "esquerdo" ou "direito"'
+        assert lado in (
+            "esquerdo", "direito"), 'Lado deve ser "esquerdo" ou "direito"'
         joint_pe = (
             self.human_parts_name["RIGHT_ANKLE"]
             if lado == "direito"
@@ -329,10 +372,11 @@ class Calculate:
         )
         pe = self.skeleton.joints[joint_pe]
 
-        chao = Skeleton.Joint("chao", 0, 0, 0) # Ponto de referência do chão para calcular a altura
+        # Ponto de referência do chão para calcular a altura
+        chao = Skeleton.Joint("chao", 0, 0, 0)
 
-        altura = Calculate.Vector(chao, pe).z
-        return abs(altura)
+        altura = Calculate.Vector(chao, pe).z  # Vetor entre o chão e o pé
+        return altura
 
     def read_json(self):
         with open(self.file3d) as f:
@@ -344,7 +388,7 @@ class Plot:
     PASTA_RESULTADO = "resultados"
 
     def __init__(self, data):
-        #Cria a pasta, caso ela não exista
+        # Cria a pasta, caso ela não exista
         os.makedirs(self.PASTA_RESULTADO, exist_ok=True)
         # Recebe o dicionário plot_data do Calculate
         self.data = data
@@ -402,6 +446,6 @@ class Plot:
 if __name__ == "__main__":
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
-    print(calc.plot_data["altura_pe_direito"])
+    print(calc.plot_data["velocidade"])
 
     plot = Plot(calc.plot_data)
