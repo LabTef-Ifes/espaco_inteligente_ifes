@@ -64,7 +64,7 @@ def render_skeletons(images, annotations, it, links, colors):
                 if begin in parts and end in parts:
                     cv2.line(image, parts[begin],
                              parts[end], color=color, thickness=4)
-            for _, center in parts.items():
+            for center in parts.values():
                 cv2.circle(image, center=center, radius=4,
                            color=(255, 255, 255), thickness=-1)
 
