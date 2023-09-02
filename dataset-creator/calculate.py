@@ -43,7 +43,7 @@ class Skeleton:
     """
 
     class Joint:
-        def __init__(self, id, x, y, z):
+        def __init__(self, id, x: float, y: float, z: float):
             """Classe que representa um ponto do esqueleto. Guarda seu id, nome e coordenadas x,y,z.
 
             Args:
@@ -63,7 +63,7 @@ class Skeleton:
 
         __repr__ = __str__
 
-        def __add__(self, other: "Joint"):
+        def __add__(self, other):
             """Soma dois pontos do esqueleto, retornando um novo ponto com as coordenadas somadas
 
             Args:
@@ -76,7 +76,7 @@ class Skeleton:
                 "sum", self.x + other.x, self.y + other.y, self.z + other.z
             )
 
-        def __div__(self, other: int | float):
+        def __truediv__(self, other: int | float):
             """Divide as coordenadas do ponto por um número
 
             Args:
@@ -278,14 +278,17 @@ class Calculate:
         right_hip = self.human_parts_name["RIGHT_HIP"]
         joint_left_hip = self.skeleton.joints[left_hip]
         joint_right_hip = self.skeleton.joints[right_hip]
-        midpoint:Skeleton.Joint = (joint_left_hip + joint_right_hip) / 2
+        midpoint = (joint_left_hip + joint_right_hip)/2
+        
         self.midpoint_history.append(midpoint)
+
+        if len(self.midpoint_history) > 100: # Caso o vetor fique grande demais, remove o primeiro elemento
+            self.midpoint_history.pop(0)
 
         if len(self.midpoint_history) > 1: # Caso seja o primeiro frame, não há como calcular a velocidade
             last_midpoint = self.midpoint_history[-2] # Pega o penúltimo ponto médio
             displacement_vector = Calculate.Vector(last_midpoint, midpoint) # Vetor deslocamento entre os pontos médios
             return displacement_vector.magnitude / self.dt
-        
         return np.nan
 
 
@@ -444,8 +447,10 @@ class Plot:
 
 
 if __name__ == "__main__":
+    
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
     print(calc.plot_data["velocidade"])
-
+    plt.plot(calc.plot_data["velocidade"])
+    plt.show()
     plot = Plot(calc.plot_data)
