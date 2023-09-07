@@ -2,9 +2,10 @@ from is_wire.core import Channel, Subscription, Message
 from is_msgs.image_pb2 import Image
 import numpy as np
 import cv2
-import json
-import time
 
+"""Exibe a imagem de uma câmera apenas
+"""
+camera_id = 3
 
 def to_np(input_image):
     if isinstance(input_image, np.ndarray):
@@ -22,7 +23,6 @@ if __name__ == '__main__':
     print('---RUNNING EXAMPLE DEMO OF THE CAMERA CLIENT---')
 
     broker_uri = "amqp://guest:guest@localhost:5672"
-    camera_id = 3
     channel = Channel(broker_uri)
     subscription = Subscription(channel=channel)
     subscription.subscribe(topic='CameraGateway.{}.Frame'.format(camera_id))
