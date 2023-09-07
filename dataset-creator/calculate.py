@@ -88,7 +88,7 @@ class Skeleton:
             return Skeleton.Joint(
                 "div", self.x / other, self.y / other, self.z / other
             )
-        
+
     def __init__(self, frame_dict: dict):
         """Recebe um dicionario que possui as chaves "objects" e "keypoints" e salva um objeto com os dados do esqueleto no frame.
 
@@ -234,7 +234,9 @@ class Calculate:
         self.frames = len(self.data)
         self.skeleton: Skeleton = Skeleton(self.data[0])
         self.dt = 1 / 6  # Tempo entre cada frame. inverso de frames por segundo
-        self.midpoint_history = [] # Lista para guardar os pontos médios entre as duas hips e calcular velocidade
+        # Lista para guardar os pontos médios entre as duas hips e calcular velocidade
+        self.midpoint_history = []
+
     def run_frames(self):
         """Passa por todos os frames, calculando as informações necessárias para o plot usando a classe Skeleton para guardar as informações. Ao final, chama a função que plota os dados"""
         for i, frame_info in enumerate(self.data):
@@ -250,6 +252,19 @@ class Calculate:
 
             # Altura
 
+            ## Altura dos ombros
+            # Erro por que caso falte um frame, retorna apenas um np.nan, enquanto nessa função retorna-se duas variáveis. Provavelmente precisará refatorar
+            try:
+                altura_ombro_esquerdo, altura_ombro_direito = self.alinhamento_ombros()
+            except:
+                altura_ombro_esquerdo, altura_ombro_direito = np.nan, np.nan
+
+            self.plot_data["altura_ombro_esquerdo"].append(
+                altura_ombro_esquerdo
+            )
+            self.plot_data["altura_ombro_direito"].append(
+                altura_ombro_direito
+            )
             # Altura do pé
             self.plot_data["altura_pe_esquerdo"].append(
                 self.altura_do_pe("esquerdo"))
@@ -269,28 +284,40 @@ class Calculate:
             # Joelho direito
             self.plot_data["angulo_joelho_direito"].append(
                 self.angulo_joelho_direito())
-    
+
     @tratar_erro_frame
     def velocidade(self):
         """A velocidade é calculada usando como referência o ponto médio entre as duas HIPS do esqueleto e o deslocamento entre os frames.
-        """        
+        """
         left_hip = self.human_parts_name["LEFT_HIP"]
         right_hip = self.human_parts_name["RIGHT_HIP"]
         joint_left_hip = self.skeleton.joints[left_hip]
         joint_right_hip = self.skeleton.joints[right_hip]
         midpoint = (joint_left_hip + joint_right_hip)/2
-        
+
         self.midpoint_history.append(midpoint)
 
-        if len(self.midpoint_history) > 100: # Caso o vetor fique grande demais, remove o primeiro elemento
+        # Caso o vetor fique grande demais, remove o primeiro elemento
+        if len(self.midpoint_history) > 100:
             self.midpoint_history.pop(0)
 
-        if len(self.midpoint_history) > 1: # Caso seja o primeiro frame, não há como calcular a velocidade
-            last_midpoint = self.midpoint_history[-2] # Pega o penúltimo ponto médio
-            displacement_vector = Calculate.Vector(last_midpoint, midpoint) # Vetor deslocamento entre os pontos médios
+        # Caso seja o primeiro frame, não há como calcular a velocidade
+        if len(self.midpoint_history) > 1:
+            # Pega o penúltimo ponto médio
+            last_midpoint = self.midpoint_history[-2]
+            # Vetor deslocamento entre os pontos médios
+            displacement_vector = Calculate.Vector(last_midpoint, midpoint)
             return displacement_vector.magnitude / self.dt
         return np.nan
 
+    @tratar_erro_frame
+    def alinhamento_ombros(self):
+        ombro_esquerdo = self.human_parts_name["LEFT_SHOULDER"]
+        ombro_direito = self.human_parts_name["RIGHT_SHOULDER"]
+        joint_ombro_esquerdo = self.skeleton.joints[ombro_esquerdo]
+        joint_ombro_direito = self.skeleton.joints[ombro_direito]
+
+        return joint_ombro_esquerdo.z, joint_ombro_direito.z
 
     @tratar_erro_frame
     def distancia_pes(self):
@@ -403,6 +430,18 @@ class Plot:
         self.plot_tronco()
         self.plot_altura_pe()
         self.plot_distancia_pes()
+        self.plot_ombros()
+
+    def plot_ombros(self):
+        fig, ax = plt.subplots()
+        ax.plot(self.data["altura_ombro_esquerdo"],
+                label="Ombro Esquerdo")
+        ax.plot(self.data["altura_ombro_direito"], label="Ombro Direito")
+        ax.set_title("Altura dos ombros(m)")
+        ax.set_xlabel("Frame")
+        ax.set_ylabel("Altura(m)")
+        ax.legend()
+        plt.savefig(os.path.join(self.PASTA_RESULTADO, "ombros.png"))
 
     def plot_distancia_pes(self):
         fig, ax = plt.subplots()
@@ -447,10 +486,8 @@ class Plot:
 
 
 if __name__ == "__main__":
-    
+
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
-    print(calc.plot_data["velocidade"])
-    plt.plot(calc.plot_data["velocidade"])
-    plt.show()
+    #print(calc.plot_data["velocidade"])
     plot = Plot(calc.plot_data)
