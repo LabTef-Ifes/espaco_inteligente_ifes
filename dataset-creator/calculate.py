@@ -441,7 +441,7 @@ class Plot:
         ax.set_xlabel("Frame")
         ax.set_ylabel("Altura(m)")
         ax.legend()
-        plt.savefig(os.path.join(self.PASTA_RESULTADO, "ombros.png"))
+        fig.savefig(os.path.join(self.PASTA_RESULTADO, "ombros.png"))
 
     def plot_distancia_pes(self):
         fig, ax = plt.subplots()
@@ -450,7 +450,7 @@ class Plot:
         ax.set_xlabel("Frame")
         ax.set_ylabel("Distância(m)")
         ax.legend()
-        plt.savefig(os.path.join(self.PASTA_RESULTADO, "distancia_pes.png"))
+        fig.savefig(os.path.join(self.PASTA_RESULTADO, "distancia_pes.png"))
 
     def plot_joelho(self):
         fig, ax = plt.subplots()
@@ -461,7 +461,7 @@ class Plot:
         ax.set_ylabel("Ângulo")
         ax.legend()
 
-        plt.savefig(os.path.join(self.PASTA_RESULTADO, "angulo_joelho.png"))
+        fig.savefig(os.path.join(self.PASTA_RESULTADO, "angulo_joelho.png"))
 
     def plot_tronco(self):
         fig, ax = plt.subplots()
@@ -470,7 +470,7 @@ class Plot:
         ax.set_xlabel("Frame")
         ax.set_ylabel("Ângulo com o plano vertical")
         ax.legend()
-        plt.savefig(os.path.join(self.PASTA_RESULTADO, "angulo_tronco.png"))
+        fig.savefig(os.path.join(self.PASTA_RESULTADO, "angulo_tronco.png"))
 
     def plot_altura_pe(self):
         # Na verdade, está sendo medida a altura do tornozelo. Farei a alteração momentânea do label para entrega do relatório de IC
@@ -482,7 +482,7 @@ class Plot:
         ax.set_ylabel("Altura")
         ax.legend()
 
-        plt.savefig(os.path.join(self.PASTA_RESULTADO, "altura_pe.png"))
+        fig.savefig(os.path.join(self.PASTA_RESULTADO, "altura_pe.png"))
 
 
 if __name__ == "__main__":
