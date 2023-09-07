@@ -94,11 +94,11 @@ Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _sch
 
 ## Descrição de arquivos do espaço inteligente.
 
-- [options/X.json](options/0.json) - parâmetros da câmera X (câmeras 0, 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: `IP`, `fps`, `height`, `width` e etc.
+- [options/X.json](options/0.json) - Parâmetros da câmera X (câmeras 0, 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: `IP`, `fps`, `height`, `width` e etc.
 - [dataset-creator/options.json](dataset-creator/options.json) - Parâmetros da criação gravação e análise dos vídeos. Neste arquivo é possível alterar o diretório onde os frames das câmeras serão salvos, para posteriormente formarem vídeos. 
 - [dataset-creator/captura_monta_e_analisa_video.py](dataset-creator/captura_monta_e_analisa_video.py) - Executa todo o sistema em sequência, desde a captura até a análise final.
-- [visualizar_camera.py](visualizar_camera.py) - arquivo teste para visualizar a imagem de uma câmera.
-- [dataset-creator/capture-images.py](dataset-creator/capture-images.py) - realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em '/dataset-creator/options.json'. Comandos válidos: `s` inicia a gravação (salvar imagens), `p` pausa a gravação, `q` fecha o programa.
+- [visualizar_camera.py](visualizar_camera.py) - Arquivo teste para visualizar a imagem de uma câmera.
+- [dataset-creator/capture-images.py](dataset-creator/capture-images.py) - Realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em '/dataset-creator/options.json'. Comandos válidos: `s` inicia a gravação (salvar imagens), `p` pausa a gravação, `q` fecha o programa.
 - [dataset-creator/make-videos.py](/dataset-creator/make-videos.py) - A partir dos frames capturados pelo arquivo `capture-images.py`, monta os vídeos de cada câmera e os salva em formato `.mp4`.
 - [dataset-creator/request-2d-skeletons.py](dataset-creator/request-2d-skeletons.py) - #TODO
 - [dataset-creator/request-3d-skeletons.py](dataset-creator/request-3d-skeletons.py) - #TODO
@@ -107,7 +107,7 @@ Para calibrar as cameras, é necessario adicionar os arquivos `.json` com o _sch
 # Câmeras novas do switch e o novo serviço de gateway
 **❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containers das câmeras antigas estão ativos.**
 
-As câmeras *novas*[^2] adquiridas recentemente para o EI não funcionam com o serviço de gateway já disponível. Desta forma, [um novo serviço de gateway](https://github.com/LabTef-Ifes/is-cameras-py) foi desenvolvido. Em sua primeira utilização, execute as instruções contidas no readme e conseguirá visualizar a imagem de uma câmera. 
+As câmeras *novas*[^2] adquiridas recentemente para o EI não funcionam com o serviço de gateway já disponível. Desta forma, [um novo serviço de gateway](https://github.com/LabTef-Ifes/is-cameras-py) foi desenvolvido. Em sua primeira utilização, execute as instruções contidas no Readme e conseguirá visualizar a imagem de uma câmera. 
 
 Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta `deploy/multi-camera`. As configurações das câmeras podem ser alterados nos arquivos `settings-camera-X.yaml` (sendo X = 0, 1, 2 ou 3) também contidos na pasta `deploy/multi-camera`. Caso só exista o arquivo correspondeste a uma câmera, crie os demais. Os parâmetros disponíveis para alteração são `fps`, `formato de cores`, `height`, `width` e `ratio`. Com os containers ativos, os arquivo do EI podem ser utilizados normalmente. Os containers que estarão ativos serão (_Name_):
 
@@ -163,6 +163,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 - [Curso de Espaço Inteligente](https://github.com/LabTef-Ifes/CursoEI)
 - [Repositório do Wyctor](https://github.com/wyctorfogos/ESPACOINTELIGENTE-IFES)
 - [dataset-creator original](https://github.com/felippe-mendonca/dataset-creator/)
+- LabVISIO - Laboratório de Visão Computacional, Robótica e Espaços Inteligentes (UFES): [GitHub](https://github.com/labvisio) / [Site](https://visio.ufes.br/)
 ## Calibração das câmeras
 
 - [is-aruco-camera-calibration](https://github.com/LabTef-Ifes/is-aruco-camera-calibration) *Referência*
