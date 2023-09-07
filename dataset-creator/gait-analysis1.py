@@ -456,5 +456,4 @@ while True:
 
         # log.info("Altura média do quadril: {:.2f}", average_hip)
         sys.exit(0)
-
-log.info('Exiting')
+        
