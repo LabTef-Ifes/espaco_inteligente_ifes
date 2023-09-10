@@ -1,5 +1,9 @@
+.idea/
+.vscode/
 venv/
 __pycache__/
 dataset-creator/*.pyc
 dataset-creator/*.md
 dataset-creator/resultados/
+*.pdf
+*.md

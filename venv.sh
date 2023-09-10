@@ -1,0 +1,1 @@
+docker run -it --name venv -v /var/run/docker.sock:/var/run/docker.sock -v ${pwd}:/app ambiente
