@@ -1,7 +1,7 @@
 # Use a imagem oficial do Ubuntu 18.04 como imagem base
 FROM ubuntu:18.04
 
-LABEL org.opencontainers.image.authors="Deivid Braian"
+LABEL org.opencontainers.image.authors="Smarzarocom"
 
 # Atualize os pacotes do sistema e instale as dependências
 RUN apt-get update && apt-get install -y \
@@ -31,6 +31,10 @@ RUN apt update && \
 COPY requirements.txt /app/requirements.txt
 # Crie um diretório de trabalho 
 WORKDIR /app
+#RUN apt install -y python3-tk && \
+#    apt-get install -y libsm6 libxext6 libxrender-dev
+
+# Copia o arquivo de requisitos para o diretório de trabalho
 RUN pip install -r requirements.txt
 
 VOLUME [ "/app" ]
