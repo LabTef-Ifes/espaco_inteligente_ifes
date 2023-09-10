@@ -1,19 +1,19 @@
 import os
-import re
-import sys
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 import cv2
 import json
-import time
 import argparse
 import numpy as np
-from utils import to_labels_array, to_labels_dict, load_options
+from utils import load_options
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 from is_msgs.image_pb2 import HumanKeypoints as HKP, ObjectAnnotations
 from google.protobuf.json_format import ParseDict
 from itertools import permutations
-import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import os
 
@@ -22,7 +22,6 @@ current_dir_path = os.path.dirname(current_file_path)
 JSON2D_FORMAT = 'p{:03d}g{:02d}c{:02d}_2d.json'
 JSON3D_FORMAT = 'p{:03d}g{:02d}_3d.json'
 MP4_FORMAT = 'p{:03d}g{:02d}c{:02d}.mp4'
-
 FOURCC = cv2.VideoWriter_fourcc(*"XVID")
 
 colors = list(permutations([0, 255, 85, 170], 3))
@@ -59,8 +58,7 @@ class Export3D:
         self.person_id, self.gesture_id = self.get_person_gesture_parser()
         self.output_file = os.path.join(
             current_dir_path, 'videos', self.OUTPUT_FORMAT.format(self.person_id, self.gesture_id))
-        # TODO
-        # corrigir W,H fixados
+
         self.video_writer = cv2.VideoWriter(
             self.output_file, FOURCC, self.FPS, (1940, 1080))
         self.options = self.get_options()
@@ -214,7 +212,7 @@ class Export3D:
         self.video_writer.release()
         cv2.destroyAllWindows()
         self.log.info('Done!')
-
+        
     def render_skeletons(self, images: dict, annotations: dict, it, links: list, colors: list):
         """_summary_
 
@@ -291,5 +289,5 @@ class Export3D:
         return output_composition
 
 if __name__ == '__main__':
-    export = Export3D(show=True)
+    export = Export3D(show=False)
     export.run()
