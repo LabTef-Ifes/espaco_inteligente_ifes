@@ -1,6 +1,8 @@
 # Use a imagem oficial do Ubuntu 18.04 como imagem base
 FROM ubuntu:18.04
 
+LABEL org.opencontainers.image.authors="Deivid Braian"
+
 # Atualize os pacotes do sistema e instale as dependências
 RUN apt-get update && apt-get install -y \
     python3.6=3.6.9-1~18.04ubuntu1.5 \

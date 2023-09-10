@@ -1,15 +1,9 @@
 .vscode/
-options/0.json
-options/1.json
-options/2.json
-options/3.json
-
-options/optionstest.json
+options/*.json
 .idea/
 # Nomes de venvs usados
-env/
+*env/
 ei_ifes/
-venv/
 
 dataset-creator/__pycache__/
 dataset-creator/videos/*.avi
