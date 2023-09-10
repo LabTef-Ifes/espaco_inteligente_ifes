@@ -7,8 +7,23 @@
 - [Câmeras antigas - Informações importantes](#câmeras-antigas---informações-importantes)
 - [Comentários sobre o uso dos containers](#comentários-sobre-o-uso-dos-containers)
   - [Grouper](#grouper)
-- [Descrição de arquivos do espaço inteligente.](#descrição-de-arquivos-do-espaço-inteligente)
-  - [calculate.py](#calculatepy)
+- [Pastas e arquivos do espaço inteligente](#pastas-e-arquivos-do-espaço-inteligente)
+  - [root(pasta inicial do diretório)](#rootpasta-inicial-do-diretório)
+  - [dataset-creator](#dataset-creator)
+    - [calculate.py](#calculatepy)
+      - [Classe Skeleton](#classe-skeleton)
+      - [Classe Calculate](#classe-calculate)
+        - [Ângulo dos joelhos](#ângulo-dos-joelhos)
+        - [Alinhamento do tronco](#alinhamento-do-tronco)
+        - [Velocidade](#velocidade)
+        - [Distância](#distância)
+      - [Classe Calculate.Vector](#classe-calculatevector)
+      - [Classe Plot](#classe-plot)
+      - [Altura do pé](#altura-do-pé)
+  - [sh\_files](#sh_files)
+  - [is-camera-py-labtef](#is-camera-py-labtef)
+  - [calibrations](#calibrations)
+  - [options](#options)
 - [Câmeras novas do switch e o novo serviço de gateway](#câmeras-novas-do-switch-e-o-novo-serviço-de-gateway)
   - [Como iniciar as câmeras](#como-iniciar-as-câmeras)
 - [Configurações do Labtef](#configurações-do-labtef)
@@ -88,6 +103,7 @@
 
 - ⚠️⚠️O arquivo [options.json](dataset-creator/options.json) está vinculado às câmeras antigas e à captura de imagem, portando ele permanece sendo necessário de se atualizar quando mudar parâmetros das câmeras
 # Comentários sobre o uso dos containers
+_Seção criada a partir da primeira conversa com o Mendonça em busca de compreender a comunicação dockerizada do EI_
 - O sistema de containeres foi criado pelo Felippe na Ufes e utilizado em seu mestrado.
 - Há diversos tópicos de comunicação relacionados à captura de imagem, envio de imagem e construção do esqueleto.
 - O `rabbit` e o `zipkin` são essenciais para a utilização da comunicação do EI e devem ser os primeiros serviços iniciados
@@ -104,19 +120,44 @@
   </p>
 </blockquote>
 
-# Descrição de arquivos do espaço inteligente.
+# Pastas e arquivos do espaço inteligente
 
-- [options/X.json](options/0.json) - Parâmetros da câmera X (câmeras 0, 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: `IP`, `fps`, `height`, `width` e etc.
-- [dataset-creator/options.json](dataset-creator/options.json) - Parâmetros da criação gravação e análise dos vídeos. Neste arquivo é possível alterar o diretório onde os frames das câmeras serão salvos, para posteriormente formarem vídeos. 
+## root(pasta inicial do diretório)
+- [iniciar_principais_containers.sh](iniciar_principais_containers.sh) - Bash para iniciar todos os containers do EI
 - [visualizar_camera.py](visualizar_camera.py) - Arquivo teste para visualizar a imagem de uma câmera.
-- [dataset-creator/capture-images.py](dataset-creator/capture-images.py) - Realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em '/dataset-creator/options.json'. Comandos válidos: `s` inicia a gravação (salvar imagens), `p` pausa a gravação, `q` fecha o programa.
+- [sh_permission_denied.py](sh_permission_denied.py) -
+- [requirements.txt](requirements.txt) -
+## dataset-creator
+
+- [dataset-creator/capture_images.py](dataset-creator/capture_images.py) - Realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em `/dataset-creator/options.json`. Comandos válidos: `s` inicia a gravação (salvar imagens), `p` pausa a gravação, `q` fecha o programa.
+
 - [dataset-creator/make_videos.py](/dataset-creator/make_videos.py) - A partir dos frames capturados pelo arquivo `capture_images.py`, monta os vídeos de cada câmera e os salva em formato `.mp4`.
 - [dataset-creator/request_2d.py](dataset-creator/request_2d.py) - #TODO
 - [dataset-creator/request_3d.py](dataset-creator/request_3d.py) - #TODO
+- [dataset-creator/options.json](dataset-creator/options.json) - Parâmetros da criação gravação e análise dos vídeos. Neste arquivo, é possível alterar o diretório onde os frames das câmeras serão salvos para posteriormente formarem vídeos. 
+  
 - [dataset-creator/export-video-3d-medicoes-e-erros.py](dataset-creator/export-video-3d-medicoes-e-erros.py) - Arquivo do Wyctor utilizado para realizar cálculos sobre a reconstrução 3D **Deprecated**
-- [dataset-creator/Parameters.py](dataset-creator/Parameters.py) - programa que possui funções usadas no arquivo `export-video-3d-medicoes-e-erros.py`.
-## [calculate.py](dataset-creator/calculate.py)
+- [dataset-creator/Parameters.py](dataset-creator/Parameters.py) - programa que possui funções usadas no arquivo `export-video-3d-medicoes-e-erros.py`. **Deprecated**
+
+### [calculate.py](dataset-creator/calculate.py) 
 A partir do arquivo json gerado pelo `request_3d.py`, calcula as métricas e os gráficos da gravação
+#### Classe Skeleton
+#### Classe Calculate
+##### Ângulo dos joelhos
+##### Alinhamento do tronco
+##### Velocidade
+##### Distância
+#### Classe Calculate.Vector
+#### Classe Plot
+#### Altura do pé
+
+## sh_files
+## is-camera-py-labtef
+## calibrations
+
+## options
+- [options/X.json](options/0.json) - Parâmetros da câmera X (câmeras 0, 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: `IP`, `fps`, `height`, `width` e etc.
+
 # Câmeras novas do switch e o novo serviço de gateway
 **❗Há problemas de conflito ao se utilizar o Spinnaker enquanto os containers das câmeras estão ativos.**
 
@@ -124,7 +165,7 @@ As câmeras *novas*[^2] adquiridas recentemente para o EI não funcionam com o s
 
 Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta `deploy/multi-camera`. As configurações das câmeras podem ser alterados nos arquivos `settings-camera-X.yaml` (sendo X o id sequencial da câmera) também contidos na pasta `deploy/multi-camera`. Caso só exista o arquivo correspondente a uma câmera, crie os demais. Os parâmetros disponíveis para alteração são `fps`, `formato de cores`, `height`, `width` e `ratio`. Com os containers ativos, os arquivo do EI podem ser utilizados normalmente. Os containers que estarão ativos serão (_Name_):
 
-| Containers                     |            descrição |
+| Containers(_Name_)             |            descrição |
 | :----------------------------- | -------------------: |
 | multi-camera-rabbitmq-1        | Comunicação RabbitMQ |
 | multi-camera-is-mjpeg-server-1 |                #TODO |
@@ -165,11 +206,11 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 # Referências
 
 ## Papers
-- [Tese de Doutorado - Rampinelli, Mariana (2014)](Tese%20Doutorado%20Calibracao%20Câmeras%20Robo%20Mariana%20Rampinelli.pdf)
-- [Relatório Final de IC - Smarzaro, Deivid (2023)](Relatório%20Final%202023.pdf)
+- [Tese de Doutorado - Rampinelli, Mariana (2014)](papers/Tese%20Doutorado%20Calibracao%20Câmeras%20Robo%20Mariana%20Rampinelli.pdf)
+- [Relatório Final de IC - Smarzaro, Deivid (2023)](papers/Relatório%20Final%202023.pdf)
 ## Repositório do gateway das novas câmeras
 - [Spinnaker Gateway do Felippe Mendonça](https://github.com/LabTef-Ifes/is-cameras-py)
-- [Spinnaker Gateway modificado para o labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef)
+- [Spinnaker Gateway modificado para o LabTeF](https://github.com/LabTef-Ifes/is-cameras-py-labtef)
 
 ## Pasta de artigos
 - [Drive da Mariana](https://drive.google.com/drive/folders/1TIPGF9pkX-jDV5Voz08XtdeS18ijzYBG?usp=sharing)
@@ -200,6 +241,6 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 # Reiniciando o PC 20 do Labtef
 Em caso de crash do pc, é necessário reiniciá-lo pelo botão físico e seguir os passos abaixo .
 1. Selecione Ubuntu no menu de fundo roxo
-2. digite `fsck /dev/sda1` na tela preta de terminal _atenção ao espaço_
+2. digite `fsck /dev/sda1` na tela preta de terminal _⚠️atenção ao espaço_
 3. aperte `y` para aceitar cada alteração
 4. digite `reboot`
