@@ -10,19 +10,19 @@ sudo python sh_permission_denied.py
 sleep 1
 
 # Run the specified scripts one by one, waiting 1 second between each
-./sh_files/is-rabbitmq.sh
+bash sh_files/is-rabbitmq.sh
 sleep 1
 
-./sh_files/is-zipkin.sh
+bash sh_files/is-zipkin.sh
 sleep 1
 
-./sh_files/is-mjpeg.sh
+bash sh_files/is-mjpeg.sh
 sleep 1
 
-./sh_files/is-skeletons-detector.sh
+bash sh_files/is-frame-transformation.sh
 sleep 1
 
-./sh_files/is-frame-transformation.sh
+bash sh_files/is-skeletons-grouper.sh
 sleep 1
 
-./sh_files/is-skeletons-grouper.sh
+bash sh_files/is-skeletons-detector.sh
