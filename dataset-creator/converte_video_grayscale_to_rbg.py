@@ -4,7 +4,7 @@ from utils import load_options
 
 from is_wire.core import Logger
 
-#TODO
+#TODO ???
 """_summary_
 """
 FPS = 21
@@ -29,7 +29,7 @@ for i in range(4):
 
     while cap.isOpened():
         ret, frame = cap.read()
-        # check for successfulness of cap.read()
+        # check for success of cap.read()
         if not ret:
             break
 

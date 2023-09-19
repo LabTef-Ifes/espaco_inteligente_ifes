@@ -24,15 +24,11 @@ class Plot:
         Args:
             y (_type_): _description_
         """        
-        fig, AX = plt.subplots()
-        # y=y[1:]
-        X = []
-        for i in range(0, len(y)):
-            X.append(i)
-        AX.plot(X, y)
-        AX.set(xlabel='Medição', ylabel='Perda percentual (%)',
+        fig, ax = plt.subplots()
+        ax.plot(range(len(y)), y)
+        ax.set(xlabel='Medição', ylabel='Perda percentual (%)',
                title='Perdas na reconstrução 3D em função da amostragem')
-        AX.grid()
+        ax.grid()
         plt.savefig(options.folder + '/Perdas_na_reconstrucao3D.png')
         plt.show()
 

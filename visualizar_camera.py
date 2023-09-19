@@ -2,10 +2,9 @@ from is_wire.core import Channel, Subscription, Message
 from is_msgs.image_pb2 import Image
 import numpy as np
 import cv2
-import json
-import time
 
-
+"""Exibe a imagem de uma camera apenas.
+"""
 def to_np(input_image):
     if isinstance(input_image, np.ndarray):
         output_image = input_image

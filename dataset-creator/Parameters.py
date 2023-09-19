@@ -52,6 +52,7 @@ class Parameter:
                     return perdas
 
     # perna direita e angulo_real_joelho_esquerdo não usados
+    # Todas essas variaveis deveriam ser uma classe ou dicionário
     @staticmethod
     def erro_medio_da_caminhada(comprimento_passo_real_medido, Stance_real, Swing_real, distance_feet,
                                 dist_dos_pes_inicial, picos_distancia, comprimento_passo_medido, comprimento_swing,
@@ -258,9 +259,8 @@ class Parameter:
                                 ** 2 + (left_hip[2] - left_knee[2]) ** 2)
                     b = np.sqrt((left_knee[1] - left_ankle[1])
                                 ** 2 + (left_knee[2] - left_ankle[2]) ** 2)
-                    produto = ((pow(a, 2) + pow(b, 2) -
-                               pow(c, 2)) / (2 * a * b))
-                    left_knee_angle = (180 - math.degrees(math.acos(produto)))
+                    produto = ((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b)) #Lei dos cossenos?
+                    left_knee_angle = (180 - math.degrees(math.acos(produto))) #180- cos^-1(lei dos cossenos)
 
                     v0 = ((neck[1] - left_hip[1]), (neck[2] - left_hip[2]))
                     v1 = ((left_knee[1] - left_hip[1]),
@@ -400,6 +400,7 @@ class Parameter:
     @staticmethod
     def right_leg(skeletons):
         skeletons_pb = ParseDict(skeletons, ObjectAnnotations())
+        # Não deveria ter tanta variavel solta, poderia ser classe ou dicionario
         right_hip = None
         right_knee = None
         right_ankle = None
@@ -482,6 +483,7 @@ class Parameter:
                     right_leg = 0
                     largura_de_passo = 0
                     right_knee_angle = 0
+        #Todos os returns são iguais. Código sujo
                     return right_leg, height_mid_point_ankle, largura_de_passo, right_knee_angle, altura_pe_direito, altura_pe_esquerdo, right_ankle, left_ankle
 
         else:
@@ -557,7 +559,7 @@ class Parameter:
         plt.savefig(options.folder + '/resultado.png')
 
         # Regras para a classificação
-
+        # Muitas rules em variável, impossível.
         rule1 = ctrl.Rule(velocidade['normal'] & cadencia['normal'] &
                           largura['normal'] & comprimento['normal'], resultado['certo'])
         rule2 = ctrl.Rule(velocidade['rápido'] & cadencia['alta'] &
@@ -1052,7 +1054,7 @@ class Parameter:
                                'normal_time_up'], movimento['Time Up and Go'])
         rule54 = ctrl.Rule(cadencia['normal_assimetria'] &
                            largura_da_passada['normal_circulos'], movimento['Circundacao do pe'])
-
+        # Tem desde rule1 até rule54
         # movimento_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10,
         # rule11, rule12, rule13, rule14, rule15, rule16, rule17, rule18, rule19, rule20, rule21, rule22, rule23,
         # rule24,rule25, rule26, rule27, rule28, rule29, rule30, rule31, rule32, rule33, rule34, rule35,
@@ -1164,6 +1166,7 @@ class Parameter:
             break
         return altura_da_pessoa
 
+    #variaveis Perna direita e esquerda não usadas
     @staticmethod
     def angulo_caminhada(perna_direita, perna_esquerda, picos_distancia, altura_quadril):
         """_summary_
@@ -1405,9 +1408,9 @@ class Parameter:
             vetor_erro_comprimento_de_passo.append(
                 abs(comprimento_passo_real - comprimento_passo_medido[j]))
 
-        for i in range(0, len(picos_distancia)):
+        for j in range(0, len(picos_distancia)):
             vetor_erro_comprimento_de_meio_passo.append(
-                abs(comprimento_medio_real_de_meio_passo - picos_distancia[i]))
+                abs(comprimento_medio_real_de_meio_passo - picos_distancia[j]))
 
         for j in range(0, len(comprimento_stance)):
             vetor_erro_comprimento_stance.append(
@@ -1810,14 +1813,14 @@ class Parameter:
                 (nome_das_coordenadas, ['Movimento']), axis=None)
         return aux_array_coordenadas, nome_das_coordenadas
 
+    #?????????
     @staticmethod
     def write_json(data):
         try:
             to_unicode = unicode
         except NameError:
             to_unicode = str
-        # with open(options.folder+'/data.json', 'w') as outfile:
-        #    json.dump(data, ouqtfile)
+
         with io.open(options.folder + '/data.json', 'w', encoding='utf8') as outfile:
             str_ = json.dumps(data,
                               indent=4, sort_keys=False,
@@ -1848,38 +1851,19 @@ class Parameter:
             "/home/julian/docker/ifes-2019-09-09/Modelos_para_treinamento/Modelo_2/Modelo_detecta_caminhada_6_movimentos")
         input_values = [velocidade_media, comprimento_passo_medido,
                         largura_da_passada, simetria_comprimento_passo, cadencia]
-        input_values = array(input_values)
-        # print(input_values)
+        input_values = np.array(input_values)
         # pt=preprocessing.PowerTransformer(method='box-cox',standardize=False)
         input_values = input_values.reshape([1, 5])  # ,bacth_size=32])
-        # print(input_values)
         scaler = preprocessing.MinMaxScaler()  # preprocessing.normalize(input_values)
         input_values_normalize = scaler.fit_transform(input_values)
-        # print(input_values_normalize)
         # input_values=(input_values/np.argmax(input_values))
         # input_values_normalize=pt.fit_transform(input_values)
         prediction = modelo_final.predict(input_values_normalize)
-        # print(input_values_normalize)
         prediction = (np.around(prediction).reshape(1, 6))
-        # print(prediction)
-        # print(CATEGORIAS[np.argmax(prediction)])
         resultado = CATEGORIAS[np.argmax(prediction)]
         return resultado
 
-    # def rede_neural_imagens(): CATEGORIES=["Certo","Errado"] filepath='0' img_array = cv2.imread(filepath,
-    # cv2.IMREAD_GRAYSCALE) print(img_array) new_array = (cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)))/255 print(
-    # new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)) modelo_final = tf.keras.models.load_model(
-    # "/home/julian/docker/ifes-2019-09-09/Modelo_para_treinamento/Modelo_classificador_imagens
-    # /Modelo_movimento_certo_e_errado_3")
-
-    # prediction = model.predict([prepare('0')])
-    # print(prediction)  # will be a list in a list.
-    # print(CATEGORIES[int(prediction[0][0])])
-    # if((CATEGORIES[int(prediction[0][0])])==0):
-    #    return "Certo"
-
-    # return "Errado"
-
+    #?????????
     @staticmethod
     def prepare(filepath):
         """_summary_
@@ -1896,6 +1880,7 @@ class Parameter:
 
     @staticmethod
     def slide_gait_cycle(slide):
+        # O que é???
         """_summary_
 
         Args:
@@ -1922,12 +1907,10 @@ class Parameter:
         Returns:
             _type_: _description_
         """
-        div = int(len(array) / quant_de_ciclos)
-        # print(div)
+        div = len(array) // quant_de_ciclos
         ref_tamanho = quant_de_ciclos * div
         while len(array) != ref_tamanho:
             array = array[:-1]
-            # print(len(aux_angulo),ref_tamanho)
         return array
 
     @staticmethod
@@ -1941,16 +1924,14 @@ class Parameter:
             pico_do_sinal (_type_): _description_
         """
 
-        # Essas referências podem mudar conforme os ciclos em interesse para análise !!!##
+        # Essas referências podem mudar conforme os ciclos em interesse para análise!
         div = int(len(y) // quant_de_ciclos)  # Prepara para a quebra do array
-        # print(div)
         # Garante que haja somente múltiplos da quantidade de ciclos  para a normalização
         ref_tamanho = quant_de_ciclos * div
 
         # ???
         while len(y) != ref_tamanho:
             y.pop()
-            # print(len(aux_angulo),ref_tamanho)
 
         y = np.array_split(y, quant_de_ciclos)
 

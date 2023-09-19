@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+venv/
+__pycache__/
+new_docker/
+dataset-creator/*.pyc
+dataset-creator/*.md
+dataset-creator/resultados/
+*.pdf
+*.md

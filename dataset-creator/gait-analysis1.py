@@ -7,7 +7,6 @@ import cv2
 import argparse
 import numpy as np
 from utils import load_options
-from utils import to_labels_array, to_labels_dict
 from video_loader import MultipleVideoLoader
 from is_wire.core import Logger
 from collections import OrderedDict
@@ -65,7 +64,7 @@ def render_skeletons(images, annotations, it, links, colors):
                 if begin in parts and end in parts:
                     cv2.line(image, parts[begin],
                              parts[end], color=color, thickness=4)
-            for _, center in parts.items():
+            for center in parts.values():
                 cv2.circle(image, center=center, radius=4,
                            color=(255, 255, 255), thickness=-1)
 
@@ -131,7 +130,7 @@ def calc_length(initial, final):
     Returns:
         _type_: _description_
     """
-    length = np.sqrt((final[1]-initial[1])**2 + (final[0]-initial[0])**2)
+    length = np.sqrt((final[1]-initial[1])**2 + (final[0]-initial[0])**2) # (final-inicial)**2
     return length
 
 
@@ -457,5 +456,4 @@ while True:
 
         # log.info("Altura média do quadril: {:.2f}", average_hip)
         sys.exit(0)
-
-log.info('Exiting')
+        

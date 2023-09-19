@@ -11,17 +11,17 @@
   "parallelism": -1,
   "initial_config": {
     "sampling": {
-      "frequency": 20
+      "frequency": 15
     },
     "camera": {
       "shutter": {
-        "ratio": 0.2,
+        "ratio": 0.1,
         "automatic": false
       }
     },
     "image": {
       "color_space": {
-        "value": "GRAY"
+        "value": "RGB"
       },
       "resolution": {
         "width": 1440,
