@@ -219,7 +219,7 @@ class Calculate:
             try:
                 result = func(self, *args, **kwargs)
             except Exception as e:
-                print(f"Erro {e}")
+                #print(f"Erro {e}")
                 return np.nan
 
             return result
@@ -271,19 +271,24 @@ class Calculate:
             self.plot_data["altura_pe_direito"].append(
                 self.altura_do_pe("direito"))
 
-            # Calcula os ângulos entre os segmentos do corpo
+            # Ângulos
 
-            # Angulo do tronco com o eixo vertical
+            ## Angulo do tronco com o eixo vertical
             self.plot_data["angulo_tronco"].append(
                 self.angulo_tronco_vertical())
 
-            # Joelho esquerdo
+            ## Joelho esquerdo
             self.plot_data["angulo_joelho_esquerdo"].append(
                 self.angulo_joelho_esquerdo()
             )
-            # Joelho direito
+            ## Joelho direito
             self.plot_data["angulo_joelho_direito"].append(
                 self.angulo_joelho_direito())
+
+            ## Angulo da pelvis
+            self.plot_data["angulo_pelvis"].append(
+                self.angulo_pelvis()
+            )
 
     @tratar_erro_frame
     def velocidade(self):
@@ -408,6 +413,23 @@ class Calculate:
         altura = Calculate.Vector(chao, pe).z  # Vetor entre o chão e o pé
         return altura
 
+    @tratar_erro_frame
+    def angulo_pelvis(self):
+        left_hip = self.human_parts_name["LEFT_HIP"]
+        right_hip = self.human_parts_name["RIGHT_HIP"]
+        left_knee = self.human_parts_name["LEFT_KNEE"]
+        right_knee = self.human_parts_name["RIGHT_KNEE"]
+        joint_left_hip = self.skeleton.joints[left_hip]
+        joint_right_hip = self.skeleton.joints[right_hip]
+        midpoint = (joint_left_hip + joint_right_hip)/2
+
+        # Vetor entre o ponto médio das hips e o joelho
+        left_vector = Calculate.Vector(midpoint, self.skeleton.joints[left_knee])
+        right_vector = Calculate.Vector(
+            midpoint, self.skeleton.joints[right_knee])
+        
+        return left_vector // right_vector
+
     def read_json(self):
         with open(self.file3d) as f:
             data: list = json.load(f)["localizations"]
@@ -431,6 +453,7 @@ class Plot:
         self.plot_altura_pe()
         self.plot_distancia_pes()
         self.plot_ombros()
+        self.plot_angulo_pelvis()
 
     def plot_ombros(self):
         fig, ax = plt.subplots()
@@ -483,11 +506,20 @@ class Plot:
         ax.legend()
 
         fig.savefig(os.path.join(self.PASTA_RESULTADO, "altura_pe.png"))
+    def plot_angulo_pelvis(self):
+        fig, ax = plt.subplots()
+        ax.plot(self.data["angulo_pelvis"], label="Ângulo da pelvis")
+        ax.set_title("Ângulo da pelvis(graus)")
+        ax.set_xlabel("Frame")
+        ax.set_ylabel("Ângulo")
+        ax.legend()
 
+        fig.savefig(os.path.join(self.PASTA_RESULTADO, "angulo_pelvis.png"))
 
 if __name__ == "__main__":
 
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
-    #print(calc.plot_data["velocidade"])
+    #print(calc.plot_data["angulo_pelvis"])
     plot = Plot(calc.plot_data)
+
