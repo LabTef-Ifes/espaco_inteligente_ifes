@@ -26,7 +26,7 @@
   - [options](#options)
 - [Câmeras novas do switch e o novo serviço de gateway](#câmeras-novas-do-switch-e-o-novo-serviço-de-gateway)
   - [Como iniciar as câmeras](#como-iniciar-as-câmeras)
-- [Configurações do Labtef](#configurações-do-labtef)
+- [Configurações do Labtef - PC 20](#configurações-do-labtef---pc-20)
 - [Referências](#referências)
   - [Papers](#papers)
   - [Repositório do gateway das novas câmeras](#repositório-do-gateway-das-novas-câmeras)
@@ -123,10 +123,10 @@ _Seção criada a partir da primeira conversa com o Mendonça em busca de compre
 # Pastas e arquivos do espaço inteligente
 
 ## root(pasta inicial do diretório)
-- [iniciar_principais_containers.sh](iniciar_principais_containers.sh) - Bash para iniciar todos os containers do EI
+- [iniciar_principais_containers.sh](iniciar_principais_containers.sh) - Bash para iniciar todos os containers do EI em um computador conectados às câmeras[^2]
 - [visualizar_camera.py](visualizar_camera.py) - Arquivo teste para visualizar a imagem de uma câmera.
-- [sh_permission_denied.py](sh_permission_denied.py) -
-- [requirements.txt](requirements.txt) -
+- [sh_permission_denied.py](sh_permission_denied.py) - Desbloqueia os arquivos `.sh` em `sh_files` para execução
+- [requirements.txt](requirements.txt) - Lista todas as bibliotecas necessárias para o funcionamento do EI.
 ## dataset-creator
 
 - [dataset-creator/capture_images.py](dataset-creator/capture_images.py) - Realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em `/dataset-creator/options.json`. Comandos válidos: `s` inicia a gravação (salvar imagens), `p` pausa a gravação, `q` fecha o programa.
@@ -187,10 +187,10 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 4. Confira que os IP's das câmeras estão corretos nos arquivos `settings-camera-X.yaml`, dentro de [multi-camera](is-cameras-py-labtef\deploy\multi-camera)
 5. Inicie os containers com o comando `python iniciar_principais_containers.sh` na pasta principal.
 6. Confira que os containeres listados estão em execução
-7. As câmeras foram iniciadas, visualize-as com o script `capture_images.py` executado dentro do `venv`
+7. As câmeras foram iniciadas, visualize-as com o script `capture_images.py`, executado dentro do `venv`
 <!-- Necessário completar -->
 
-# Configurações do Labtef
+# Configurações do Labtef - PC 20
 
 | Item                   |                           Detalhamento |
 | :--------------------- | -------------------------------------: |
