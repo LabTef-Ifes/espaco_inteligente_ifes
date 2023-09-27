@@ -4,6 +4,7 @@
 - [Summary](#summary)
 - [Preparando o ambiente](#preparando-o-ambiente)
   - [Instale o Docker](#instale-o-docker)
+  - [Instale o ambiente](#instale-o-ambiente)
 - [Câmeras antigas - Informações importantes](#câmeras-antigas---informações-importantes)
 - [Comentários sobre o uso dos containers](#comentários-sobre-o-uso-dos-containers)
   - [Grouper](#grouper)
@@ -12,14 +13,17 @@
   - [dataset-creator](#dataset-creator)
     - [calculate.py](#calculatepy)
       - [Classe Skeleton](#classe-skeleton)
+        - [Joint](#joint)
       - [Classe Calculate](#classe-calculate)
-        - [Ângulo dos joelhos](#ângulo-dos-joelhos)
-        - [Alinhamento do tronco](#alinhamento-do-tronco)
         - [Velocidade](#velocidade)
+        - [Alinhamento dos ombros](#alinhamento-dos-ombros)
         - [Distância](#distância)
-      - [Classe Calculate.Vector](#classe-calculatevector)
-      - [Classe Plot](#classe-plot)
+        - [Alinhamento do tronco](#alinhamento-do-tronco)
+        - [Ângulo dos joelhos](#ângulo-dos-joelhos)
       - [Altura do pé](#altura-do-pé)
+      - [Ângulo entre os joelhos](#ângulo-entre-os-joelhos)
+      - [Vector](#vector)
+      - [Classe Plot](#classe-plot)
   - [sh\_files](#sh_files)
   - [is-camera-py-labtef](#is-camera-py-labtef)
   - [calibrations](#calibrations)
@@ -40,6 +44,21 @@
 ---
 # Preparando o ambiente
 
+## Instale o Docker
+1. Confira se já possui docker utilizando `docker -v` no terminal.
+2. Caso não possua, execute o seguinte comando no terminal
+    ``` shell
+    apt update && \
+    apt install -y apt-transport-https ca-certificates curl software-properties-common && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" && \
+    apt update && \
+    apt-cache policy docker-ce && \
+    apt install -y docker-ce
+    ```
+3. Em caso de erro de permissão, adicione `sudo` na frente de cada comando `apt`.
+
+## Instale o ambiente  
 **Para utilizar o GitHub no Linux, é recomendado utilizar a extensão github nativa no VsCode**
 1. Adicione o seu usuario para utilizar o docker sem sudo com `sudo usermod -aG docker $USER`.
 2. Crie uma pasta local para o projeto com o nome `desenvolvimento`
@@ -55,38 +74,32 @@
 5. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh). 
    1. Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) novamente.
    
-6. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
+6. Em outro terminal, digite `docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
 
-    | containers ativos (**Comunicação**) |                                                                                             **descrição** |
-    | :---------------------------------- | --------------------------------------------------------------------------------------------------------: |
-    | rabbitmq                            |                                                                          Canal de comunicação dos tópicos |
-    | zipkin                              |                                                             Exibe e organiza os tópicos para visualização |
-    | **Câmeras antigas[^1]**             |                                                                                             **descrição** |
-    | cam0                                |                                                                                           Conexão da cam0 |
-    | cam1                                |                                                                                           Conexão da cam1 |
-    | cam2                                |                                                                                           Conexão da cam2 |
-    | cam3                                |                                                                                           Conexão da cam3 |
-    | **Reconstrução**                    |                                                                                             **descrição** |
-    | skX (X in [1,2,...])                | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
-    | is-frame_transformation             |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
-    | grouper                             |                                                                    Descrito na [citação abaixo](#grouper) |
+    | containers ativos (**Comunicação**) |                                 **descrição** |
+    | :---------------------------------- | --------------------------------------------: |
+    | rabbitmq                            |              Canal de comunicação dos tópicos |
+    | zipkin                              | Exibe e organiza os tópicos para visualização |
+    
+
+    | **Câmeras antigas[^1]** |   **descrição** |
+    | :---------------------- | --------------: |
+    | cam0                    | Conexão da cam0 |
+    | cam1                    | Conexão da cam1 |
+    | cam2                    | Conexão da cam2 |
+    | cam3                    | Conexão da cam3 |
+    
+    
+    | **Reconstrução**        |                                                                                             **descrição** |
+    | :---------------------- | --------------------------------------------------------------------------------------------------------: |
+    | skX (X in [1,2,...])    | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
+    | is-frame_transformation |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
+    | grouper                 |                                                                    Descrito na [citação abaixo](#grouper) |
 
 <!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator. 
 1. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
-## Instale o Docker
-1. Confira se já possui docker utilizando `docker -v` no terminal.
-2. Caso não possua, execute o seguinte comando no terminal
-    ``` shell
-    apt update && \
-    apt install -y apt-transport-https ca-certificates curl software-properties-common && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" && \
-    apt update && \
-    apt-cache policy docker-ce && \
-    apt install -y docker-ce
-    ```
-3. Em caso de erro, adicione `sudo` na frente de cada comando `apt`.
+
 ---
 # Câmeras antigas - Informações importantes
 
@@ -142,17 +155,115 @@ _Seção criada a partir da primeira conversa com o Mendonça em busca de compre
 ### [calculate.py](dataset-creator/calculate.py) 
 A partir do arquivo json gerado pelo `request_3d.py`, calcula as métricas e os gráficos da gravação
 #### Classe Skeleton
-#### Classe Calculate
-##### Ângulo dos joelhos
-##### Alinhamento do tronco
-##### Velocidade
-##### Distância
-#### Classe Calculate.Vector
-#### Classe Plot
-#### Altura do pé
+Representa um esqueleto humano. Possui os seguintes métodos e atributos:
 
+`__init__(self, frame_dict: dict)`
+Construtor da classe que recebe um dicionário frame_dict contendo informações sobre os keypoints do esqueleto. Este dicionário é extraído de um frame de um vídeo. Os principais atributos são:
+
+`objects`: Uma lista de dicionários, onde cada dicionário representa um objeto (pessoa) no frame.
+
+`keypoints`: Uma lista de dicionários contendo as coordenadas tridimensionais dos keypoints de cada pessoa no frame.
+
+`joints`: Um dicionário que mapeia os IDs dos keypoints para objetos da classe Joint.
+
+`read_joints(self) -> dict[str, Skeleton.Joint]`
+Este método lê os keypoints do esqueleto a partir dos dados do frame e retorna um dicionário com os keypoints representados como objetos da classe Joint.
+##### Joint
+Possui os pontos `x`,`y`,`z` de um dado ponto do corpo.
+Possui `id` e `nome`
+Pode fazer divisão por um número.
+Pode somar com outra `Joint`.
+#### Classe Calculate
+
+Atributos:
+`human_parts_id`: Um dicionário que mapeia os IDs dos keypoints para seus nomes correspondentes.
+
+`human_parts_name`: Um dicionário que mapeia os nomes dos keypoints para seus IDs correspondentes.
+
+`Vector`: Uma classe interna que representa um vetor entre dois pontos do esqueleto.
+
+`init(self, file3d)`
+Construtor da classe que recebe o nome de um arquivo JSON contendo os dados tridimensionais dos keypoints do esqueleto. Os principais atributos são:
+
+`plot_data`: Um dicionário usado para armazenar os resultados dos cálculos que serão usados para a geração de gráficos.
+
+`file3d`: O nome do arquivo JSON contendo os dados.
+
+`data`: Uma lista de frames, onde cada frame contém informações sobre os keypoints do esqueleto.
+
+`frames`: O número total de frames no arquivo.
+
+`skeleton`: Um objeto da classe `Skeleton` que representa o esqueleto no primeiro frame.
+
+`dt`: O tempo entre cada frame (inverso da taxa de quadros por segundo).
+
+`midpoint_history`: Uma lista para armazenar os pontos médios entre as duas `hips` (quadril) para calcular a velocidade.
+
+`run_frames(self)`
+Este método passa por todos os frames do arquivo JSON e realiza vários cálculos, incluindo velocidade, distância entre os pés, altura dos ombros, altura dos pés, ângulo do tronco e ângulos dos joelhos. Os resultados são armazenados no dicionário `plot_data`.
+
+##### Velocidade
+`velocidade(self)`: Calcula a velocidade com base no deslocamento do ponto médio entre as duas `hips`.
+##### Alinhamento dos ombros
+`alinhamento_ombros(self)`: Calcula a altura dos ombros esquerdo e direito.
+
+##### Distância
+`distancia_pes(self)`: Calcula a distância entre os pés.
+
+##### Alinhamento do tronco
+
+`angulo_tronco_vertical(self)`: Calcula o ângulo do tronco em relação ao plano vertical.
+##### Ângulo dos joelhos
+`angulo_joelho_direito(self)`: Calcula o ângulo do joelho direito.
+
+`angulo_joelho_esquerdo(self)`: Calcula o ângulo do joelho esquerdo.
+#### Altura do pé
+`altura_do_pe(self, lado)`: Calcula a altura do tornozelo (esquerdo ou direito).
+
+#### Ângulo entre os joelhos
+`angulo_pelvis(self)`: Calcula o ângulo da pelvis.
+
+#### Vector
+Classe interna dentro da classe `Calculate` que representa um vetor tridimensional. Essa classe é usada para calcular a magnitude e o ângulo entre dois vetores, que são frequentemente utilizados no contexto do processamento de keypoints tridimensionais do esqueleto humano.
+
+Aqui está uma descrição dos principais aspectos da classe `Calculate.Vector`:
+
+Método `init(self, point_a, point_b)`
+O construtor da classe `Calculate.Vector` recebe dois objetos do tipo `Skeleton.Joint`, que representam pontos no espaço tridimensional. Ele cria um vetor cuja origem está no ponto `point_a` e cujo destino está no ponto `point_b`. O vetor é definido pelas coordenadas (x, y, z) do ponto de origem e do ponto de destino.
+
+Propriedade `vector`
+A propriedade `vector` retorna uma representação do vetor como um array NumPy, contendo as componentes x, y e z do vetor.
+
+Propriedade `magnitude`
+A propriedade `magnitude` calcula a magnitude (comprimento) do vetor usando a função `np.linalg.norm` da biblioteca NumPy. A magnitude é uma medida do tamanho do vetor no espaço tridimensional.
+
+Método `calculate_angle(self, vector)`
+O método `calculate_angle` calcula o ângulo entre dois vetores. Ele recebe outro objeto do tipo `Calculate.Vector` como argumento e calcula o ângulo entre o vetor atual (representado pela instância `self`) e o vetor passado como argumento usando o produto interno (dot product) entre os dois vetores. O resultado é retornado em graus.
+
+Operador `floordiv(self, other)`
+O operador `floordiv` é definido para calcular o ângulo entre dois vetores usando a função `calculate_angle`. Quando você usa o operador `//` entre duas instâncias da classe `Calculate.Vector`, ele chama o método `calculate_angle` para calcular o ângulo entre esses vetores.
+
+A classe `Calculate.Vector` é útil para calcular ângulos e magnitudes entre pontos tridimensionais, o que é fundamental para várias métricas e cálculos realizados na classe `Calculate` ao processar os keypoints do esqueleto humano.
+#### Classe Plot
+A classe `Plot` é responsável por criar gráficos a partir dos dados calculados pela classe `Calculate`. Ela possui os seguintes métodos:
+
+`init(self, data)`
+Construtor da classe que recebe o dicionário `data` contendo os resultados dos cálculos da classe `Calculate`.
+
+`plot(self)`
+Este método chama vários outros métodos para criar gráficos de diferentes métricas, como altura dos ombros, ângulos dos joelhos, distância entre os pés, entre outros. Os gráficos são salvos na pasta `resultados`.
+
+Os gráficos gerados incluem:
+
+- Altura dos ombros
+- Ângulos dos joelhos
+- Ângulo do tronco
+- Altura dos pés (tornozelos)
+- Distância entre os pés
+- Ângulo da pelvis
 ## sh_files
 ## is-camera-py-labtef
+sub-repositório. [Mais informações](https://github.com/LabTef-Ifes/is-cameras-py-labtef)
 ## calibrations
 
 ## options
