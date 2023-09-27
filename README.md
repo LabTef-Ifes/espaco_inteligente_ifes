@@ -72,6 +72,8 @@
     | is-frame_transformation             |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
     | grouper                             |                                                                    Descrito na [citação abaixo](#grouper) |
 
+7. Em caso de nem todos os containers estiverem ativados, rode o comando `sh iniciar_principais_containers.sh` novamente.   
+
 <!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator. 
 1. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
 ## Instale o Docker
