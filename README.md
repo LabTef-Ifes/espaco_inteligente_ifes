@@ -52,10 +52,25 @@
 	</ol>
 3. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef` 
 4. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivo [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
-5. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) com o comando `sh iniciar_principais_containers.sh`
+5. Confira se já possui docker utilizando `docker -v` no terminal. 
+   <ol type="i">
+	<li> Caso não possua, execute o seguinte comando no terminal:
+	    ``` shell
+	    apt update && \
+	    apt install -y apt-transport-https ca-certificates curl software-properties-common && \
+	    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+	    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" && \
+	    apt update && \
+	    apt-cache policy docker-ce && \
+	    apt install -y docker-ce
+	    ```
+	<li> Em caso de erro, adicione `sudo` na frente de cada comando `apt`.
+ 	<li> Para maiores informações, consulte a documentação oficial do Docker.
+  
+7. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) com o comando `sh iniciar_principais_containers.sh`
    1. Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) novamente.
    
-6. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
+8. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
 
     | containers ativos (**Comunicação**) |                                                                                             **Descrição** |
@@ -72,7 +87,7 @@
     | is-frame_transformation             |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
     | grouper                             |                                                                    Descrito na [citação abaixo](#grouper) |
 
-7. Em caso de nem todos os containers estiverem ativados, rode o comando `sh iniciar_principais_containers.sh` novamente.   
+9. Em caso de nem todos os containers estiverem ativados, rode o comando `sh iniciar_principais_containers.sh` novamente.   
 
 <!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator. 
 1. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
