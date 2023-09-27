@@ -52,7 +52,7 @@
 	</ol>
 3. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef` 
 4. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivo [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
-5. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh). 
+5. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) com o comando `sh iniciar_principais_containers.sh`
    1. Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) novamente.
    
 6. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
