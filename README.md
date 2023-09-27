@@ -52,25 +52,11 @@
 	</ol>
 3. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef` 
 4. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivo [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
-5. Confira se já possui docker utilizando `docker -v` no terminal. 
-   <ol type="i">
-	<li> Caso não possua, execute o seguinte comando no terminal:
-	    ``` shell
-	    apt update && \
-	    apt install -y apt-transport-https ca-certificates curl software-properties-common && \
-	    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-	    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" && \
-	    apt update && \
-	    apt-cache policy docker-ce && \
-	    apt install -y docker-ce
-	    ```
-	<li> Em caso de erro, adicione `sudo` na frente de cada comando `apt`.
- 	<li> Para maiores informações, consulte a documentação oficial do Docker.
-  
-7. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) com o comando `sh iniciar_principais_containers.sh`
+5. Ceritfique-se de ter o Docker instalado na máquina. Caso não tenha confira o tópico [Instale o Docker](#instale-o-docker)    
+6. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) com o comando `sh iniciar_principais_containers.sh`
    1. Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) novamente.
    
-8. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
+7. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
 
     | containers ativos (**Comunicação**) |                                                                                             **Descrição** |
@@ -87,7 +73,7 @@
     | is-frame_transformation             |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
     | grouper                             |                                                                    Descrito na [citação abaixo](#grouper) |
 
-9. Em caso de nem todos os containers estiverem ativados, rode o comando `sh iniciar_principais_containers.sh` novamente.   
+8. Em caso de nem todos os containers estiverem ativados, rode o comando `sh iniciar_principais_containers.sh` novamente.   
 
 <!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator. 
 1. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
@@ -104,6 +90,7 @@
     apt install -y docker-ce
     ```
 3. Em caso de erro, adicione `sudo` na frente de cada comando `apt`.
+4. Para maiores informações, confira a documentação oficial do Docker.
 ---
 # Câmeras antigas - Informações importantes
 
@@ -120,7 +107,7 @@
 
 - ⚠️⚠️O arquivo [options.json](dataset-creator/options.json) está vinculado às câmeras antigas e à captura de imagem, portando ele permanece sendo necessário de se atualizar quando mudar parâmetros das câmeras
 # Comentários sobre o uso dos containers
-_Seção criada a partir da primeira conversa com o Mendonça em busca de compreender a comunicação dockerizada do EI_
+_Seção criada a partir da primeira conversa com o Felippe Mendonça em busca de compreender a comunicação dockerizada do EI_
 - O sistema de containeres foi criado pelo Felippe na Ufes e utilizado em seu mestrado.
 - Há diversos tópicos de comunicação relacionados à captura de imagem, envio de imagem e construção do esqueleto.
 - O `rabbit` e o `zipkin` são essenciais para a utilização da comunicação do EI e devem ser os primeiros serviços iniciados
@@ -139,11 +126,11 @@ _Seção criada a partir da primeira conversa com o Mendonça em busca de compre
 
 # Pastas e arquivos do espaço inteligente
 
-## root(pasta inicial do diretório)
+## root (pasta inicial do diretório)
 - [iniciar_principais_containers.sh](iniciar_principais_containers.sh) - Bash para iniciar todos os containers do EI
 - [visualizar_camera.py](visualizar_camera.py) - Arquivo teste para visualizar a imagem de uma câmera.
-- [sh_permission_denied.py](sh_permission_denied.py) -
-- [requirements.txt](requirements.txt) -
+- [sh_permission_denied.py](sh_permission_denied.py) - Arquivo com o comando que dá permissão de executar arquivos .sh 
+- [requirements.txt](requirements.txt) - Arquivo com todas as bilbiotecas necessárias para o funcionamento do EI.
 ## dataset-creator
 
 - [dataset-creator/capture_images.py](dataset-creator/capture_images.py) - Realiza a captura dos frames das 4 câmeras e os salva no diretório especificado em `/dataset-creator/options.json`. Comandos válidos: `s` inicia a gravação (salvar imagens), `p` pausa a gravação, `q` fecha o programa.
@@ -151,7 +138,7 @@ _Seção criada a partir da primeira conversa com o Mendonça em busca de compre
 - [dataset-creator/make_videos.py](/dataset-creator/make_videos.py) - A partir dos frames capturados pelo arquivo `capture_images.py`, monta os vídeos de cada câmera e os salva em formato `.mp4`.
 - [dataset-creator/request_2d.py](dataset-creator/request_2d.py) - #TODO
 - [dataset-creator/request_3d.py](dataset-creator/request_3d.py) - #TODO
-- [dataset-creator/options.json](dataset-creator/options.json) - Parâmetros da criação gravação e análise dos vídeos. Neste arquivo, é possível alterar o diretório onde os frames das câmeras serão salvos para posteriormente formarem vídeos. 
+- [dataset-creator/options.json](dataset-creator/options.json) - Parâmetros da criação gravação e análise dos vídeos. Neste arquivo, é possível alterar o diretório onde os frames das câmeras serão salvos para posteriormente formarem vídeos. As informações de `fps`, `width`, `height` e `color` desse arquivo devem ser as mesmas inseridas em `options/X.json` (X = 0, 1, 2 ou 3). 
   
 - [dataset-creator/export-video-3d-medicoes-e-erros.py](dataset-creator/export-video-3d-medicoes-e-erros.py) - Arquivo do Wyctor utilizado para realizar cálculos sobre a reconstrução 3D **Deprecated**
 - [dataset-creator/Parameters.py](dataset-creator/Parameters.py) - programa que possui funções usadas no arquivo `export-video-3d-medicoes-e-erros.py`. **Deprecated**
@@ -182,7 +169,7 @@ As câmeras *novas*[^2] adquiridas recentemente para o EI não funcionam com o s
 
 Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta `deploy/multi-camera`. As configurações das câmeras podem ser alterados nos arquivos `settings-camera-X.yaml` (sendo X o id sequencial da câmera) também contidos na pasta `deploy/multi-camera`. Caso só exista o arquivo correspondente a uma câmera, crie os demais. Os parâmetros disponíveis para alteração são `fps`, `formato de cores`, `height`, `width` e `ratio`. Com os containers ativos, os arquivo do EI podem ser utilizados normalmente. Os containers que estarão ativos serão (_Name_):
 
-| Containers(_Name_)             |            descrição |
+| Containers (_Name_)             |            Descrição |
 | :----------------------------- | -------------------: |
 | multi-camera-rabbitmq-1        | Comunicação RabbitMQ |
 | multi-camera-is-mjpeg-server-1 |                #TODO |
@@ -201,9 +188,29 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 1. Conecte a câmera no Switch físico
 2. Abra o software **SpinView**
 3. Clique com o botão direito no IP da câmera e clique em `Auto Force IP`
-4. Confira que os IP's das câmeras estão corretos nos arquivos `settings-camera-X.yaml`, dentro de [multi-camera](is-cameras-py-labtef\deploy\multi-camera)
-5. Inicie os containers com o comando `python iniciar_principais_containers.sh` na pasta principal.
-6. Confira que os containeres listados estão em execução
+4. Confira que os IP's das câmeras estão corretos nos arquivos `settings-camera-X.yaml`, dentro de [multi-camera](is-cameras-py-labtef/deploy/multi-camera/)
+5. Inicie os containers com o comando `sh iniciar_principais_containers.sh` na pasta principal.
+6. Confira se os containeres listados abaixo estão em execução
+
+| Containers(_Name_)             |            descrição |
+| :----------------------------- | -------------------: |
+| multi-camera-is-mjpeg-server-1 | 		  #TODO |
+| is-frame_transformation 	 |                #TODO |
+| multi-camera-is-zipkin-1 	 |                #TODO |
+| multi-camera-is-rabbitmq-1 	 | Comunicação RabbitMQ |
+| multi-camera-camera-0-1        |  Conexão da câmera 0 |
+| multi-camera-camera-1-1        |  Conexão da câmera 1 |
+| multi-camera-camera-2-1        |  Conexão da câmera 2 |
+| multi-camera-camera-3-1        |  Conexão da câmera 3 |
+| grouper1			 |                #TODO |
+| grouper2			 |                #TODO |
+| grouper3			 |                #TODO |
+| grouper4			 |                #TODO |
+| sk1				 |                #TODO |
+| sk2				 |                #TODO |
+| sk3				 |                #TODO |
+| sk4				 |                #TODO |
+
 7. As câmeras foram iniciadas, visualize-as com o script `capture_images.py` executado dentro do `venv`
 <!-- Necessário completar -->
 
