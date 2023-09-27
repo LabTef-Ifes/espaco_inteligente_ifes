@@ -46,7 +46,7 @@
 	<ol type="i">
 	<li>Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes</code> para o repositório principal ou <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid</code> para <i>clonar</i> o fork de atualização.
 	<li>
-	    Crie um <i>virtual environment</i> para o projeto
+	    Crie um <i>virtual environment</i> para o projeto.
 		    Para criar um venv, digite <code>python3.6 -m venv venv</code> no diretório reservado ao projeto.
 	<li>Ative o ambiente virtual com o comando <code>source venv/bin/activate</code>.
 	</ol>
@@ -58,16 +58,16 @@
 6. Em outro terminal, digite `sudo docker stats` para verificar se os containers estão rodando (*Ctrl+C para fechar*). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
    
 
-    | containers ativos (**Comunicação**) |                                                                                             **descrição** |
+    | containers ativos (**Comunicação**) |                                                                                             **Descrição** |
     | :---------------------------------- | --------------------------------------------------------------------------------------------------------: |
     | rabbitmq                            |                                                                          Canal de comunicação dos tópicos |
     | zipkin                              |                                                             Exibe e organiza os tópicos para visualização |
-    | **Câmeras antigas[^1]**             |                                                                                             **descrição** |
+    | **Câmeras antigas[^1]**             |                                                                                             **Descrição** |
     | cam0                                |                                                                                           Conexão da cam0 |
     | cam1                                |                                                                                           Conexão da cam1 |
     | cam2                                |                                                                                           Conexão da cam2 |
     | cam3                                |                                                                                           Conexão da cam3 |
-    | **Reconstrução**                    |                                                                                             **descrição** |
+    | **Reconstrução**                    |                                                                                             **Descrição** |
     | skX (X in [1,2,...])                | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
     | is-frame_transformation             |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
     | grouper                             |                                                                    Descrito na [citação abaixo](#grouper) |
