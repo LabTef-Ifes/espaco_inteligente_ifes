@@ -33,6 +33,8 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
          (HKP.Value('NECK'), HKP.Value('LEFT_HIP')), (HKP.Value('LEFT_HIP'),
                                                       HKP.Value('LEFT_KNEE')),
+                                                    (HKP.Value('LEFT_HIP'),
+                                                    HKP.Value('RIGHT_HIP')),
          (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
          (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
          (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
@@ -49,6 +51,7 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
 class Export3D:
     OUTPUT_FORMAT = 'p{:03d}g{:02d}_output.avi'
     FPS = 15
+
     def __init__(self,show:bool=True):
         plt.ioff()
         self.log = Logger(name='Export3D')
