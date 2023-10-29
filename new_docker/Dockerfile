@@ -36,7 +36,7 @@ WORKDIR /app
 
 # Copia o arquivo de requisitos para o diretório de trabalho
 RUN pip install -r requirements.txt
-
+EXPOSE 80
 VOLUME [ "/app" ]
 # Defina o comando de inicialização (substitua pelo comando do seu aplicativo)
 #CMD [""]

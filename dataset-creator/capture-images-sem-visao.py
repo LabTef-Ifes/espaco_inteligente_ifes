@@ -8,7 +8,6 @@ import shutil
 import argparse
 from datetime import datetime as dt
 from collections import defaultdict, OrderedDict
-import cv2
 import numpy as np
 from utils import load_options
 from is_msgs.image_pb2 import Image
