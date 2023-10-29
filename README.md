@@ -68,13 +68,13 @@
 
 1. Adicione o seu usuario para utilizar o docker sem sudo com `sudo usermod -aG docker $USER`.
 2. Crie uma pasta local para o projeto com o nome `desenvolvimento`
-<ol type="i">
-<li>Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes</code> para o repositório principal ou <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid</code> para <i>clonar</i> o fork de atualização.
-<li>
-    Crie um <i>virtual environment</i> para o projeto
-	    Para criar um venv, digite <code>python3.6 -m venv venv</code> no diretório reservado ao projeto.
-<li>Ative o ambiente virtual com o comando <code>source venv/bin/activate</code>.
-</ol>
+    <ol type="i">
+    <li>Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes</code> para o repositório principal ou <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid</code> para <i>clonar</i> o fork de atualização.
+    <li>
+        Crie um <i>virtual environment</i> para o projeto
+            Para criar um venv, digite <code>python3.6 -m venv venv</code> no diretório reservado ao projeto.
+    <li>Ative o ambiente virtual com o comando <code>source venv/bin/activate</code>.
+    </ol>
 3. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef`
 4. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivo [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
 5. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh).
@@ -112,8 +112,8 @@
   1. Na opção **RGB** (_pixel format RGB8_) as câmeras funcionam com até **12 fps** (1288 width, 728 heigth).
   2. Na opção **GRAY** (_pixel format Mono8_) as câmeras irão funcionar com até **30 fps** (1288 width, 728 heigth).
   3. Informações adicionais podem ser encontradas nas [referências técnicas](./referencias-tecnicas) das câmeras.
-- As alterações realizadas nos arquivos `options/X.json` (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao inicializar os containers.
-  ⚠️ _Caso os containers estejam ativos e for realizado alguma mudanças nos arquivos json, os containers deverão ser parados e reinicializados._
+- As alterações realizadas nos arquivos `options/X.json` (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao (_re_)inicializar os containers.
+  ⚠️ _Caso os containers estejam ativos e for realizada alguma mudançaa nos arquivos json, os containers deverão ser parados e reinicializados._
 - Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O Flycapture SDK, software do fabricante das câmeras, é compatível com o modelo _antigo_[^1].
 
