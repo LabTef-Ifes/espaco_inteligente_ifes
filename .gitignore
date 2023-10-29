@@ -5,11 +5,13 @@ options/*.json
 *env/
 ei_ifes/
 
-dataset-creator/__pycache__/
+# Cache
+*__pycache__*
+# Videos
 dataset-creator/videos/*.avi
 #dataset-creator/videos/*.mp4
 dataset-creator/record_screen.avi
 dataset-creator/*.pyc
 dataset-creator/videos/*/*.jpeg
 
-is-cameras-py-labtef/
+is-cameras-py-labtef
