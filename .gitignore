@@ -15,3 +15,4 @@ dataset-creator/*.pyc
 dataset-creator/videos/*/*.jpeg
 
 is-cameras-py-labtef
+.python-version
