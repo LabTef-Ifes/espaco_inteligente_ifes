@@ -1,0 +1,575 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: camera-gateways
+  namespace: default
+data:
+  cam0: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.100",
+      "camera_id": 0,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+  cam1: |-
+   {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.101",
+      "camera_id": 1,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+  cam2: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.102",
+      "camera_id": 2,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+  cam3: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.103",
+      "camera_id": 3,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+  cam4: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.104",
+      "camera_id": 4,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+  cam5: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.105",
+      "camera_id": 5,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+  cam6: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.106",
+      "camera_id": 6,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+  cam7: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.0.107",
+      "camera_id": 7,
+      "packet_delay": 6000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {},
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 720,
+            "height": 540
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "SPINNAKER"
+    }
+
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam0"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "0"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam0
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam1"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "1"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam1
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam2"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "2"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam2
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam3"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "3"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam3
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam4"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "4"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam4
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam5"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "5"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam5
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam6"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "6"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam6
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "cam7"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      containers:
+      - name: "7"
+        image: viros/is-cameras:1.5
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam7
+            path: options.json

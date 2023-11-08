@@ -1,0 +1,319 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: camera-gateways
+  namespace: default
+data:
+  cam0: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.10.0",
+      "camera_id": 0,
+      "packet_delay": 3000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.1,
+            "automatic": false
+          }
+        },
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "FLYCAPTURE"
+    }
+  cam1: |-
+   {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.10.1",
+      "camera_id": 1,
+      "packet_delay": 3000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.1,
+            "automatic": false
+          }
+        },
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "FLYCAPTURE"
+    }
+  cam2: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.10.2",
+      "camera_id": 2,
+      "packet_delay": 3000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.1,
+            "automatic": false
+          }
+        },
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "FLYCAPTURE"
+    }
+  cam3: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "camera_ip": "10.10.10.3",
+      "camera_id": 3,
+      "packet_delay": 3000,
+      "packet_size": 1400,
+      "reverse_x": false,
+      "reverse_y": false,
+      "parallelism": 0,
+      "initial_config": {
+        "sampling": {
+          "frequency": 5.0
+        },
+        "camera": {
+          "shutter": {
+            "ratio": 0.1,
+            "automatic": false
+          }
+        },
+        "image": {
+          "color_space": {
+            "value": "RGB"
+          },
+          "resolution": {
+            "width": 1288,
+            "height": 728
+          },
+          "format": {
+            "format": "JPEG",
+            "compression": 0.8
+          }
+        }
+      },
+      "camera_driver": "FLYCAPTURE"
+    }
+
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "is-cameras-0"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      nodeSelector:
+        kubernetes.io/hostname: titan
+      containers:
+      - name: "0"
+        image: labviros/is-cameras:0.0.1
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam0
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "is-cameras-1"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      nodeSelector:
+        kubernetes.io/hostname: dirac
+      containers:
+      - name: "1"
+        image: labviros/is-cameras:0.0.1
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam1
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "is-cameras-2"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      nodeSelector:
+        kubernetes.io/hostname: cheetara
+      containers:
+      - name: "2"
+        image: labviros/is-cameras:0.0.1
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam2
+            path: options.json
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "is-cameras-3"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camera
+    spec:
+      hostNetwork: true
+      dnsPolicy: "ClusterFirstWithHostNet"
+      nodeSelector:
+        kubernetes.io/hostname: monstro
+      containers:
+      - name: "3"
+        image: labviros/is-cameras:0.0.1
+        command: ["/service.bin"]
+        args: ["/opt/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            memory: 128Mi
+            cpu: '1'
+          requests:
+            memory: 128Mi
+            cpu: '1'
+        volumeMounts:
+          - name: options
+            mountPath: /opt
+      volumes:
+      - name: options
+        configMap:
+          name: camera-gateways
+          items:
+          - key: cam3
+            path: options.json

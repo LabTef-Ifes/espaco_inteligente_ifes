@@ -1,9 +1,9 @@
 echo 'viros/is-mjpeg-server:1'
 
-docker run -d --name is-mjpeg-server \
+docker run -d --name is-mjpeg-server5 \
     -p 3000:3000 \
     -e IS_URI=amqp://guest:guest@rabbitmq:5672 \
-    --restart always \
+    --restart=on-failure:5 \
     --network=host \
     labviros/is-mjpeg-server:0.0.1
 

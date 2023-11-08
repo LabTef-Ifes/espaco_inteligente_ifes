@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Stop all running containers
-sudo docker container stop $(sudo docker container ls -q)
+#docker container stop $(docker container ls -q)
 
 # Execute sh_permission_denied.py using Python
-sudo python sh_permission_denied.py
+python sh_permission_denied.py
 
 # Change directory and start Docker Compose in detached mode
-cd is-cameras-py-labtef/deploy/multi-camera && sudo docker compose up -d && cd ../../..
+cd is-cameras-py-labtef/deploy/multi-camera && docker compose up -d && cd ../../..
 
 # Wait for 7 seconds
 sleep 7

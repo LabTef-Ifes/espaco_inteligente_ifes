@@ -1,0 +1,65 @@
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: rabbitmq-exporter
+  namespace: monitoring
+  labels:
+    app: rabbitmq-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq-exporter
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-exporter
+    spec:
+      containers:
+      - name: rabbitmq-exporter
+        image: kbudde/rabbitmq-exporter
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: "0.1"
+        env:
+        - name: RABBIT_URL 
+          value: "http://rabbitmq.default"
+        - name: PUBLISH_PORT
+          value: "8080"
+
+---
+
+kind: ServiceMonitor
+apiVersion: monitoring.coreos.com/v1
+metadata:
+  name: rabbitmq-exporter 
+  namespace: monitoring
+  labels:
+    app: rabbitmq-exporter 
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq-exporter 
+  endpoints: 
+  - port: http
+    interval: 5s
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-exporter 
+  namespace: monitoring
+  labels:
+    app: rabbitmq-exporter 
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: rabbitmq-exporter 
+

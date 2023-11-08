@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skeletons-heatmap
+  namespace: default
+data:
+  heatmap: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 9411,
+      "group_ids": [0],
+      "limits": {
+        "xmin": -4.0,
+        "xmax": 4.0,
+        "ymin": -2.5,
+        "ymax": 2.5
+      },
+      "bins_step": 0.05,
+      "output_scale": 5.0,
+      "output_rotate": "NONE",
+      "referential": {
+        "x": 0.0,
+        "y": 0.0,
+        "length": 50
+      },
+      "frame_id": 1000,
+      "draw_grid": true,
+      "flip_horizontal": true,
+      "flip_vertical": false,
+      "log_scale": true,
+      "average_coordinates": false,
+      "samples": 10000,
+      "period_ms": 200
+    }
+
+---
+
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: "is-skeletons-heatmap"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: heatmap
+    spec:
+      containers:
+      - name: service
+        image: viros/is-skeletons-heatmap:0.0.2
+        command: ["is-skeletons-heatmap"]
+        args: ["/conf/options.json"]
+        imagePullPolicy: Always
+        resources:
+          limits: 
+            cpu: "1"
+            memory: 256Mi
+        volumeMounts:
+          - name: options
+            mountPath: /conf/
+      volumes:
+      - name: options
+        configMap:
+          name: skeletons-heatmap
+          items:
+          - key: heatmap
+            path: options.json

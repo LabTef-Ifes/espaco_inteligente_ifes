@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: is-mjpeg-server
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: is-mjpeg-server
+    spec:
+      containers:
+      - name: is-mjpeg-server
+        image: labviros/is-mjpeg-server:0.0.1
+        env:
+        - name: IS_URI
+          value: 'amqp://rabbitmq.default'
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            memory: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: is-mjpeg-server
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: is-mjpeg-server
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30300
