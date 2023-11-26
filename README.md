@@ -95,12 +95,9 @@
 
    | **Reconstrução**        |                                                                                             **descrição** |
    | :---------------------- | --------------------------------------------------------------------------------------------------------: |
-   | skX (X in [1,2,...])    | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
+   | skX [^3]   | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
    | is-frame_transformation |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
    | grouper                 |                                                                    Descrito na [citação abaixo](#grouper) |
-
-<!-- Comentado pois não é mais necessário ajustar essa pasta, pois está em relative path na pasta videos, dentro de dataset-creator.
-1. Ajuste o diretório da pasta com os vídeos a serem salvos/analisados no arquivo **`dataset-creator/options.json`**. -->
 
 ---
 
@@ -112,13 +109,14 @@
   1. Na opção **RGB** (_pixel format RGB8_) as câmeras funcionam com até **12 fps** (1288 width, 728 heigth).
   2. Na opção **GRAY** (_pixel format Mono8_) as câmeras irão funcionar com até **30 fps** (1288 width, 728 heigth).
   3. Informações adicionais podem ser encontradas nas [referências técnicas](./referencias-tecnicas) das câmeras.
-- As alterações realizadas nos arquivos `options/X.json` (sendo X = 0, 1, 2 ou 3) somente surtirão efeito ao (_re_)inicializar os containers.
+- As alterações realizadas nos arquivos `options/X.json`[^3] somente surtirão efeito ao (_re_)inicializar os containers.
   ⚠️ _Caso os containers estejam ativos e for realizada alguma mudançaa nos arquivos json, os containers deverão ser parados e reinicializados._
 - Para parar todos os containers de uma só vez utilize o comando: `sudo docker container stop $(sudo docker container ls -q)`
 - O Flycapture SDK, software do fabricante das câmeras, é compatível com o modelo _antigo_[^1].
 
 - ⚠️⚠️O arquivo [options.json](dataset-creator/options.json) está vinculado às câmeras antigas e à captura de imagem, portando ele permanece sendo necessário de se atualizar quando mudar parâmetros das câmeras
 
+[^3]: X representa o número da câmera entre 0 e a quantidade de câmeras. Com 4 câmeras, X pode ser 0,1,2 ou 3
 # Comentários sobre o uso dos containers
 
 _Seção criada a partir da primeira conversa com o Mendonça em busca de compreender a comunicação dockerizada do EI_
@@ -291,12 +289,12 @@ Este método chama vários outros métodos para criar gráficos de diferentes m�
 
 Os gráficos gerados incluem:
 
-- Altura dos ombros
-- Ângulos dos joelhos
-- Ângulo do tronco
-- Altura dos pés (tornozelos)
-- Distância entre os pés
-- Ângulo da pelvis
+1. Altura dos ombros
+1. Ângulos dos joelhos
+1. Ângulo do tronco
+1. Altura dos pés (tornozelos)
+1. Distância entre os pés
+1. Ângulo da pelvis
 
 ## sh_files
 
@@ -312,7 +310,7 @@ Possui os jsons de calibração do ambiente. Esses jsons são utilizados para o 
 
 ## options
 
-- [options/X.json](options/0.json) - Parâmetros da câmera X (câmeras 0, 1, 2 e 3). Neste arquivo é possível alterar parâmetros relativos a câmera: `IP`, `fps`, `height`, `width` e etc.
+- [options/X.json](options/0.json)[^3]. Neste arquivo é possível alterar parâmetros relativos a câmera: `IP`, `fps`, `height`, `width` e etc.
 
 # Câmeras novas do switch e o novo serviço de gateway
 
@@ -320,13 +318,13 @@ Possui os jsons de calibração do ambiente. Esses jsons são utilizados para o 
 
 As câmeras _novas_[^2] adquiridas recentemente para o EI não funcionam com o serviço de gateway já disponível. Desta forma, [um novo serviço de gateway](https://github.com/LabTef-Ifes/is-cameras-py) foi desenvolvido. Em sua primeira utilização, execute as instruções contidas no Readme e conseguirá visualizar a imagem de uma câmera.
 
-Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta `deploy/multi-camera`. As configurações das câmeras podem ser alterados nos arquivos `settings-camera-X.yaml` (sendo X o id sequencial da câmera) também contidos na pasta `deploy/multi-camera`. Caso só exista o arquivo correspondente a uma câmera, crie os demais. Os parâmetros disponíveis para alteração são `fps`, `formato de cores`, `height`, `width` e `ratio`. Com os containers ativos, os arquivo do EI podem ser utilizados normalmente. Os containers que estarão ativos serão (_Name_):
+Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker compose up` dentro da pasta `deploy/multi-camera`. As configurações das câmeras podem ser alterados nos arquivos `settings-camera-X.yaml` [^3] também contidos na pasta `deploy/multi-camera`. Caso só exista o arquivo correspondente a uma câmera, crie os demais. Os parâmetros disponíveis para alteração são `fps`, `formato de cores`, `height`, `width` e `ratio`. Com os containers ativos, os arquivo do EI podem ser utilizados normalmente. Os containers que estarão ativos serão (_Name_):
 
 | Containers(_Name_)             |                       descrição |
 | :----------------------------- | ------------------------------: |
 | multi-camera-rabbitmq-1        |            Comunicação RabbitMQ |
 | multi-camera-is-mjpeg-server-1 | [Descrição do Mendonça](#mjpeg) |
-| multi-camera-camera-X-1        |             Conexão da câmera X |
+| multi-camera-camera-X-1        |             Conexão da câmera X[^3] |
 
 - O Readme contido dentro do arquivo `spinnaker-2.7.0.128-Ubuntu18.04-amd64-pkg.tar.gz` possui informações -_sobre alteração de buffer, por exemplo_- que podem ajudar caso esteja ocorrendo algum problema de captura de imagem.
 - O `Spinnaker SDK` é o software do fabricante das câmeras compatível com o modelo _novo_[^2] e com o modelo _antigo_[^1]
@@ -339,7 +337,7 @@ Para iniciar as quatro câmeras de uma só vez, execute o comando `sudo docker c
 1. Conecte a câmera no Switch físico
 2. Abra o software **SpinView**
 3. Clique com o botão direito no IP da câmera e clique em `Auto Force IP`
-4. Confira que os IP's das câmeras estão corretos nos arquivos `settings-camera-X.yaml`, dentro de [multi-camera](is-cameras-py-labtef\deploy\multi-camera)
+4. Confira que os IP's das câmeras estão corretos nos arquivos `settings-camera-X.yaml`[^3], dentro de [multi-camera](is-cameras-py-labtef\deploy\multi-camera)
 5. Inicie os containers com o comando `python iniciar_principais_containers.sh` na pasta principal.
 6. Confira que os containeres listados estão em execução
 7. As câmeras foram iniciadas, visualize-as com o script `visualizar_camera.py`, executado dentro do `venv`
