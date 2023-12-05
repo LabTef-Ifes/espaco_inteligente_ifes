@@ -5,7 +5,7 @@ import re
 import socket
 import time
 from collections import defaultdict
-from enum import Enum
+from enum import Enum,auto
 from glob import glob
 
 from google.protobuf.json_format import MessageToDict
@@ -20,11 +20,11 @@ JSON2D_REGEX = 'p([0-9]{3})g([0-9]{2})c([0-9]{2})_2d.json'
 JSON3D_FORMAT = 'p{:03d}g{:02d}_3d.json'
 # Enumeração para representar os diferentes estados do programa
 class State(Enum):
-    MAKE_REQUESTS = 1
-    RECV_REPLIES = 2
-    CHECK_END_OF_SEQUENCE_AND_SAVE = 3
-    CHECK_FOR_TIMEDOUT_REQUESTS = 4
-    EXIT = 5
+    MAKE_REQUESTS = auto()
+    RECV_REPLIES = auto()
+    CHECK_END_OF_SEQUENCE_AND_SAVE = auto()
+    CHECK_FOR_TIMEDOUT_REQUESTS = auto()
+    EXIT = auto()
 
 
 class Skeleton3D:
@@ -146,14 +146,14 @@ class Skeleton3D:
         """
         self.state = State.MAKE_REQUESTS
 
-        while self.state != State.EXIT:
-            if self.state == State.MAKE_REQUESTS:
+        while self.state is not State.EXIT:
+            if self.state is State.MAKE_REQUESTS:
                 self._make_requests()
-            elif self.state == State.RECV_REPLIES:
+            elif self.state is State.RECV_REPLIES:
                 self._recv_replies()
-            elif self.state == State.CHECK_FOR_TIMEDOUT_REQUESTS:
+            elif self.state is State.CHECK_FOR_TIMEDOUT_REQUESTS:
                 self._check_for_timed_out_requests()
-            elif self.state == State.CHECK_END_OF_SEQUENCE_AND_SAVE:
+            elif self.state is State.CHECK_END_OF_SEQUENCE_AND_SAVE:
                 self._check_end_of_sequence_and_save()
 
     def _make_requests(self):

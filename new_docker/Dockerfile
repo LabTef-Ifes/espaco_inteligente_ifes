@@ -9,7 +9,12 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && apt-get clean
 
-#RUN echo python --version
+# Instala dependências do OpenCV
+RUN apt install -y libsm6 libxext6 \
+    ffmpeg
+
+RUN apt-get install -y libxrender-dev
+
 # Atualize o pip para a versão mais recente
 RUN python3 -m pip install --upgrade pip
 

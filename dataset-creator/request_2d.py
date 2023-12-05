@@ -6,7 +6,7 @@ import socket
 import sys
 import time
 from collections import defaultdict
-from enum import Enum
+from enum import Enum,auto
 from glob import glob
 
 import cv2
@@ -171,19 +171,19 @@ class Skeleton2D:
                 
             self.state = State.MAKE_REQUESTS
             while True:
-                if self.state == State.MAKE_REQUESTS: # se o estado atual é fazer pedidos
+                if self.state is State.MAKE_REQUESTS: # se o estado atual é fazer pedidos
                     self._make_request()
                 
-                elif self.state == State.RECV_REPLIES: # se o estado atual é receber respostas
+                elif self.state is State.RECV_REPLIES: # se o estado atual é receber respostas
                     self._recv_replies()
                 
-                elif self.state == State.CHECK_END_OF_VIDEO_AND_SAVE: # se o estado atual é verificar o fim do vídeo e salvar
+                elif self.state is State.CHECK_END_OF_VIDEO_AND_SAVE: # se o estado atual é verificar o fim do vídeo e salvar
                     self._check_end_of_video_and_save()
                 
-                elif self.state == State.CHECK_FOR_TIMEOUTED_REQUESTS: # se o estado atual é verificar pedidos com tempo limite excedido
+                elif self.state is State.CHECK_FOR_TIMEOUTED_REQUESTS: # se o estado atual é verificar pedidos com tempo limite excedido
                     self._check_for_timeouted_requests()
                 
-                elif self.state == State.EXIT: # se o estado atual é sair
+                elif self.state is State.EXIT: # se o estado atual é sair
                     break
             self.log.info("Completed!")
         else:
@@ -199,7 +199,6 @@ class Skeleton2D:
         channel = Channel(self.options.broker_uri)
         subscription = Subscription(channel)
         return channel, subscription
-        #self.subscription.subscribe(topic='SkeletonsDetector.Detected')
 
     def get_pending_videos(self):
         # Criação de lista de vídeos a serem processados e do número de frames em cada um
@@ -241,11 +240,11 @@ class Skeleton2D:
 
 # Definição de estados para a máquina de estados
 class State(Enum):
-    MAKE_REQUESTS = 1
-    RECV_REPLIES = 2
-    CHECK_END_OF_VIDEO_AND_SAVE = 3
-    CHECK_FOR_TIMEOUTED_REQUESTS = 4
-    EXIT = 5
+    MAKE_REQUESTS = auto()
+    RECV_REPLIES = auto()
+    CHECK_END_OF_VIDEO_AND_SAVE = auto()
+    CHECK_FOR_TIMEOUTED_REQUESTS = auto()
+    EXIT = auto()
 
 if __name__ == '__main__':
     request_skeleton = Skeleton2D()
