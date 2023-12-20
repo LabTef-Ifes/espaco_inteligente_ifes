@@ -4,7 +4,7 @@
 
 - [Summary](#summary)
 - [Preparando o ambiente](#preparando-o-ambiente)
-  - [Instale o Docker](#instale-o-docker)
+  - [Requisitos de instalação](#requisitos-de-instalação)
   - [Instale o ambiente](#instale-o-ambiente)
 - [Câmeras antigas - Informações importantes](#câmeras-antigas---informações-importantes)
 - [Comentários sobre o uso dos containers](#comentários-sobre-o-uso-dos-containers)
@@ -48,21 +48,14 @@
 ---
 
 # Preparando o ambiente
+Em dezembro de 2023, estamos atualizando uma nova máquina utilizando o EI com Ubuntu 22.04.
 
-## Instale o Docker
-
-1. Confira se já possui docker utilizando `docker -v` no terminal.
-2. Caso não possua, execute o seguinte comando no terminal
-   ```shell
-   apt update && \
-   apt install -y apt-transport-https ca-certificates curl software-properties-common && \
-   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-   add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" && \
-   apt update && \
-   apt-cache policy docker-ce && \
-   apt install -y docker-ce
-   ```
-3. Em caso de erro de permissão, adicione `sudo` na frente de cada comando `apt`.
+## Requisitos de instalação
+- [Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04)
+- [Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-22-04)
+- [Nvidia Docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/1.14.3/install-guide.html#installing-with-apt)
+- [Python 3.10.10](https://www.linuxcapable.com/how-to-install-python-3-10-on-ubuntu-linux/)
+- [Nvidia Drivers](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
 ## Instale o ambiente
 
@@ -72,7 +65,7 @@
 2. Crie uma pasta local para o projeto com o nome `desenvolvimento`
     <ol type="i">
     <li>Para sincronizar esse repositório à uma pasta local na sua máquina Linux, abra o terminal e digite <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes</code> para o repositório principal ou <code>git clone https://github.com/LabTef-Ifes/espaco_inteligente_ifes-deivid</code> para <i>clonar</i> o fork de atualização.
-    <li>Crie um <i>virtual environment</i> para o projeto <br> Para criar um venv, digite <code>python3.6 -m venv venv</code> no diretório reservado ao projeto.
+    <li>Crie um <i>virtual environment</i> para o projeto <br> Para criar um venv, digite <code>python3.10 -m venv venv</code> no diretório reservado ao projeto.
     <li>Ative o ambiente virtual com o comando <code>source venv/bin/activate</code>.
     </ol>
 3. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef`
@@ -95,7 +88,7 @@
 
    | **Reconstrução**        |                                                                                             **descrição** |
    | :---------------------- | --------------------------------------------------------------------------------------------------------: |
-   | skX [^3]                | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo request-3d-skeletons.py |
+   | skX [^3]                | Serviço de transformação dos esqueletos 2d em esqueletos 3d. Utilizado no arquivo `request_3d.py` |
    | is-frame_transformation |                                            Serviço de transformar esqueletos 2d em 3d usando a calibração |
    | grouper                 |                                                                           Descrito na [citação](#grouper) |
 
@@ -117,6 +110,7 @@
 - ⚠️⚠️O arquivo [options.json](dataset-creator/options.json) está vinculado às câmeras antigas e à captura de imagem, portando ele permanece sendo necessário de atualizar quando mudar parâmetros das câmeras.
 
 [^3]: X representa o número da câmera entre 0 e a quantidade de câmeras. Com 4 câmeras, X pode ser 0,1,2 ou 3
+
 # Comentários sobre o uso dos containers
 
 _Seção criada a partir da primeira conversa com o Mendonça em busca de compreender a comunicação dockerizada do EI_
@@ -136,7 +130,8 @@ _Seção criada a partir da primeira conversa com o Mendonça em busca de compre
   <p>
       <footer>
       <cite>- Felippe Mendonça</cite>,
-      <time datetime="2023-05-22">22 de maio de 2023</time></footer>
+      <time datetime="2023-05-22">22 de maio de 2023</time>
+      </footer>
   </p>
 </blockquote>
 
@@ -150,7 +145,8 @@ _Seção criada a partir da primeira conversa com o Mendonça em busca de compre
     <p>        
         <footer>
         <cite>- Felippe Mendonça</cite>,
-        <time datetime="2023-06-05">05 de junho de 2023</time></footer>
+        <time datetime="2023-06-05">05 de junho de 2023</time>
+        </footer>
     </p>
 </blockquote>
 
