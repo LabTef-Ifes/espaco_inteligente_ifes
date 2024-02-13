@@ -5,6 +5,8 @@
 - [Summary](#summary)
 - [Preparando o ambiente](#preparando-o-ambiente)
   - [Requisitos de instalação](#requisitos-de-instalação)
+  - [Kubernetes](#kubernetes)
+    - [Como usar#](#como-usar)
   - [Instale o ambiente](#instale-o-ambiente)
 - [Câmeras antigas - Informações importantes](#câmeras-antigas---informações-importantes)
 - [Comentários sobre o uso dos containers](#comentários-sobre-o-uso-dos-containers)
@@ -15,9 +17,9 @@
   - [dataset-creator](#dataset-creator)
     - [calculate.py](#calculatepy)
       - [Classe Skeleton](#classe-skeleton)
-        - [Joint](#joint)
+        - [Classe Joint](#classe-joint)
       - [Classe Calculate](#classe-calculate)
-        - [Vector](#vector)
+        - [Classe Vector](#classe-vector)
         - [Atributos](#atributos)
         - [Funções](#funções)
         - [Velocidade](#velocidade)
@@ -56,6 +58,17 @@ Em dezembro de 2023, estamos atualizando uma nova máquina utilizando o EI com U
 - [Nvidia Docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/1.14.3/install-guide.html#installing-with-apt)
 - [Python 3.10.10](https://www.linuxcapable.com/how-to-install-python-3-10-on-ubuntu-linux/)
 - [Nvidia Drivers](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+## Kubernetes
+Kubernetes realiza a orquestração de containers, distribuindo o trabalho e garantindo a funcionalidade do EI
+O Labvisio utiliza Kubernetes para manter o seu espaço funcionamento.
+
+Um exemplo: É possível realizar a captura de cada câmera com um computador diferente, realizar a detecção 2D em outro computador e a reconstrução 3D em outro PC diferente, usando 6 computadores e 4 câmeras.
+
+### Como usar#
+#TODO
+
 
 ## Instale o ambiente
 
@@ -70,7 +83,7 @@ Em dezembro de 2023, estamos atualizando uma nova máquina utilizando o EI com U
     </ol>
 3. Dentro da pasta clonada, clone o repositório [is-camera-py-labtef](https://github.com/LabTef-Ifes/is-cameras-py-labtef) com o comando `git clone https://github.com/LabTef-Ifes/is-cameras-py-labtef`
 4. Com o `venv` ativo, instale as bibliotecas necessárias para o espaço inteligente (EI) escritas no arquivo [requirements.txt](requirements.txt) através do comando `pip install -r requirements.txt`.
-5. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) com $`sh iniciar_principais_containers.sh`.
+5. Execute os containers necessários para o funcionamento do EI: execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) com `sh iniciar_principais_containers.sh`.
    1. Caso se depare com o erro de **permission denied**, execute o arquivo [sh_permission_denied.py](sh_permission_denied.py) e execute o arquivo [iniciar_principais_containers.sh](iniciar_principais_containers.sh) novamente.
 6. Em outro terminal, digite `docker stats` para verificar se os containers estão rodando (_Ctrl+C para fechar_). Os containers em funcionamento do EI são (verificar o parâmetro _NAME_ no terminal):
 
@@ -150,6 +163,7 @@ _Seção criada a partir da primeira conversa com o Mendonça em busca de compre
     </p>
 </blockquote>
 
+O serviço, de forma resumida, realiza conversão de imagens para jpeg para que seja possível exibir no navegador.
 # Pastas e arquivos do espaço inteligente
 
 ## root(pasta inicial do diretório)
@@ -190,7 +204,7 @@ Construtor da classe que recebe um dicionário frame_dict contendo informações
 `read_joints(self) -> dict[str, Skeleton.Joint]`
 Este método lê os keypoints do esqueleto a partir dos dados do frame e retorna um dicionário com os keypoints representados como objetos da classe Joint.
 
-##### Joint
+##### Classe Joint
 
 Possui os pontos `x`,`y`,`z` de um dado ponto do corpo.
 Possui `id` e `nome`
@@ -199,7 +213,7 @@ Pode somar com outra `Joint`.
 
 #### Classe Calculate
 Realiza todos os cálculos de movimento e posição utilizando a classe Skeleton.
-##### Vector
+##### Classe Vector
 
 Classe interna dentro da classe `Calculate` que representa um vetor tridimensional. Essa classe é usada para calcular a magnitude e o ângulo entre dois vetores, que são frequentemente utilizados no contexto do processamento de keypoints tridimensionais do esqueleto humano.
 
@@ -290,7 +304,7 @@ Este método chama vários outros métodos para criar gráficos de diferentes m�
 Os gráficos gerados incluem:
 
 1. Altura dos ombros
-2.  Ângulos dos joelhos
+2. Ângulos dos joelhos
 3. Ângulo do tronco
 4. Altura dos pés (tornozelos)
 5. Distância entre os pés
