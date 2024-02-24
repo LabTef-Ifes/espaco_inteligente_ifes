@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pandas as pd
 from collections import defaultdict
 import os
 import json
@@ -171,7 +172,7 @@ class Calculate:
         """Um segmento do corpo pode ser tratado como um vetor, com origem no ponto A e destino no ponto B. Assim, usamos álgebra para obter sua magnitude e ângulo criando vetores entre dois pontos do corpo."""
 
         def __init__(self, point_a, point_b):
-            """Cria um vetor entre dois pontos"""
+            """Cria um vetor do point_a ao point_b"""
             self.point_a = point_a
             self.x = point_b.x - point_a.x
             self.y = point_b.y - point_a.y
@@ -219,7 +220,7 @@ class Calculate:
             try:
                 result = func(self, *args, **kwargs)
             except Exception as e:
-                #print(f"Erro {e}")
+                # print(f"Erro {e}")
                 return np.nan
 
             return result
@@ -237,6 +238,10 @@ class Calculate:
         # Lista para guardar os pontos médios entre as duas hips e calcular velocidade
         self.midpoint_history = []
 
+    def save_data(self, path):
+        df = pd.DataFrame(self.plot_data)
+        df.to_csv(path, index=None)
+
     def run_frames(self):
         """Passa por todos os frames, calculando as informações necessárias para o plot usando a classe Skeleton para guardar as informações. Ao final, chama a função que plota os dados"""
         for i, frame_info in enumerate(self.data):
@@ -252,7 +257,7 @@ class Calculate:
 
             # Altura
 
-            ## Altura dos ombros
+            # Altura dos ombros
             # Erro por que caso falte um frame, retorna apenas um np.nan, enquanto nessa função retorna-se duas variáveis. Provavelmente precisará refatorar
             try:
                 altura_ombro_esquerdo, altura_ombro_direito = self.alinhamento_ombros()
@@ -273,19 +278,19 @@ class Calculate:
 
             # Ângulos
 
-            ## Angulo do tronco com o eixo vertical
+            # Angulo do tronco com o eixo vertical
             self.plot_data["angulo_tronco"].append(
                 self.angulo_tronco_vertical())
 
-            ## Joelho esquerdo
+            # Joelho esquerdo
             self.plot_data["angulo_joelho_esquerdo"].append(
                 self.angulo_joelho_esquerdo()
             )
-            ## Joelho direito
+            # Joelho direito
             self.plot_data["angulo_joelho_direito"].append(
                 self.angulo_joelho_direito())
 
-            ## Angulo da pelvis
+            # Angulo da pelvis
             self.plot_data["angulo_pelvis"].append(
                 self.angulo_pelvis()
             )
@@ -424,10 +429,11 @@ class Calculate:
         midpoint = (joint_left_hip + joint_right_hip)/2
 
         # Vetor entre o ponto médio das hips e o joelho
-        left_vector = Calculate.Vector(midpoint, self.skeleton.joints[left_knee])
+        left_vector = Calculate.Vector(
+            midpoint, self.skeleton.joints[left_knee])
         right_vector = Calculate.Vector(
             midpoint, self.skeleton.joints[right_knee])
-        
+
         return left_vector // right_vector
 
     def read_json(self):
@@ -506,6 +512,7 @@ class Plot:
         ax.legend()
 
         fig.savefig(os.path.join(self.PASTA_RESULTADO, "altura_pe.png"))
+
     def plot_angulo_pelvis(self):
         fig, ax = plt.subplots()
         ax.plot(self.data["angulo_pelvis"], label="Ângulo da pelvis")
@@ -516,10 +523,11 @@ class Plot:
 
         fig.savefig(os.path.join(self.PASTA_RESULTADO, "angulo_pelvis.png"))
 
+
 if __name__ == "__main__":
 
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
-    #print(calc.plot_data["angulo_pelvis"])
+    calc.save_data('test.csv')
+    # print(calc.plot_data["angulo_pelvis"])
     plot = Plot(calc.plot_data)
-
