@@ -511,7 +511,7 @@ class Plot:
         ax.set_ylabel("Altura")
         ax.legend()
 
-        fig.savefig(os.path.join(self.PASTA_RESULTADO, "altura_pe.png"))
+        fig.savefig(os.path.join(self.PASTA_RESULTADO, "altura_tornozelo.png"))
 
     def plot_angulo_pelvis(self):
         fig, ax = plt.subplots()
@@ -529,5 +529,4 @@ if __name__ == "__main__":
     calc = Calculate("videos/p001g01_3d.json")
     calc.run_frames()
     calc.save_data('test.csv')
-    # print(calc.plot_data["angulo_pelvis"])
     plot = Plot(calc.plot_data)
