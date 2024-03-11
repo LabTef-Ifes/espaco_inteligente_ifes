@@ -225,7 +225,7 @@ class Skeleton3D:
 
             new_requests[msg.correlation_id] = {
                 'body': request['body'],
-                'person_id': request['gesture_id'],
+                'person_id': request['person_id'],
                 'gesture_id': request['gesture_id'],
                 'pos': request['pos'],
                 'requested_at': time.time()
