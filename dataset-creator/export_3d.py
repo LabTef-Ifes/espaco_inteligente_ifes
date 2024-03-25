@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import os
 import matplotlib
 matplotlib.use('Agg')
@@ -48,6 +49,63 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('RIGHT_EYE'), HKP.Value('RIGHT_EAR'))]
 
 
+class Export3D:
+    """
+    Class for exporting 3D animations with skeletons rendered on images and 3D plots.
+
+    Attributes:
+        OUTPUT_FORMAT (str): Output video format.
+        FPS (int): Frames per second for the output video.
+        log (Logger): Logger instance for logging messages.
+        fig (Figure): Figure object for the 3D plot.
+        ax (Axes3D): Axes3D object for the 3D plot.
+        show (bool): Flag indicating whether to display the rendered images.
+        person_id (int): ID of the person.
+        gesture_id (int): ID of the gesture.
+        output_file (str): Output file path for the video.
+        video_writer (VideoWriter): VideoWriter object for writing the video.
+        options (Options): Options object for loading options.
+        keymap (dict): Dictionary containing the keymap.
+        gestures (OrderedDict): Ordered dictionary containing the gestures.
+        size (tuple): Tuple representing the size of the full image.
+        full_image (ndarray): Numpy array representing the full image.
+        cameras_id_list (list): List of camera IDs.
+        json_files (dict): Dictionary containing the paths of the JSON annotation files.
+        video_files (dict): Dictionary containing the paths of the video files.
+        json_localizations_file (str): Path of the JSON localizations file.
+        multiple_video_loader (MultipleVideoLoader): MultipleVideoLoader object for loading multiple videos.
+        annotations (dict): Dictionary containing the annotations.
+        localizations (dict): Dictionary containing the localizations.
+
+    Methods:
+        get_keymap(): Returns the keymap dictionary.
+        get_options(): Returns the options object.
+        get_person_gesture_parser(): Returns the person ID and gesture ID.
+        get_annotations(): Returns the annotations dictionary.
+        get_localizations(): Returns the localizations dictionary.
+        check_gesture(gesture_id): Checks if the gesture ID is valid.
+        check_person(person_id, gesture_id): Checks if the person ID is valid.
+        check_annotations_files(): Checks if the annotation files exist.
+        run(): Runs the export process.
+        render_skeletons(images, annotations, it, links, colors): Renders skeletons on the images.
+        render_skeletons_3d(skeletons, links, colors): Renders skeletons in 3D.
+        place_images(output_image, images_list, x_offset, y_offset): Places images in a grid.
+    """
+    OUTPUT_FORMAT = 'p{:03d}g{:02d}_output.avi'
+    FPS = 15
+
+    def __init__(self, show: bool = True):
+        """
+        Initializes an Export3D object.
+
+        Args:
+            show (bool, optional): Flag indicating whether to display the rendered images. Defaults to True.
+        """
+        # Code omitted for brevity
+        pass
+
+    # Code omitted for brevity
+    pass
 class Export3D:
     OUTPUT_FORMAT = 'p{:03d}g{:02d}_output.avi'
     FPS = 15
@@ -133,7 +191,7 @@ class Export3D:
         return gestures
 
     def check_person(self, person_id, gesture_id):
-        assert person_id < 1 or person_id > 999, f"Invalid PERSON_ID: {person_id}. Must be between 1 and 999."
+        assert 1 <= person_id <= 999, f"Invalid PERSON_ID: {person_id}. Must be between 1 and 999."
 
         self.log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
 
@@ -160,7 +218,19 @@ class Export3D:
         return json_files, video_files, json_localizations_file
     
     def run(self):
-        def draw_axis():
+
+        for it_frames in tqdm(range(self.multiple_video_loader.n_frames())):
+            self.multiple_video_loader.load_next()
+
+            frames = self.multiple_video_loader[it_frames]
+            if frames is not None:
+                self.render_skeletons(
+                    frames, self.annotations, it_frames, links, colors)
+                frames_list = [frames[cam] for cam in sorted(frames.keys())]
+                self.full_image = self.place_images(
+                    self.full_image, frames_list)
+
+            # draw axis 3d
             self.ax.clear()
             self.ax.view_init(azim=28, elev=32)
             self.ax.set_xlim(-1.5, 1.5)
@@ -174,20 +244,6 @@ class Export3D:
             self.ax.set_xlabel('X', labelpad=20)
             self.ax.set_ylabel('Y', labelpad=10)
             self.ax.set_zlabel('Z', labelpad=5)
-
-        for it_frames in range(self.multiple_video_loader.n_frames()):
-            self.multiple_video_loader.load_next()
-
-            frames = self.multiple_video_loader[it_frames]
-            if frames is not None:
-                self.render_skeletons(
-                    frames, self.annotations, it_frames, links, colors)
-                frames_list = [frames[cam] for cam in sorted(frames.keys())]
-                self.full_image = self.place_images(
-                    self.full_image, frames_list)
-
-            # draw axis 3d
-            draw_axis()
 
             self.render_skeletons_3d(
                 self.localizations[it_frames], links, colors)
@@ -217,16 +273,19 @@ class Export3D:
         self.log.info('Done!')
         
     def render_skeletons(self, images: dict, annotations: dict, it, links: list, colors: list):
-        """_summary_
+        """
+        Renders skeletons on the given images based on the provided annotations.
 
         Args:
-            images (dict): _description_
-            annotations (dict): _description_
-            it (_type_): _description_
-            links (list): _description_
-            colors (list): _description_
-        """
+            images (dict): A dictionary containing the images to render the skeletons on.
+            annotations (dict): A dictionary containing the annotations for each image.
+            it: The iteration index.
+            links (list): A list of tuples representing the links between keypoints.
+            colors (list): A list of colors to use for rendering the skeleton.
 
+        Returns:
+            None
+        """
         for cam_id, image in images.items():
             skeletons = ParseDict(annotations[cam_id][it], ObjectAnnotations())
             for ob in skeletons.objects:
@@ -292,5 +351,5 @@ class Export3D:
         return output_composition
 
 if __name__ == '__main__':
-    export = Export3D(show=False)
+    export = Export3D(show=True)
     export.run()
