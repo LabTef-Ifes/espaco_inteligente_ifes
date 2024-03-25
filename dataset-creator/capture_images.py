@@ -5,7 +5,7 @@ import sys
 import json
 import shutil
 import argparse
-from datetime import datetime as dt
+from datetime import datetime
 from collections import defaultdict, OrderedDict
 import cv2
 import numpy as np
@@ -209,7 +209,7 @@ info_bar_text = "PERSON_ID: {} GESTURE_ID: {} ({})".format(
 # loop principal do programa
 while True:
     # consome uma mensagem do canal
-    msg = channel.consume()
+    msg = channel.consume(timeout=1)
 
     # obtém o id da câmera a partir do tópico da mensagem
     camera_id = get_id(msg.topic)
@@ -225,11 +225,11 @@ while True:
         continue
 
     # converte o array de bytes da mensagem em um array numpy
-    data = np.fromstring(pb_image.data, dtype=np.uint8)
+    data = np.frombuffer(pb_image.data, dtype=np.uint8)
 
     # armazena a imagem e o timestamp no dicionário correspondente
     images_data[camera_id] = data
-    current_timestamps[camera_id] = dt.utcfromtimestamp(
+    current_timestamps[camera_id] = datetime.fromtimestamp(datetime.UTC)(
         msg.created_at).isoformat()
 
     # verifica se todas as imagens foram recebidas
