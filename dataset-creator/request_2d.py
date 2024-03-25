@@ -20,8 +20,8 @@ from utils import FrameVideoFetcher, load_options, make_pb_image
 class Skeleton2D:
 # Definição de constantes
     MIN_REQUESTS = 5
-    MAX_REQUESTS = 15
-    DEADLINE_SEC = 5.0
+    MAX_REQUESTS = 10
+    DEADLINE_SEC = 15.0
     JSON2D_FORMAT = '{}_2d.json'
 
     def __init__(self):
@@ -41,7 +41,6 @@ class Skeleton2D:
         self.pending_videos,self.n_annotations = self.get_pending_videos()
 
         self.channel,self.subscription = self.start_communication()
-        
 
         self.frame_fetcher:FrameVideoFetcher = FrameVideoFetcher(
                     video_files=self.pending_videos, base_folder=self.options.folder)
@@ -159,7 +158,7 @@ class Skeleton2D:
             self.requests.pop(correlation_id)
 
             # exibe uma mensagem de log informando que a mensagem expirou
-            self.log.warn("Message '{}' timeouted. Sending another request.", correlation_id)
+            self.log.warn("Message '{}' timed out. Sending another request.", correlation_id)
 
         # atualiza o dicionário requests com as novas requisições
         self.requests.update(new_requests)

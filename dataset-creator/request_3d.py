@@ -28,6 +28,38 @@ class State(Enum):
 
 
 class Skeleton3D:
+    """
+    Class representing a 3D skeleton.
+
+    Attributes:
+        log (Logger): Logger instance for logging.
+        state (State): Current state of the skeleton.
+        pending_localizations (list): List of pending localizations.
+        requests (dict): Dictionary of requests.
+        num_localizations (defaultdict): Default dictionary of number of localizations.
+        localizations_received (defaultdict): Default dictionary of received localizations.
+        options: Options for the skeleton.
+        channel: Communication channel.
+        subscription: Subscription for the channel.
+        annotation_files: List of annotation files.
+        person_gesture_camera_dict (defaultdict): Default dictionary of person, gesture, and camera.
+        quantity_of_annotations (defaultdict): Default dictionary of quantity of annotations.
+        cameras_id_list (list): List of camera IDs.
+        annotations_fetcher (AnnotationsFetcher): AnnotationsFetcher instance.
+
+    Methods:
+        _get_cameras_id_list: Get the list of camera IDs.
+        _get_communication: Get the communication channel and subscription.
+        _get_annotation_files: Get the list of annotation files.
+        _get_options: Get the options for the skeleton.
+        _get_person_gesture_camera: Get the person, gesture, and camera dictionary.
+        check_for_detection_files: Check for detection files.
+        _publish: Publish a message.
+        run: Run the skeleton.
+        _make_requests: Make requests.
+        _recv_replies: Receive replies.
+        _check_for_timed_out_requests: Check for timed out requests.
+    """
     def __init__(self):
         self.log = Logger(name='Request3dSkeletons')
 
@@ -157,11 +189,17 @@ class Skeleton3D:
                 self._check_end_of_sequence_and_save()
 
     def _make_requests(self):
-        """_summary_
-        """        
+        """
+        Makes requests to fetch annotations for person gestures.
 
+        This method is responsible for making requests to fetch annotations for person gestures.
+        It iterates over the annotations fetcher and sends messages with the annotations to be processed.
+
+        Returns:
+            None
+        """
         self.state = State.RECV_REPLIES
-            
+
         if len(self.requests) < MIN_REQUESTS:
             while len(self.requests) <= MAX_REQUESTS:
                 person_id, gesture_id, pos, annotations = self.annotations_fetcher.next()
@@ -174,7 +212,7 @@ class Skeleton3D:
                 body = json.dumps({'list': annotations}).encode('utf-8')
                 msg.body = body
                 msg.timeout = DEADLINE_SEC
-                
+
                 self._publish(msg)
 
                 self.requests[msg.correlation_id] = {
@@ -186,8 +224,18 @@ class Skeleton3D:
                 }
 
     def _recv_replies(self):
-        """ Consome a mensagem de localização 3D e salva no dicionário
-        """        
+        """Consume the 3D location message and save it in the dictionary.
+
+        This method receives the 3D location message from the channel and saves it in the dictionary
+        `self.localizations_received`. The message is unpacked into `ObjectAnnotations` and the
+        correlation ID is used to retrieve the corresponding person ID, gesture ID, and position from
+        the `self.requests` dictionary. The unpacked message is then converted to a dictionary using
+        `MessageToDict` and stored in `self.localizations_received`. Finally, the correlation ID is
+        removed from the `self.requests` dictionary.
+
+        If a socket timeout occurs, the state is set to `State.CHECK_FOR_TIMEDOUT_REQUESTS`. Otherwise,
+        the state is set to `State.CHECK_END_OF_SEQUENCE_AND_SAVE`.
+        """
         try:
             msg = self.channel.consume(timeout=1.0)
             if msg.status.ok():
@@ -209,8 +257,16 @@ class Skeleton3D:
             self.state = State.CHECK_END_OF_SEQUENCE_AND_SAVE
 
     def _check_for_timed_out_requests(self):
-        """_summary_
-        """        
+        """
+        Check for timed out requests and resend them if necessary.
+
+        This method iterates through the requests dictionary and checks if any requests have timed out.
+        If a request has timed out, it resends the request and updates the request timestamp.
+        The timed out request is then removed from the requests dictionary and a new request is added with the updated timestamp.
+
+        Returns:
+            None
+        """
         new_requests = {}
 
         for cid in list(self.requests.keys()):
@@ -220,7 +276,6 @@ class Skeleton3D:
             msg = Message(reply_to=self.subscription, content_type=ContentType.JSON)
             msg.body = request['body']
             msg.timeout = DEADLINE_SEC
-            
             self._publish(msg)
 
             new_requests[msg.correlation_id] = {
@@ -238,10 +293,16 @@ class Skeleton3D:
         self.state = State.MAKE_REQUESTS
 
     def _check_end_of_sequence_and_save(self):
-        """_summary_
-        """        
+        """Check if the end of a sequence has been reached and save the data.
+
+        This method checks if all the required localizations for each person and gesture
+        have been received. If so, it saves the localizations as a JSON file.
+
+        Returns:
+            None
+        """
         done_sequences:list = []
-        # Error para p001g03 e g02???
+
         for person_id, gestures in self.localizations_received.items():
             for gesture_id, localizations_dict in gestures.items():
                 try:
@@ -266,7 +327,7 @@ class Skeleton3D:
                 self.log.info('Saved: PERSON_ID: {:03d} GESTURE_ID: {:02d}',
                         person_id, gesture_id)
 
-        # Remove as sequências que já foram salvas
+        # Remove the sequences that have already been saved
         for person_id, gesture_id in done_sequences:
             del self.localizations_received[person_id][gesture_id]
 
