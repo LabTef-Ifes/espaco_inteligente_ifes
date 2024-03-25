@@ -2,6 +2,7 @@ from is_wire.core import Channel, Subscription, Message
 from is_msgs.image_pb2 import Image
 import numpy as np
 import cv2
+from datetime import datetime
 
 """Exibe a imagem de uma camera apenas.
 """
@@ -21,7 +22,7 @@ if __name__ == '__main__':
     print('---RUNNING EXAMPLE DEMO OF THE CAMERA CLIENT---')
 
     broker_uri = "amqp://guest:guest@localhost:5672"
-    camera_id = 1
+    camera_id = 3
     channel = Channel(broker_uri)
     subscription = Subscription(channel=channel)
     subscription.subscribe(topic='CameraGateway.{}.Frame'.format(camera_id))
@@ -36,5 +37,10 @@ if __name__ == '__main__':
         frame = to_np(im)
         # print(frame.shape)
         cv2.imshow(window, frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        key = cv2.waitKey(1)  
+        if key == ord('s'):
+            filename = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+            #print(filename)
+            cv2.imwrite(filename + '.jpeg', frame) 
+        if key == ord('q'):
             break
